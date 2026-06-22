@@ -1,5 +1,81 @@
-#dice-box{
+:root{
+    --die-bg-color:#ffffff;
+    --die-font-color:#000000;
+    --die-outline-color:#00000000
+}
+
+@font-face {
+    font-family: 'BaseballClubSolid';
+    src: url("../../../public/assets/BaseballClubSolid-E4X69.ttf");
+}
+
+#grad-box{
+    background-image:linear-gradient(90deg, #C4CED4 0%, #ffffff00 5%, #ffffff00 6%, #ff0000ff 7%, #C4CED4 35%, #ffffff00 36%, #C4CED4 37%, #C4CED4 65%, #ffffff00 66%, #C4CED4 67%, #C4CED4 95%, #ffffff00 96%, #C4CED4 97%, #C4CED4 100%);
+    width:100px;
+    height:100px;
+}
+
+#diceRoller {
     height: 300px;
-    width:300px;
-    background-color:#DDFFDD;
+    width: 300px;
+    margin-top: 1.5rem;
+    z-index: -1;
+    overflow: hidden;
+}
+
+#canvas {
+    width: 300px;
+    height: 300px;
+}
+.die-box{
+    position:relative;
+height:50px;
+width:50px;
+border-radius:5px;
+display:flex;
+justify-content: center;
+align-items:center;
+background:var(--die-bg-color);
+font-size:35px;
+font-family:"BaseballClubSolid";
+color:var(--die-font-color);
+-webkit-text-stroke: 0.7px var(--die-outline-color);
+border:1px solid #aaaaaa;
+}
+.die-box::after{
+    content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:radial-gradient(at 5% 5%,#ffffff80 0%, #ffffff00 80%);
+}
+/*.color-option{
+    box-sizing:border-box;
+    padding:2% 10% 2% 5%;
+    width:30px;
+    background-color:#FF0000;
+}*/
+.ios-picker {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #f2f2f7; /* iOS Light Mode Gray */
+  border: 1px solid #c7c7cc;
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 17px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #000;
+  cursor: pointer;
+  width: 100%;
+  max-width: 300px;
+  outline: none;
+  text-align: center;
+}
+
+.ios-picker option {
+  /*background-color: #ffffff;*/
+  color: #333333;
+  padding: 10px;
 }
