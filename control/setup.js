@@ -1,4 +1,5 @@
 import { players } from '../model/players.js'
+import { pitchers } from '../model/pitchers.js'
 import { G } from '../model/game.js'
 
 function shuffle(array) {
@@ -9,11 +10,24 @@ function shuffle(array) {
   }
 };
 
-export function setupTest(){
-const tier1Players = players.filter(player => (player.tier===1 && player.condition==="roll"));
-shuffle(tier1Players);
-G.batterRoster = tier1Players.splice(0,9);
-G.game.lineup=G.batterRoster;
+export function gameSetup(){
+//Create 3 player decks
+const t1Players = players.filter(player => (player.tier===1 && player.condition==="roll"));
+const t1Pitchers = pitchers.filter(pitcher => (pitcher.tier === 1));
+shuffle(t1Players);
+shuffle(t1Pitchers);
+const t2Players = players.filter(player => (player.tier === 2 && player.condition === "roll"));
+const t2Pitchers = pitchers.filter(pitcher => (pitcher.tier === 2));
+t2Players.push(...t2Pitchers)
+shuffle(t2Players);
+const t3Players = players.filter(player => (player.tier === 3 && player.condition === "roll"));
+const t3Pitchers = pitchers.filter(pitcher => (pitcher.tier === 3));
+t3Players.push(...t3Pitchers)
+shuffle(t3Players);
 
-
+//Get initial Roster of T1 Players
+G.batterRoster=t1Players.splice(0,9);
+G.pitcherRoster=t1Pitchers.splice(0,1);
+console.log(G.batterRoster);
+console.log(G.pitcherRoster);
 }
