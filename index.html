@@ -13,25 +13,31 @@
   <div id='name'></div>
   <div id='result'></div>
   
-  <select id='team-select'><option value="">--Pick One--</option></select>
-  <select id='color-1'><option value="">--Pick One</option></select>
+  <select id='team-select'>
+    <option value="">--Pick One--</option>
+  </select>
+  <select id='color-1'>
+    <option value="">--Pick One</option>
+  </select>
   <div class='die-box'>8</div>
   <button id="roll">Roll</button>
-      <div id="diceRoller"> <!-- absolutely positionned behind #diceRollerUI -->
-      <!-- dice_box gets created here -->
-    </div>
-<div id="resources">
-  <div id="dicePool"></div>
-  <div id="rerolls"></div>
-  <div id="mods"></div>
-</div>
-<div id="batter"></div>
-
-<script src="dice/libs/three.min.js"></script>
-<script src="dice/libs/cannon.min.js"></script>
-<script src="dice/libs/teal.js"></script>
-<script src="dice/dice.js" type='module'></script>
-<script src='main.js' type='module'></script>
+  <div id="diceRoller"> <!-- absolutely positionned behind #diceRollerUI -->
+    <!-- dice_box gets created here -->
+  </div>
+  <div id="reference"><img src="public/assets/reference/season.png"></div>
+  <div id="lineup"></div>
+  <div id="resources">
+    <div id="dicePool"></div>
+    <div id="rerolls"></div>
+    <div id="mods"></div>
+  </div>
+  <div id="batter"></div>
+  
+  <script src="dice/libs/three.min.js"></script>
+  <script src="dice/libs/cannon.min.js"></script>
+  <script src="dice/libs/teal.js"></script>
+  <script src="dice/dice.js" type='module'></script>
+  <script src='main.js' type='module'></script>
 </body>
 
 </html>

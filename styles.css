@@ -14,13 +14,13 @@
     width:100px;
     height:100px;
 }
-
 #diceRoller {
     height: 300px;
     width: 300px;
     margin-top: 1.5rem;
     z-index: -1;
     overflow: hidden;
+    display:none;
 }
 
 #canvas {
@@ -78,4 +78,24 @@ border:1px solid #aaaaaa;
   /*background-color: #ffffff;*/
   color: #333333;
   padding: 10px;
+}
+
+#reference img{
+    width:150px;
+}
+#lineup {
+    display:flex;
+    flex-direction:row;
+    width:100%;
+    overflow:scroll;
+    height:200px;
+    background:#CCCCCC;
+    border:1 px solid #AAAAAA;
+    border-radius:20px;
+    gap:5px;
+}
+.lineup-card{
+    height:90%;
+    border-radius:8px;
+    overflow:hidden;
 }
