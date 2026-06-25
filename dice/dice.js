@@ -29,7 +29,7 @@
 
 export const DICE = (function() {
     var that = {};
- 
+    
     var vars = { //todo: make these configurable on init
         frame_rate: 1 / 60,
         scale: 100, //dice size
@@ -40,17 +40,17 @@ export const DICE = (function() {
             shininess: 30,
             shading: THREE.FlatShading,
         },
-        label_color: '#CE1141', //numbers on dice
-        outline_color: '#13274F',
+        label_color: '#E81828', //numbers on dice
+        outline_color: '#ffffff',
         dice_color: '#ffffff',
-        stripe_color: '#ffffff',
+        stripe_color: '#E81828',
         ambient_light_color: 0xf0f0f0,
         spot_light_color: 0x404040,
         desk_color: '#101010', //canvas background
         desk_opacity: 0.5,
         use_shadows: true,
         use_adapvite_timestep: true //todo: setting this to false improves performace a lot. but the dice rolls don't look as natural...
-    }  
+    }
     //const loader=new FontLoader();
     const CONSTS = {
         known_types: ['d4', 'd6', 'd8', 'd9', 'd10', 'd12', 'd20', 'd100'],
@@ -208,16 +208,39 @@ export const DICE = (function() {
         this.light.shadowCameraFar = mw * 5;
         this.light.shadowCameraFov = 50;
         this.light.shadowBias = 0.001;
-        this.light.shadowDarkness = 1.1;
+        this.light.shadowDarkness = 0.9;
         this.light.shadowMapWidth = 1024;
         this.light.shadowMapHeight = 1024;
         this.scene.add(this.light);
-        
+        var box = this;
         if (this.desk) this.scene.remove(this.desk);
-        this.desk = new THREE.Mesh(new THREE.PlaneGeometry(this.w * 2, this.h * 2, 1, 1),
-            new THREE.MeshPhongMaterial({ color: vars.desk_color, opacity: vars.desk_opacity, transparent: true }));
-        this.desk.receiveShadow = vars.use_shadows;
-        this.scene.add(this.desk);
+        new THREE.TextureLoader().load('./public/assets/baseballfield.jpeg', function(deskTexture) {
+            
+            deskTexture.needsUpdate = true;
+            
+            // IMPORTANT for r73 stability
+            
+            deskTexture.generateMipmaps = false;
+            
+            deskTexture.minFilter = THREE.LinearFilter;
+            
+            deskTexture.magFilter = THREE.LinearFilter
+            
+            
+            
+            
+            box.desk = new THREE.Mesh(
+                new THREE.PlaneGeometry(box.w * 2, box.h * 2, 1, 1),
+                new THREE.MeshPhongMaterial({
+                    map: deskTexture,
+                    side: THREE.DoubleSide,
+                    shininess: 20
+                })
+            );
+            box.desk.receiveShadow = vars.use_shadows;
+            box.scene.add(box.desk);
+            box.renderer.render(box.scene, box.camera);
+        });
         
         this.renderer.render(this.scene, this.camera);
     }
@@ -537,8 +560,8 @@ export const DICE = (function() {
     that.set_color = function(type, hex) {
         if (type === 'dice') vars.dice_color = hex;
         else if (type === 'label') vars.label_color = hex;
-        else if (type==='stripe') vars.stripe_color=hex;
-        else if (type==='outline') vars.outline_color=hex;
+        else if (type === 'stripe') vars.stripe_color = hex;
+        else if (type === 'outline') vars.outline_color = hex;
         // force regeneration on next roll
         delete threeD_dice.dice_material;
         delete threeD_dice.d4_material;
@@ -609,23 +632,23 @@ export const DICE = (function() {
     
     //pinstripes
     function draw_pinstripes(context, size, base_color, stripe_color) {
-    context.fillStyle = base_color;
-    context.fillRect(0, 0, size, size);
-    context.save();
-    context.strokeStyle = `${stripe_color}80`;
-    context.lineWidth = size * 0.02;
-    context.translate(size / 2, size / 2);
-    //context.rotate(Math.PI / 4); // 45° pinstripes
-    var diag = size * 1.5;
-    for (var x = -diag; x < diag; x += size * 0.2) {
-        context.beginPath();
-        context.moveTo(x, -diag);
-        context.lineTo(x, diag);
-        context.stroke();
+        context.fillStyle = base_color;
+        context.fillRect(0, 0, size, size);
+        context.save();
+        context.strokeStyle = `${stripe_color}80`;
+        context.lineWidth = size * 0.02;
+        context.translate(size / 2, size / 2);
+        //context.rotate(Math.PI / 4); // 45° pinstripes
+        var diag = size * 1.5;
+        for (var x = -diag; x < diag; x += size * 0.2) {
+            context.beginPath();
+            context.moveTo(x, -diag);
+            context.lineTo(x, diag);
+            context.stroke();
+        }
+        context.restore();
     }
-    context.restore();
-}
-
+    
     
     function create_dice_materials(face_labels, size, margin) {
         function create_text_texture(text, color, back_color) {
@@ -642,7 +665,7 @@ export const DICE = (function() {
             context.textBaseline = "middle";
             context.fillStyle = color;
             context.strokeStyle = vars.outline_color;
-            context.lineWidth=2;
+            context.lineWidth = 2;
             context.strokeText(text, canvas.width / 2, canvas.height / 2);
             context.fillText(text, canvas.width / 2, canvas.height / 2);
             if (text == '6' || text == '9') {
@@ -683,7 +706,8 @@ export const DICE = (function() {
         }
         var materials = [];
         for (var i = 0; i < labels.length; ++i)
-            materials.push(new THREE.MeshPhongMaterial($t.copyto(vars.material_options, { map: create_d4_text(labels[i], vars.label_color, vars.dice_color)
+            materials.push(new THREE.MeshPhongMaterial($t.copyto(vars.material_options, {
+                map: create_d4_text(labels[i], vars.label_color, vars.dice_color)
                 
             })));
         return materials;

@@ -13,7 +13,6 @@
   <div id='name'></div>
   <div id='result'></div>
   
-  
   <select id='team-select'><option value="">--Pick One--</option></select>
   <select id='color-1'><option value="">--Pick One</option></select>
   <div class='die-box'>8</div>
@@ -21,13 +20,17 @@
       <div id="diceRoller"> <!-- absolutely positionned behind #diceRollerUI -->
       <!-- dice_box gets created here -->
     </div>
-
+<div id="resources">
+  <div id="dicePool"></div>
+  <div id="rerolls"></div>
+  <div id="mods"></div>
+</div>
+<div id="batter"></div>
 
 <script src="dice/libs/three.min.js"></script>
 <script src="dice/libs/cannon.min.js"></script>
 <script src="dice/libs/teal.js"></script>
 <script src="dice/dice.js" type='module'></script>
-<script src="https://app.unpkg.com/three@0.160.0/files/examples/jsm/loaders/FontLoader.js"></script>
 <script src='main.js' type='module'></script>
 </body>
 

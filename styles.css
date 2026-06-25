@@ -1,7 +1,7 @@
 :root{
-    --die-bg-color:#ffffff;
-    --die-font-color:#000000;
-    --die-outline-color:#00000000
+    --die-bg-color: linear-gradient(90deg,white 0%, white 5%, #E81828a0 6%, white 7%, white 35%, #E81828a0 36%, white 37%, white 65%, #E81828a0 66%, white 67%, white 95%, #E81828a0 96%, white 97%, white 100%);
+    --die-font-color:#E81828;
+    --die-outline-color:#ffffff;
 }
 
 @font-face {

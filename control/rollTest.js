@@ -69,7 +69,7 @@ export function checkStraight(dice, run) {
 }
 
 export function countValue(dice, op, val, target) {
-  const valCount = dice.filter(res => res===val).length
+  const valCount = dice.filter(res => res === val).length
   switch (op) {
     case 'eq':
       return valCount === target;
@@ -86,30 +86,30 @@ export function countValue(dice, op, val, target) {
 }
 
 export function countPairs(dice, op, target) {
-  const counts={};
+  const counts = {};
   
-  for (const num of dice){
-    counts[num]=(counts[num] || 0) +1;
+  for (const num of dice) {
+    counts[num] = (counts[num] || 0) + 1;
   }
   
-  const pairs = Object.values(counts).filter(count => count>=2).length;
+  const pairs = Object.values(counts).filter(count => count >= 2).length;
   
   switch (op) {
-  case 'eq':
-    return pairs === target;
-    break;
-  case 'le':
-    return pairs <= target;
-    break;
-  case 'ge':
-    return pairs >= target;
-    break;
-  default:
-    return false;
-}
+    case 'eq':
+      return pairs === target;
+      break;
+    case 'le':
+      return pairs <= target;
+      break;
+    case 'ge':
+      return pairs >= target;
+      break;
+    default:
+      return false;
+  }
 }
 
-export function countSets(dice, op, num,target) {
+export function countSets(dice, op, num, target) {
   const counts = {};
   
   for (const num of dice) {
@@ -127,6 +127,45 @@ export function countSets(dice, op, num,target) {
       break;
     case 'ge':
       return sets >= target;
+      break;
+    default:
+      return false;
+  }
+}
+
+export function testRange(dice, op, target) {
+  const diceMax = Math.max(...dice);
+  const diceMin = Math.min(...dice);
+  const diceRange = diceMax - diceMin;
+  
+  switch (op) {
+    case 'eq':
+      return diceRange === target;
+      break;
+    case 'le':
+      return diceRange <= target;
+      break;
+    case 'ge':
+      return diceRange >= target;
+      break;
+    default:
+      return false;
+  }
+}
+
+export function countUnique(dice, op, target) {
+  // Sort and remove duplicates in case of unsorted or messy inputs
+  const unique = [...new Set(dice)].length;
+  
+  switch (op) {
+    case 'eq':
+      return unique === target;
+      break;
+    case 'le':
+      return unique <= target;
+      break;
+    case 'ge':
+      return unique >= target;
       break;
     default:
       return false;
