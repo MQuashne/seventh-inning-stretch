@@ -4,12 +4,14 @@ const black = "#000000";
 
 export const teamColors = {
   "ARI": {
-    "red": "#A71930",
+    "red": "#AA182C",
     "sand": "#E3D4AD",
     "black": "#000000",
     "gray": "#C4CED4",
     "blue": "#30CED8",
-    "purple": "#5F259F"
+    "purple": "#5F259F",
+    "primary": "#AA182C",
+    "secondary": "#000000",
   },
   "ATL": {
     "blue": "#13274F",
@@ -17,7 +19,9 @@ export const teamColors = {
     "gold": "#EAAA00",
     "white": "#FFFFFF",
     "ltBlue": "#6CACE4",
-    "royal": "#1E22AA"
+    "royal": "#1E22AA",
+    "primary": "#0c2340",
+    "secondary":"ba0c2f"
   },
   "BAL": {
     "orange": "#DF4601",
@@ -25,7 +29,10 @@ export const teamColors = {
     "white": "#FFFFFF",
     "gray": "#C4CED4",
     "green": "#1F3E38",
-    "cream": "#FBF9F6"
+    "cream": "#FBF9F6",
+    "primary": "#DF4601",
+    "secondary": "#000000",
+    
   },
   "BOS": {
     "red": "#BD3039",
@@ -33,7 +40,9 @@ export const teamColors = {
     "white": "#FFFFFF",
     "ltBlue": "#307FE2",
     "gold": "#FFD100",
-    "green": "#5A8D84"
+    "green": "#5A8D84",
+    "primary": "#0D2B56",
+    "secondary": "#BD3039"
   },
   "CHC": {
     "blue": "#0E3386",
@@ -41,7 +50,9 @@ export const teamColors = {
     "white": "#FFFFFF",
     "gray": "#C4CED4",
     "ltBlue": "#7BA4DB",
-    "navy": "#13294B"
+    "navy": "#13294B",
+    "primary": "#0E3386",
+    "secondary": "#CC3433"
   },
   "CWS": {
     "offBlack": "#27251F",
@@ -49,7 +60,9 @@ export const teamColors = {
     "white": "#FFFFFF",
     "black": "#000000",
     "blue": "#0C2340",
-    "red": "#BA0C2F"
+    "red": "#BA0C2F",
+    "primary": "#000000",
+    "secondary": "#C4CED4",
   },
   "CIN": {
     "red": "#C6011F",
@@ -57,7 +70,9 @@ export const teamColors = {
     "black": "#000000",
     "gray": "#C4CED4",
     "bronze": "#946B3A",
-    "dkRed": "#BA0C2F"
+    "dkRed": "#BA0C2F",
+    "primary": "#C6011F",
+    "secondary": "#000000",
   },
   "CLE": {
     "red": "#E31937",
@@ -65,7 +80,7 @@ export const teamColors = {
     "white": "#FFFFFF",
     "gray": "#909ea3",
     "beige": "#D1CCBD",
-  "cream": "#EFE4CE"
+    "cream": "#EFE4CE"
     
   },
   "COL": {
@@ -93,11 +108,13 @@ export const teamColors = {
     "gold": "#FDB827"
   },
   "KC": {
-    "blue": "#0032A0",
-    "gold": "#BD9B60",
+    "blue": "#0031A7",
+    "gold": "#BA9B63",
     "white": "#FFFFFF",
     "ltBlue": "#7AB2DD",
-    "navy": "#13294B"
+    "navy": "#13294B",
+    "primary": "#0031A7",
+    "secondary": "#BA9B63"
   },
   "LAA": {
     "red": "#BA0021",
@@ -105,7 +122,9 @@ export const teamColors = {
     "gray": "#C4CED4",
     "white": "#FFFFFF",
     "natural": "#EFDBB2",
-    "crimson": "#C8102E"
+    "crimson": "#C8102E",
+    "primary": "#BA0021",
+    "secondary": "#003263",
   },
   "LAD": {
     "blue": "#005A9C",
@@ -121,7 +140,9 @@ export const teamColors = {
     "aqua": "#009789",
     "black": "#000000",
     "slate": "#41748D",
-    "pink": "#F04E98"
+    "pink": "#F04E98",
+    primary: "#000000",
+    secondary: "#00A3E0"
   },
   "MIL": {
     "blue": "#12284B",
@@ -166,7 +187,9 @@ export const teamColors = {
     "ltBlue": "#6BACE4",
     "dkRed": "#6F263D",
     "neptune": "#00629B",
-    "navy": "#13294B"
+    "navy": "#13294B",
+    "primary": "#C20C31",
+    "secondary": "#020731",
   },
   "PIT": {
     "yellow": "#FDB827",
@@ -553,7 +576,7 @@ export const teamUnis = {
       text: teamColors["HOU"]["blue"],
       outline: teamColors["HOU"]["orange"]
     },
-        "Alt 1": {
+    "Alt 1": {
       jersey: teamColors["HOU"]["orange"],
       text: teamColors["HOU"]["blue"],
       outline: teamColors["HOU"]["white"],
@@ -646,32 +669,32 @@ export const teamUnis = {
     }
   },
   "MIA": {
-      "Home": {
-        jersey: white,
-        text: teamColors["MIA"]["blue"],
-        outline: teamColors["MIA"]["red"]
-      },
-      "Away": {
-        jersey: awayGray,
-        text: teamColors["MIA"]["blue"],
-        outline: teamColors["MIA"]["red"],
-      },
-      "Alt 1": {
-        jersey: teamColors["MIA"]["blue"],
-        text: teamColors["MIA"]["black"],
-        outline: teamColors["MIA"]["red"],
-      },
-            "Alt 2": {
-        jersey: teamColors["MIA"]["black"],
-        text: teamColors["MIA"]["white"],
-        outline: teamColors["MIA"]["blue"],
-      },
-      "City": {
-        jersey: teamColors["MIA"]["black"],
-        text: teamColors["MIA"]["aqua"],
-        outline: teamColors["MIA"]["pink"]
-      }
+    "Home": {
+      jersey: white,
+      text: teamColors["MIA"]["blue"],
+      outline: teamColors["MIA"]["red"]
     },
+    "Away": {
+      jersey: awayGray,
+      text: teamColors["MIA"]["blue"],
+      outline: teamColors["MIA"]["red"],
+    },
+    "Alt 1": {
+      jersey: teamColors["MIA"]["blue"],
+      text: teamColors["MIA"]["black"],
+      outline: teamColors["MIA"]["red"],
+    },
+    "Alt 2": {
+      jersey: teamColors["MIA"]["black"],
+      text: teamColors["MIA"]["white"],
+      outline: teamColors["MIA"]["blue"],
+    },
+    "City": {
+      jersey: teamColors["MIA"]["black"],
+      text: teamColors["MIA"]["aqua"],
+      outline: teamColors["MIA"]["pink"]
+    }
+  },
   "MIL": {
     "Home": {
       jersey: teamColors["MIL"]["cream"],
@@ -769,27 +792,27 @@ export const teamUnis = {
     }
   },
   "ATH": {
-  "Home": {
-    jersey: teamColors["ATH"]["white"],
-    text: teamColors["ATH"]["green"],
-    outline: teamColors["ATH"]["yellow"],
+    "Home": {
+      jersey: teamColors["ATH"]["white"],
+      text: teamColors["ATH"]["green"],
+      outline: teamColors["ATH"]["yellow"],
+    },
+    "Away": {
+      jersey: awayGray,
+      text: teamColors["ATH"]["green"],
+      outline: teamColors["ATH"]["yellow"]
+    },
+    "Alt 1": {
+      jersey: teamColors["ATH"]["kelly"],
+      text: teamColors["ATH"]["white"],
+      outline: teamColors["ATH"]["yellow"]
+    },
+    "Alt 2": {
+      jersey: teamColors["ATH"]["yellow"],
+      text: teamColors["ATH"]["white"],
+      outline: teamColors["ATH"]["green"],
+    }
   },
-  "Away": {
-    jersey: awayGray,
-    text: teamColors["ATH"]["green"],
-    outline: teamColors["ATH"]["yellow"]
-  },
-  "Alt 1": {
-    jersey: teamColors["ATH"]["kelly"],
-    text: teamColors["ATH"]["white"],
-    outline: teamColors["ATH"]["yellow"]
-  },
-  "Alt 2": {
-    jersey: teamColors["ATH"]["yellow"],
-    text: teamColors["ATH"]["white"],
-    outline: teamColors["ATH"]["green"],
-  }
-},
   "PHI": {
     "Home": {
       jersey: teamColors["PHI"]["white"],
@@ -815,7 +838,7 @@ export const teamUnis = {
     "Alt 3": {
       jersey: teamColors["PHI"]["dkRed"],
       text: teamColors["PHI"]["white"]
-},
+    },
     "City": {
       jersey: teamColors["PHI"]["navy"],
       text: teamColors["PHI"]["white"],
@@ -857,9 +880,9 @@ export const teamUnis = {
     },
     "Away": {
       jersey: teamColors["SD"]["sand"],
-  text: teamColors["SD"]["brown"],
-  outline: teamColors["SD"]["gold"],
-  stripe: teamColors["SD"]["brown"]
+      text: teamColors["SD"]["brown"],
+      outline: teamColors["SD"]["gold"],
+      stripe: teamColors["SD"]["brown"]
     },
     "Alt 1": {
       jersey: teamColors["SD"]["brown"],
@@ -878,32 +901,32 @@ export const teamUnis = {
     }
   },
   "SF": {
-  "Home": {
-    jersey: teamColors["SF"]["cream"],
-    text: teamColors["SF"]["black"],
-    outline: teamColors["SF"]["orange"]
+    "Home": {
+      jersey: teamColors["SF"]["cream"],
+      text: teamColors["SF"]["black"],
+      outline: teamColors["SF"]["orange"]
+    },
+    "Away": {
+      jersey: teamColors["SF"]["gray"],
+      text: teamColors["SF"]["black"],
+      outline: teamColors["SF"]["orange"]
+    },
+    "Alt 1": {
+      jersey: teamColors["SF"]["orange"],
+      text: teamColors["SF"]["black"],
+      outline: teamColors["SF"]["white"]
+    },
+    "Alt 2": {
+      jersey: teamColors["SF"]["black"],
+      text: teamColors["SF"]["black"],
+      outline: teamColors["SF"]["orange"]
+    },
+    "City": {
+      jersey: teamColors["SF"]["black"],
+      text: teamColors["SF"]["white"],
+      outline: teamColors["SF"]["orange"]
+    }
   },
-  "Away": {
-    jersey: teamColors["SF"]["gray"],
-    text: teamColors["SF"]["black"],
-    outline: teamColors["SF"]["orange"]
-  },
-  "Alt 1": {
-    jersey: teamColors["SF"]["orange"],
-    text: teamColors["SF"]["black"],
-    outline: teamColors["SF"]["white"]
-  },
-  "Alt 2": {
-    jersey: teamColors["SF"]["black"],
-    text: teamColors["SF"]["black"],
-    outline: teamColors["SF"]["orange"]
-  },
-  "City": {
-    jersey: teamColors["SF"]["black"],
-    text: teamColors["SF"]["white"],
-    outline: teamColors["SF"]["orange"]
-  }
-},
   "SEA": {
     "Home": {
       jersey: white,
@@ -984,31 +1007,31 @@ export const teamUnis = {
     }
   },
   "TEX": {
-  "Home": {
-    jersey: teamColors["TEX"]["white"],
-    text: teamColors["TEX"]["blue"],
-    outline: teamColors["TEX"]["red"]
+    "Home": {
+      jersey: teamColors["TEX"]["white"],
+      text: teamColors["TEX"]["blue"],
+      outline: teamColors["TEX"]["red"]
+    },
+    "Away": {
+      jersey: teamColors["TEX"]["gray"],
+      text: teamColors["TEX"]["blue"],
+      outline: teamColors["TEX"]["red"]
+    },
+    "Alt 1": {
+      jersey: teamColors["TEX"]["ltBlue"],
+      text: teamColors["TEX"]["white"],
+      outline: teamColors["TEX"]["red"]
+    },
+    "Alt 2": {
+      jersey: teamColors["TEX"]["blue"],
+      text: teamColors["TEX"]["green"],
+      outline: teamColors["TEX"]["red"]
+    },
+    "City": {
+      jersey: teamColors["TEX"]["natural"],
+      text: teamColors["TEX"]["red"]
+    }
   },
-  "Away": {
-    jersey: teamColors["TEX"]["gray"],
-    text: teamColors["TEX"]["blue"],
-    outline: teamColors["TEX"]["red"]
-  },
-  "Alt 1": {
-    jersey: teamColors["TEX"]["ltBlue"],
-    text: teamColors["TEX"]["white"],
-    outline: teamColors["TEX"]["red"]
-  },
-  "Alt 2": {
-    jersey: teamColors["TEX"]["blue"],
-    text: teamColors["TEX"]["green"],
-    outline: teamColors["TEX"]["red"]
-  },
-  "City": {
-    jersey: teamColors["TEX"]["natural"],
-    text: teamColors["TEX"]["red"]
-  }
-},
   "TOR": {
     "Home": {
       jersey: teamColors["TOR"]["white"],
@@ -1030,7 +1053,7 @@ export const teamUnis = {
       text: teamColors["TOR"]["white"],
       outline: teamColors["TOR"]["dkBlue"]
     },
-        "Alt 3": {
+    "Alt 3": {
       jersey: teamColors["TOR"]["red"],
       text: teamColors["TOR"]["white"]
     },
@@ -1067,5 +1090,5 @@ export const teamUnis = {
       outline: teamColors["WSH"]["stone"]
     }
   },
-
+  
 }

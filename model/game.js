@@ -5,7 +5,7 @@ export const G = {
   tier2Deck: [],
   tier3Deck: [],
   diceSupply: 12,
-  schedule: [],
+  schedule: [{title:"Spring Training",description:"Recruit new players",status:"active"},{title:"TBD",description:"Game 1",status:"future"},{title:"TBD",description:"Game 2",status:"future"},{title:"TBD",description:"Game 3",status:"future"},{title:"All-Star Break",description:"Rest up",status:"future"},{title:"TBD",description:"Game 4",status:"future"},{title:"TBD",description:"Game 5",status:"future"},{title:"TBD",description:"Game 6",status:"future"},{title:"Playoffs?",description:" Playoffs, baby!",status:"future"}],
   gameNum: 1,
   game: {
     home: 1,

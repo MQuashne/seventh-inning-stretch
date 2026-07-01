@@ -1,0 +1,59 @@
+    :root,
+    [data-team="ARI"] {
+      --tp: #AA182C;
+      --ts: #000000;
+    }
+    
+    [data-team="ATL"] {
+      --tp: #0c2340;
+      --ts: #ba0c2f;
+    }
+    
+    [data-team="BAL"] {
+      --tp: #DF4601;
+      --ts: #000000;
+    }
+    
+    [data-team="PHI"] {
+      --tp: #E81828;
+      --ts: #002d72;
+    }
+    
+    [data-team="CWS"] {
+  --tp: #000000;
+  --ts: #C4CED4;
+}
+
+    [data-team="LAA"] {
+      --tp: #ba0021;
+      --ts: #003236;
+    }
+   
+   [data-team="CHC"] {
+  --tp: #0e3386;
+  --ts: #cc3433;
+}
+
+[data-team="CIN"] {
+  --tp: #c6011f;
+  --ts: #000000;
+}
+
+[data-team="CLE"] {
+  --tp: #002b5c;
+  --ts: #e31937;
+}
+
+[data-team="COL"] {
+  --tp: #33006f;
+  --ts: #c4ced4;
+}
+   
+   
+   
+    :root {
+      --tp-light: oklch(from var(--tp) calc(l + 0.12) c h);
+      --tp-dark: oklch(from var(--tp) calc(l - 0.12) c h);
+      --ts-light: oklch(from var(--ts) calc(l + 0.12) c h);
+      --ts-dark: oklch(from var(--ts) calc(l - 0.12) c h);
+    }

@@ -88,6 +88,7 @@ export const players = [
     reRoll: 1,
     modifier: 0,
     condition: "roll",
+    outcomes:[{type:"straight",target:3,play:"1B"}],
     bat(dice) {
       if (checkStraight(dice, 3)) {
         return "1B"
@@ -150,6 +151,7 @@ export const players = [
     reRoll: 1,
     modifier: 0,
     condition: "roll",
+    outcomes: [{type:"even",count:2,play:"1B"}],
     bat(dice) {
       //disable resources?
       if (countEvenOdd(dice, "ge", "even", 2)) {
@@ -172,6 +174,7 @@ export const players = [
     reRoll: 0,
     modifier: 0,
     condition: "roll",
+    outcomes:[{type:"match",count:2,play:"1B"},{type:"match",count:3,play:"2B"}],
     bat(dice) {
       //disable resources?
       if (countSets(dice, "ge", 3, 1)) {
@@ -196,6 +199,7 @@ export const players = [
     reRoll: 0,
     modifier: 0,
     condition: "roll",
+    outcomes:[{type:"range",target:3,play:"BB"},{type:"range",target:4,play:"1B"},{type:"range",target:5,play:"2B"}],
     bat(dice) {
       if (testRange(dice, "ge", 5, 1)) {
         return "2B"
@@ -254,6 +258,7 @@ export const players = [
     reRoll: 0,
     modifier: 0,
     condition: "roll",
+    outcomes:[{type:"unequal",count:3,play:"1B"}],
     bat(dice) {
       if (countUnique(dice, "ge", 3)) {
         return "1B";
@@ -303,6 +308,7 @@ export const players = [
     reRoll: 0,
     modifier: 0,
     condition: "roll",
+    outcomes:[{type:"high",target:4,play:"2B"},{type:"low",target:3,play:"all_out"}],
     bat(dice) {
       if (maxValue(dice, "ge", 4)) {
         return "2B";
@@ -362,6 +368,7 @@ export const players = [
     modifier: 0,
     team: "SF",
     condition: "roll",
+    outcomes:[{type:"max",target:6,play:"2B"},{type:"max",target:4,play:"1B"},{type:"max",target:3,play:"1B"}],
     bat(dice) {
       if (maxValue(dice, "ge", 6)) {
         return "2B"
@@ -385,7 +392,8 @@ export const players = [
     reroll: 1,
     modifier: 0,
     team: "SD",
-    condition: "roll"
+    condition: "roll",
+    outcomes:[{type:"straight",target:2,play:"1B"},{type:"straight",target:3,play:"2B"}]
   },
   {
     id: "022",
@@ -528,7 +536,8 @@ export const players = [
     reroll: 0,
     modifier: 0,
     team: "ATL",
-    condition: "roll"
+    condition: "roll",
+    outcomes:[{type:"unequal",count:2,play:"1B"},{type:"unequal",count:3,play:"2B"},{type:"unequal",count:4,play:"3B"},{type:"unequal",count:5,play:"HR"}]
   },
   {
     id: "045",

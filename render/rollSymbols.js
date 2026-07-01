@@ -1,0 +1,17 @@
+export function value(target, count) {
+  return `<svg width="175" height="100" viewBox = "0 0 175 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 165,30
+    v -10
+    a 10 10 0 0 0 -10 -10
+    h -60
+    a 10 10 0 0 0 -10 10
+    v 60
+    a 10 10 0 0 0 10 10
+    h 60
+    a 10 10 0 0 0 10 -10
+    v -50
+    " stroke="red" stroke-width="4" fill="transparent"/>
+    <text x="125" y="55" fill="red" font-family="Arial" text-anchor="middle" alignment-baseline="middle" font-size="60px" font-weight="800">${target}</text>
+      <text x="50" y="55" fill="red" font-family="Arial" text-anchor="middle" alignment-baseline="middle" font-size="60px" font-weight="800">${count}</text>
+    </svg>`
+}

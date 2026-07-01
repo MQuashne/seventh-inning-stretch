@@ -1,7 +1,21 @@
-:root{
-    --die-bg-color: linear-gradient(90deg,white 0%, white 5%, #E81828a0 6%, white 7%, white 35%, #E81828a0 36%, white 37%, white 65%, #E81828a0 66%, white 67%, white 95%, #E81828a0 96%, white 97%, white 100%);
-    --die-font-color:#E81828;
-    --die-outline-color:#ffffff;
+@import 'team-colors.css';
+
+:root {
+    --die-bg-color: linear-gradient(90deg, white 0%, white 5%, #E81828a0 6%, white 7%, white 35%, #E81828a0 36%, white 37%, white 65%, #E81828a0 66%, white 67%, white 95%, #E81828a0 96%, white 97%, white 100%);
+    --die-font-color: #E81828;
+    --die-outline-color: #ffffff;
+    --team-back: #FFFFFF;
+    --grass: #618240;
+    --grass-lt: oklch(from var(--grass) calc(l + 0.035) c h);
+    --cream: #f5f0e0;
+    --parchment: #ede0c0;
+    --parchment-dk: #d0bc90;
+    --ink: #180f04;
+    --ink-faded: #4a3520;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    
 }
 
 @font-face {
@@ -9,93 +23,410 @@
     src: url("../../../public/assets/BaseballClubSolid-E4X69.ttf");
 }
 
-#grad-box{
-    background-image:linear-gradient(90deg, #C4CED4 0%, #ffffff00 5%, #ffffff00 6%, #ff0000ff 7%, #C4CED4 35%, #ffffff00 36%, #C4CED4 37%, #C4CED4 65%, #ffffff00 66%, #C4CED4 67%, #C4CED4 95%, #ffffff00 96%, #C4CED4 97%, #C4CED4 100%);
-    width:100px;
-    height:100px;
+body {
+    /*background-color: #2d5a3D;*/
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
 }
+
+.hidden {
+    display:none !important;
+}
+
+#main-screen {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    /* Takes full window height */
+}
+
+.main-content {
+    flex: 1;
+    padding:0 5%;
+    
+}
+
+#game-footer {
+    height: 8vh;
+    width: 100%;
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+}
+
+#game-nav {
+    background: var(--tp);
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    
+}
+
+.nav-item {
+    
+    text-align: center;
+    height: 90%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 1px 0px 0px #00000020;
+}
+.nav-item:active{
+    background:var(--tp-light);
+}
+.nav-item.active{
+    background:var(--tp-light);
+}
+
+.menu-label {
+    font-size: 0.7rem;
+    font-family: "Oswald";
+}
+
+.material-symbols-outlined {
+    font-size: 2rem;
+}
+
+.front-office-header{
+    width:100%;
+    height:10vh;
+}
+/* GAME HEADER */
+.game-header-outer {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    margin-bottom: 0;
+}
+
+.game-header {
+    padding: 0.6rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    /*border-bottom: 2px solid rgba(0, 0, 0, 0.3);*/
+    /*box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);*/
+    background-image: linear-gradient(115deg, var(--tp) 10%, var(--ts) calc(10% + 1px), var(--ts) 15%, #caa472 calc(15% + 1px), #caa472 100%);
+    filter: url(#wood-grain);
+    
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding-left: 20%;
+    margin-bottom: 3%;
+}
+
+.game-header-team {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: transparent;
+    background-color: var(--tp);
+    text-shadow: 0.05rem 0.05rem 0.0px rgba(255, 255, 255, 0.2);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+    
+    /*margin-top: 0.75rem;*/
+}
+
+.game-footer {
+    position: static;
+}
+
+
 #diceRoller {
     height: 300px;
     width: 300px;
     margin-top: 1.5rem;
     z-index: -1;
     overflow: hidden;
-    display:none;
+    display: none;
 }
 
 #canvas {
     width: 300px;
     height: 300px;
 }
-.die-box{
-    position:relative;
-height:50px;
-width:50px;
-border-radius:5px;
-display:flex;
-justify-content: center;
-align-items:center;
-background:var(--die-bg-color);
-font-size:35px;
-font-family:"BaseballClubSolid";
-color:var(--die-font-color);
--webkit-text-stroke: 0.7px var(--die-outline-color);
-border:1px solid #aaaaaa;
+
+.die-box {
+    position: relative;
+    height: 50px;
+    width: 50px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--die-bg-color);
+    font-size: 35px;
+    font-family: "BaseballClubSolid";
+    color: var(--die-font-color);
+    -webkit-text-stroke: 0.7px var(--die-outline-color);
+    border: 1px solid #aaaaaa;
 }
-.die-box::after{
+
+.die-box::after {
     content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background:radial-gradient(at 5% 5%,#ffffff80 0%, #ffffff00 80%);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(at 5% 5%, #ffffff80 0%, #ffffff00 80%);
 }
+
 /*.color-option{
     box-sizing:border-box;
     padding:2% 10% 2% 5%;
     width:30px;
     background-color:#FF0000;
 }*/
-.ios-picker {
-  -webkit-appearance: none;
-  appearance: none;
-  background-color: #f2f2f7; /* iOS Light Mode Gray */
-  border: 1px solid #c7c7cc;
-  border-radius: 12px;
-  padding: 12px 20px;
-  font-size: 17px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  color: #000;
-  cursor: pointer;
-  width: 100%;
-  max-width: 300px;
-  outline: none;
-  text-align: center;
+
+#reference img {
+    width: 150px;
 }
 
-.ios-picker option {
-  /*background-color: #ffffff;*/
-  color: #333333;
-  padding: 10px;
-}
-
-#reference img{
-    width:150px;
-}
 #lineup {
-    display:flex;
-    flex-direction:row;
-    width:100%;
-    overflow:scroll;
-    height:200px;
-    background:#CCCCCC;
-    border:1 px solid #AAAAAA;
-    border-radius:20px;
-    gap:5px;
+    display: flex;
+    flex-direction: row;
+    
+    overflow: scroll;
+    height: 200px;
+    background: #CCCCCC;
+    border: 1 px solid #AAAAAA;
+    border-radius: 20px;
+    gap: 10px;
+    align-items: center;
 }
-.lineup-card{
-    height:90%;
-    border-radius:8px;
-    overflow:hidden;
+
+.lineup-card {
+    height: 90%;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.lineup-card img {
+    height: 165px;
+    min-width: 0;
+    
+}
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    /* Tinted green veil — like looking through felt */
+    background: rgba(6, 18, 10, 0.90);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    backdrop-filter: blur(3px) hue-rotate(150deg) saturate(0.5);
+}
+
+.modal-header {
+    background-image: linear-gradient(115deg, var(--tp) 10%, var(--ts) calc(10% + 1px), var(--ts) 15%, #caa472 calc(15% + 1px), #caa472 100%);
+    filter: url(#wood-grain);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: calc(100%-1.5rem);
+    height: 10%;
+    display: flex;
+    padding-left: 20%;
+    flex-direction: row;
+    align-items: center;
+    
+}
+
+.modal-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: transparent;
+    background-color: var(--ts);
+    text-shadow: 0.05rem 0.05rem 0.0px rgba(255, 255, 255, 0.2);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+    flex-grow: 0;
+}
+
+.modal-body {
+    
+    display: flex;
+    height: 92%;
+}
+
+.lawn-stripes {
+    /* Solid base green */
+    /* Angled semi-transparent gradients to simulate light/shadow on grass */
+    background: repeating-linear-gradient(45deg,
+            var(--grass),
+            var(--grass) 11%,
+            var(--grass-lt) 12%,
+            var(--grass-lt) 23%,
+            var(--grass) 24%);
+    box-shadow: 0 20px 20px #00000020 inset;
+    
+    /* Define the scale of a single repeating pattern block */
+    
+}
+
+.small {
+    height: 30%;
+}
+
+.medium {
+    height: 55%;
+}
+
+.large {
+    height: 90%;
+}
+
+.dialog {
+    width: 90%;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    justify-content: top;
+    
+}
+
+
+#p {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.sw {
+    height: 40px;
+    width: 40px;
+}
+
+#tp {
+    background: var(--tp);
+}
+
+#tp-light {
+    background: var(--tp-light);
+}
+
+#tp-dark {
+    background: var(--tp-dark);
+}
+
+#ts {
+    background: var(--ts);
+}
+
+#ts-light {
+    background: var(--ts-light);
+}
+
+#ts-dark {
+    background: var(--ts-dark);
+}
+
+#a {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.section-ts {
+    display: flex;
+    flex-direction: column;
+    background: var(--ts-dark);
+    position: relative;
+    padding: 2%;
+}
+
+.section-heading {
+    font-family: 'Oswald', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--ink-faded);
+    width: 100%;
+    margin-bottom: 1%;
+    padding: 2% 0;
+    height: 9%;
+    display: flex;
+    align-items: center;
+}
+.section-subheading{
+    font-family:"Oswald";
+    margin-bottom:3%;
+}
+
+#calendar {}
+
+#calendar-body {
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 80%;
+    gap:1rem;
+}
+
+.event {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    aspect-ratio: 1/1;
+    background: var(--cream);
+    box-shadow: 2px 5px 2px #00000080;
+    font-family: 'Kalam';
+}
+.event.active{
+    border:4px solid var(--tp);
+}
+.event.future{
+    opacity:75%;
+}
+
+.event-top {
+    width: 100%;
+    aspect-ratio: 8/1;
+    background: var(--tp);
+    box-shadow: 0 2px 2px #00000020;
+}
+
+.event-title {
+    font-size: 1.5rem;
+    color: var(--ink);
+    text-wrap: wrap;
+    text-align: center;
+    flex: 4;
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    margin:auto;
+}
+
+.event-body {
+    font-size: 1rem;
+    color: var(--ink);
+    text-wrap: wrap;
+    text-align: center;
+    width: 100%;
+    flex: 1;
+    font-weight: 400;
 }

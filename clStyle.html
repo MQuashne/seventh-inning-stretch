@@ -1,0 +1,2706 @@
+<!DOCTYPE html>
+<html lang="en" data-team="mudhens">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diamond Strategy — Team Theme Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:wght@300;400;600&family=IBM+Plex+Mono:wght@400;600&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ══════════════════════════════════════════════
+       FIXED GLOBALS — never change between teams
+    ══════════════════════════════════════════════ */
+    :root {
+      --wood-dark: #2e1a0a;
+      --wood-mid: #6b3f1e;
+      --wood-light: #9b6032;
+      --cream: #f5f0e0;
+      --parchment: #ede0c0;
+      --parchment-dk: #d0bc90;
+      --ink: #180f04;
+      --ink-faded: #4a3520;
+      --red: #8b2020;
+      --red-bright: #a82525;
+      --pip-ball: #3a8a50;
+      
+      --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.35);
+      --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+      --shadow-wood: 0 6px 24px rgba(0, 0, 0, 0.55);
+      --shadow-inset: inset 0 3px 10px rgba(0, 0, 0, 0.6);
+    }
+    
+    /* ══════════════════════════════════════════════
+       TEAM TOKENS — swap these to retheme everything
+       --tp-*  = team primary (replaces felt greens)
+       --ta-*  = team accent  (replaces brass gold)
+    ══════════════════════════════════════════════ */
+    
+    /* 1. Riverton Mudhens — Ballpark Green + Brass */
+    :root,
+    [data-team="mudhens"] {
+      --tp-deep: #0f2218;
+      --tp-dark: #1c3a28;
+      --tp-mid: #2D5A3D;
+      --tp-bright: #3d7a52;
+      /*bright+48*/
+      --ta: #c9a84c;
+      --ta-light: #e8c97a;
+      --ta-dark: #8a6520;
+      --score-bg: #090f0c;
+    }
+    
+    
+    /* 2. Ironwood Miners — Navy + Copper */
+    [data-team="miners"] {
+      --tp-deep: #0d1525;
+      --tp-dark: #1a2540;
+      --tp-mid: #2a3d62;
+      --tp-bright: #3a5585;
+      --ta: #c06030;
+      --ta-light: #e08858;
+      --ta-dark: #7a3010;
+      --score-bg: #08090f;
+    }
+    
+    
+    /* 3. Bayside Gulls — Deep Teal + Sandy Gold */
+    [data-team="gulls"] {
+      --tp-deep: #0d2028;
+      --tp-dark: #1a3840;
+      --tp-mid: #2a5860;
+      --tp-bright: #3a7882;
+      --ta: #d4a84b;
+      --ta-light: #f0cc72;
+      --ta-dark: #906818;
+      --score-bg: #080f12;
+    }
+    
+    /* 4. Redrock Dusters — Dark Crimson + Ochre */
+    [data-team="dusters"] {
+      --tp-deep: #200c0c;
+      --tp-dark: #3a1818;
+      --tp-mid: #5a2828;
+      --tp-bright: #7a3838;
+      --ta: #c8a060;
+      --ta-light: #e8c080;
+      --ta-dark: #886020;
+      --score-bg: #100808;
+    }
+    
+    /* 5. Crestfall Blues — Midnight Indigo + Silver */
+    [data-team="blues"] {
+      --tp-deep: #0c1020;
+      --tp-dark: #182038;
+      --tp-mid: #283860;
+      --tp-bright: #384880;
+      --ta: #a8b8d0;
+      --ta-light: #c8d8f0;
+      --ta-dark: #6878a0;
+      --score-bg: #08080f;
+    }
+    
+    /* ══════════════════════════════════════════════
+       RESET & BASE
+    ══════════════════════════════════════════════ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    /* Smooth crossfade when switching teams */
+    html {
+      transition: opacity 0.18s ease;
+    }
+    
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      background-color: var(--tp-deep);
+      color: var(--cream);
+      line-height: 1.65;
+      min-height: 100vh;
+      /* Felt weave — just texture, color comes from background-color */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect x='0' y='0' width='1' height='1' fill='rgba(255,255,255,0.016)'/%3E%3Crect x='3' y='3' width='1' height='1' fill='rgba(255,255,255,0.016)'/%3E%3C/svg%3E");
+      transition: background-color 0.35s ease;
+    }
+    
+    /* ══════════════════════════════════════════════
+       LAYOUT
+    ══════════════════════════════════════════════ */
+    .wrap {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 2rem 5rem;
+    }
+    
+    .section {
+      margin-bottom: 3.5rem;
+    }
+    
+    .eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ta);
+      margin-bottom: 1rem;
+      padding-bottom: 0.55rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: color 0.35s ease;
+    }
+    
+    .eyebrow::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent);
+    }
+    
+    .gold-rule {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1) 30%, rgba(255, 255, 255, 0.1) 70%, transparent);
+      margin: 3rem 0;
+    }
+    
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+    
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+    
+    .flex-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      align-items: center;
+    }
+    
+    /* ══════════════════════════════════════════════
+       WOOD UTILITY
+    ══════════════════════════════════════════════ */
+    .wood {
+      background: linear-gradient(108deg,
+          var(--wood-dark) 0%,
+          #4a2a10 18%,
+          var(--wood-mid) 35%,
+          #7a4820 50%,
+          var(--wood-light) 56%,
+          #7a4820 63%,
+          var(--wood-mid) 75%,
+          #4a2a10 90%,
+          var(--wood-dark) 100%);
+    }
+    
+    .wood-bevel {
+      position: relative;
+    }
+    
+    .wood-bevel::before {
+      content: '';
+      position: absolute;
+      inset: 8px;
+      border: 1.5px solid rgba(201, 168, 76, 0.2);
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: 1;
+    }
+    
+    /* ══════════════════════════════════════════════
+       TEAM SWITCHER
+    ══════════════════════════════════════════════ */
+    .switcher-outer {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      margin-bottom: 0;
+    }
+    
+    .switcher-panel {
+      padding: 0.6rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      border-bottom: 2px solid rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    }
+    
+    .switcher-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--parchment-dk);
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    
+    .switcher-pills {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .team-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.38rem 0.75rem 0.38rem 0.55rem;
+      border-radius: 3px;
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.25);
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+    
+    .team-pill:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    
+    .team-pill.active {
+      border-color: var(--ta);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 1px var(--ta-dark);
+    }
+    
+    .pill-dots {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+    
+    .pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    
+    .pill-abbr {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--cream);
+    }
+    
+    .pill-name {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--parchment-dk);
+      display: none;
+    }
+    
+    @media (min-width: 680px) {
+      .pill-name {
+        display: block;
+      }
+    }
+    
+    /* ══════════════════════════════════════════════
+       GAME HEADER
+    ══════════════════════════════════════════════ */
+    .game-header {
+      text-align: center;
+      padding: 3rem 2rem 2.75rem;
+      border-radius: 0 0 8px 8px;
+      margin-bottom: 3rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-wood);
+    }
+    
+    .game-header::after {
+      content: '';
+      position: absolute;
+      inset: 7px;
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      pointer-events: none;
+    }
+    
+    .header-inner {
+      position: relative;
+      z-index: 2;
+    }
+    
+    .header-pre {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--parchment-dk);
+      margin-bottom: 0.6rem;
+      transition: color 0.35s;
+    }
+    
+    .header-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 5.5vw, 3.8rem);
+      font-weight: 900;
+      color: var(--ta);
+      letter-spacing: 0.02em;
+      line-height: 1;
+      text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+      transition: color 0.35s ease;
+    }
+    
+    .header-rule {
+      display: inline-block;
+      width: 36px;
+      height: 2px;
+      background: var(--ta-dark);
+      vertical-align: middle;
+      margin: 0 1rem;
+      border-radius: 1px;
+      transition: background 0.35s;
+    }
+    
+    .header-team {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ta-light);
+      margin-top: 0.75rem;
+      transition: color 0.35s;
+    }
+    
+    .header-sub {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--parchment-dk);
+      margin-top: 0.3rem;
+    }
+    
+    /* ══════════════════════════════════════════════
+       PALETTE SWATCHES
+    ══════════════════════════════════════════════ */
+    .palette-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+    }
+    
+    .swatch {
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      width: 105px;
+    }
+    
+    .swatch-block {
+      height: 54px;
+      transition: background-color 0.35s ease;
+    }
+    
+    .swatch-info {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 0.32rem 0.5rem;
+    }
+    
+    .swatch-name {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--cream);
+      display: block;
+    }
+    
+    .swatch-hex {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.56rem;
+      color: var(--parchment-dk);
+      display: block;
+    }
+    
+    /* ══════════════════════════════════════════════
+       TYPOGRAPHY
+    ══════════════════════════════════════════════ */
+    .type-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+    
+    .type-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.18rem;
+    }
+    
+    .type-meta {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.57rem;
+      letter-spacing: 0.08em;
+      color: var(--tp-bright);
+      text-transform: uppercase;
+      transition: color 0.35s;
+    }
+    
+    .t-display {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--ta);
+      line-height: 1.1;
+      transition: color 0.35s;
+    }
+    
+    .t-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--cream);
+    }
+    
+    .t-sub {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--parchment-dk);
+    }
+    
+    .t-body {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1rem;
+      color: var(--cream);
+      max-width: 56ch;
+    }
+    
+    .t-caption {
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.82rem;
+      color: var(--parchment-dk);
+    }
+    
+    .t-mono {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.88rem;
+      color: var(--ta-light);
+      transition: color 0.35s;
+    }
+    
+    .t-stat {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1.85rem;
+      font-weight: 600;
+      color: var(--cream);
+    }
+    
+    /* ══════════════════════════════════════════════
+       BUTTONS
+    ══════════════════════════════════════════════ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.3rem;
+      border-radius: 3px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.12s, box-shadow 0.12s, background-color 0.35s, border-color 0.35s, color 0.3s;
+      white-space: nowrap;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(170deg, var(--ta-light) 0%, var(--ta) 100%);
+      color: var(--ink);
+      box-shadow: 0 3px 0 var(--ta-dark), var(--shadow-sm);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 0 var(--ta-dark), 0 6px 14px rgba(0, 0, 0, 0.4);
+    }
+    
+    .btn-primary:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 var(--ta-dark);
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: var(--cream);
+      border: 1.5px solid rgba(245, 240, 224, 0.32);
+    }
+    
+    .btn-secondary:hover {
+      border-color: var(--cream);
+      background: rgba(245, 240, 224, 0.07);
+    }
+    
+    .btn-danger {
+      background: linear-gradient(170deg, var(--red-bright), var(--red));
+      color: var(--cream);
+      box-shadow: 0 3px 0 #5a1010, var(--shadow-sm);
+    }
+    
+    .btn-danger:hover {
+      transform: translateY(-1px);
+    }
+    
+    .btn-danger:active {
+      transform: translateY(2px);
+    }
+    
+    .btn-team {
+      background: linear-gradient(170deg, var(--tp-bright), var(--tp-mid));
+      color: var(--cream);
+      box-shadow: 0 3px 0 var(--tp-dark), var(--shadow-sm);
+    }
+    
+    .btn-team:hover {
+      transform: translateY(-1px);
+    }
+    
+    .btn-team:active {
+      transform: translateY(2px);
+    }
+    
+    .btn-wood {
+      background: linear-gradient(170deg, var(--wood-light), var(--wood-mid));
+      color: var(--cream);
+      box-shadow: 0 3px 0 var(--wood-dark), var(--shadow-sm);
+    }
+    
+    .btn-wood:hover {
+      transform: translateY(-1px);
+    }
+    
+    .btn-wood:active {
+      transform: translateY(2px);
+    }
+    
+    .btn-sm {
+      padding: 0.4rem 0.82rem;
+      font-size: 0.72rem;
+    }
+    
+    .btn-lg {
+      padding: 0.82rem 2rem;
+      font-size: 0.9rem;
+      letter-spacing: 0.16em;
+    }
+    
+    .btn:disabled {
+      opacity: 0.36;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    
+    /* ══════════════════════════════════════════════
+       PLAYER CARD
+    ══════════════════════════════════════════════ */
+    .card {
+      width: 122px;
+      height: 180px;
+      border-radius: 5px;
+      background: var(--cream);
+      position: relative;
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(.2, .8, .3, 1), box-shadow 0.2s, outline-color 0.35s;
+      border: 1px solid var(--parchment-dk);
+    }
+    
+    .card:hover {
+      transform: translateY(-8px) rotate(-1.2deg);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.3);
+      z-index: 20;
+    }
+    
+    .card.active {
+      outline: 2.5px solid var(--ta);
+      outline-offset: 1px;
+      box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.25), var(--shadow-md);
+    }
+    
+    .card.on-deck {
+      opacity: 0.78;
+      outline: 1.5px solid var(--parchment);
+      outline-offset: 1px;
+    }
+    
+    .card-top {
+      background: linear-gradient(170deg, var(--tp-dark), var(--tp-mid));
+      padding: 4px 6px 3px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.35s ease;
+    }
+    
+    .card-team-tag {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.52rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ta-light);
+      transition: color 0.35s;
+    }
+    
+    .card-pos-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      font-weight: 600;
+      color: var(--cream);
+      background: rgba(0, 0, 0, 0.28);
+      padding: 1px 5px;
+      border-radius: 2px;
+    }
+    
+    .card-portrait {
+      width: 100%;
+      height: 80px;
+      background: linear-gradient(160deg, #c5aa85, #9a7a55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      position: relative;
+    }
+    
+    .card-portrait::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 20px;
+      background: linear-gradient(transparent, var(--cream));
+    }
+    
+    .card-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.63rem;
+      font-weight: 700;
+      color: var(--ink);
+      text-align: center;
+      padding: 2px 5px 0;
+      line-height: 1.25;
+    }
+    
+    .card-divider {
+      border: none;
+      border-top: 1px solid var(--parchment-dk);
+      margin: 3px 5px 0;
+    }
+    
+    .card-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 2px 4px 0;
+    }
+    
+    .card-stat {
+      text-align: center;
+      padding: 2px 0;
+    }
+    
+    .cs-val {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.67rem;
+      font-weight: 600;
+      color: var(--ink);
+      display: block;
+    }
+    
+    .cs-lbl {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.43rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--ink-faded);
+      display: block;
+    }
+    
+    .card-dice-row {
+      display: flex;
+      gap: 3px;
+      justify-content: center;
+      padding: 4px 0 3px;
+    }
+    
+    .mini-die {
+      width: 15px;
+      height: 15px;
+      background: var(--cream);
+      border: 1px solid var(--parchment-dk);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      font-weight: 600;
+      color: var(--tp-dark);
+      transition: color 0.35s;
+    }
+    
+    .mini-die.hot {
+      background: var(--ta-light);
+      border-color: var(--ta);
+      color: var(--ink);
+      transition: background 0.35s, border-color 0.35s;
+    }
+    
+    /* Order ring */
+    .order-ring {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      box-shadow: var(--shadow-sm);
+      flex-shrink: 0;
+      transition: background 0.35s, color 0.35s, border-color 0.35s;
+    }
+    
+    .ring-accent {
+      background: var(--ta);
+      color: var(--ink);
+    }
+    
+    .ring-dim {
+      background: var(--tp-dark);
+      color: var(--ta);
+      border: 1px solid var(--ta-dark);
+    }
+    
+    /* ══════════════════════════════════════════════
+       LINEUP TROUGH
+    ══════════════════════════════════════════════ */
+    .trough-outer {
+      border-radius: 10px;
+      padding: 0.85rem 1.1rem 1.1rem;
+      box-shadow: var(--shadow-wood);
+      position: relative;
+    }
+    
+    .trough-outer::before {
+      content: '';
+      position: absolute;
+      inset: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      pointer-events: none;
+    }
+    
+    .trough-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ta);
+      text-align: center;
+      margin-bottom: 0.75rem;
+      transition: color 0.35s;
+    }
+    
+    .trough-felt {
+      background: linear-gradient(180deg, var(--tp-deep), var(--tp-dark));
+      border-radius: 6px;
+      padding: 0.65rem 0.65rem 0.85rem;
+      box-shadow: var(--shadow-inset);
+      transition: background 0.35s ease;
+    }
+    
+    .lineup-scroll {
+      display: flex;
+      gap: 0.55rem;
+      overflow-x: auto;
+      padding: 0.3rem 0.05rem 0.65rem;
+      scrollbar-width: thin;
+      scrollbar-color: var(--ta-dark) rgba(0, 0, 0, 0.2);
+    }
+    
+    .lineup-scroll::-webkit-scrollbar {
+      height: 4px;
+    }
+    
+    .lineup-scroll::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 2px;
+    }
+    
+    .lineup-scroll::-webkit-scrollbar-thumb {
+      background: var(--ta-dark);
+      border-radius: 2px;
+      transition: background 0.35s;
+    }
+    
+    .lineup-slot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.38rem;
+      flex-shrink: 0;
+    }
+    
+    .slot-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.08em;
+      height: 11px;
+    }
+    
+    .lbl-batting {
+      color: var(--ta);
+      transition: color 0.35s;
+    }
+    
+    .lbl-deck {
+      color: var(--parchment-dk);
+    }
+    
+    .lbl-blank {
+      color: transparent;
+    }
+    
+    /* ══════════════════════════════════════════════
+       CLIPBOARD LINEUP CARD
+    ══════════════════════════════════════════════ */
+    .clipboard-wrap {
+      position: relative;
+      padding-top: 14px;
+      display: inline-block;
+    }
+    
+    .clip {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 42px;
+      height: 20px;
+      background: linear-gradient(180deg, #999, #666);
+      border-radius: 4px 4px 3px 3px;
+      z-index: 10;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+    }
+    
+    .clip::after {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 17px;
+      height: 13px;
+      background: #555;
+      border-radius: 2px;
+      border: 1.5px solid #444;
+    }
+    
+    .clipboard {
+      background: linear-gradient(155deg, #d8c9a5, #c8b588);
+      border-radius: 4px;
+      padding: 1.15rem 0.9rem 0.9rem;
+      min-width: 250px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      position: relative;
+    }
+    
+    .clipboard::before {
+      content: '';
+      position: absolute;
+      left: 2.3rem;
+      top: 3.3rem;
+      bottom: 0.9rem;
+      right: 0.9rem;
+      background-image: repeating-linear-gradient(transparent, transparent 27px, rgba(90, 60, 20, 0.16) 27px, rgba(90, 60, 20, 0.16) 28px);
+      pointer-events: none;
+    }
+    
+    .cb-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--ink);
+      text-align: center;
+      margin-bottom: 0.65rem;
+      padding-bottom: 0.45rem;
+      border-bottom: 2px solid rgba(90, 60, 20, 0.28);
+    }
+    
+    .cb-row {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.27rem 0;
+      position: relative;
+    }
+    
+    .cb-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--ink-faded);
+      width: 15px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    
+    .cb-dots {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.48rem;
+      color: rgba(90, 60, 20, 0.22);
+      flex: 1;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    
+    .cb-name {
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.8rem;
+      color: var(--ink);
+      position: absolute;
+      left: 1.35rem;
+    }
+    
+    .cb-pos {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: var(--ink-faded);
+      width: 20px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    
+    /* ══════════════════════════════════════════════
+       SCOREBOARD
+    ══════════════════════════════════════════════ */
+    .scoreboard {
+      background: var(--score-bg);
+      border-radius: 6px;
+      padding: 0.8rem 1.2rem 0.9rem;
+      font-family: 'IBM Plex Mono', monospace;
+      box-shadow: var(--shadow-inset), 0 0 0 1px rgba(255, 255, 255, 0.04);
+      overflow-x: auto;
+      transition: background 0.35s ease;
+    }
+    
+    .sb-grid {
+      display: grid;
+      grid-template-columns: 74px repeat(9, 1fr) 1.2fr 1.2fr 1.2fr;
+      min-width: 560px;
+    }
+    
+    .sb-hcell {
+      text-align: center;
+      padding: 0.2rem 0.08rem;
+      font-size: 0.6rem;
+      color: rgba(255, 255, 255, 0.3);
+      letter-spacing: 0.05em;
+    }
+    
+    .sb-hcell.left {
+      text-align: left;
+    }
+    
+    .sb-hcell.active {
+      color: var(--ta);
+      transition: color 0.35s;
+    }
+    
+    .sb-div {
+      grid-column: 1/-1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.07);
+    }
+    
+    .sb-cell {
+      text-align: center;
+      padding: 0.35rem 0.08rem;
+      font-size: 0.76rem;
+      color: var(--cream);
+    }
+    
+    .sb-cell.left {
+      text-align: left;
+      font-size: 0.7rem;
+      color: var(--parchment-dk);
+    }
+    
+    .sb-cell.active {
+      color: var(--ta);
+      font-weight: 600;
+      transition: color 0.35s;
+    }
+    
+    .sb-cell.home {
+      color: var(--ta-light);
+      transition: color 0.35s;
+    }
+    
+    .sb-cell.total {
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: var(--ta);
+      transition: color 0.35s;
+    }
+    
+    /* ══════════════════════════════════════════════
+       BOARD ELEMENTS CLUSTER
+    ══════════════════════════════════════════════ */
+    .board-cluster {
+      background: linear-gradient(175deg, var(--tp-dark), var(--tp-deep));
+      border-radius: 8px;
+      padding: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.75rem;
+      align-items: flex-start;
+      box-shadow: var(--shadow-inset);
+      transition: background 0.35s ease;
+    }
+    
+    .b-section-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ta);
+      margin-bottom: 0.52rem;
+      display: block;
+      transition: color 0.35s;
+    }
+    
+    /* Count */
+    .count-panel {
+      background: var(--score-bg);
+      border-radius: 6px;
+      padding: 0.95rem 1.1rem;
+      display: inline-flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      box-shadow: var(--shadow-inset);
+      transition: background 0.35s;
+    }
+    
+    .count-row {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    
+    .count-lbl {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--parchment-dk);
+      width: 46px;
+    }
+    
+    .pips {
+      display: flex;
+      gap: 5px;
+    }
+    
+    .pip {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1.5px solid;
+      transition: background 0.25s, box-shadow 0.25s, border-color 0.25s;
+    }
+    
+    .pip-ball {
+      border-color: var(--pip-ball);
+    }
+    
+    .pip-ball.on {
+      background: var(--pip-ball);
+      box-shadow: 0 0 7px rgba(58, 138, 80, 0.65);
+    }
+    
+    .pip-strike {
+      border-color: var(--ta);
+      transition: border-color 0.35s;
+    }
+    
+    .pip-strike.on {
+      background: var(--ta);
+      box-shadow: 0 0 7px rgba(0, 0, 0, 0.3);
+      transition: background 0.35s;
+    }
+    
+    .pip-out {
+      border-color: var(--red);
+    }
+    
+    .pip-out.on {
+      background: var(--red);
+      box-shadow: 0 0 7px rgba(139, 32, 32, 0.65);
+    }
+    
+    /* Bases */
+    .bases-field {
+      width: 86px;
+      height: 86px;
+      position: relative;
+      flex-shrink: 0;
+    }
+    
+    .base {
+      position: absolute;
+      width: 21px;
+      height: 21px;
+      transform: rotate(45deg);
+      border: 2px solid rgba(245, 240, 224, 0.2);
+      transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    
+    .base.on {
+      background: var(--ta);
+      border-color: var(--ta);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      transition: background 0.35s, border-color 0.35s;
+    }
+    
+    .b-home {
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+    }
+    
+    .b-first {
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%) rotate(45deg);
+    }
+    
+    .b-second {
+      top: 4px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+    }
+    
+    .b-third {
+      left: 4px;
+      top: 50%;
+      transform: translateY(-50%) rotate(45deg);
+    }
+    
+    /* Inning tracker */
+    .inn-track {
+      display: flex;
+      gap: 5px;
+    }
+    
+    .inn-pip {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255, 255, 255, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.25);
+      transition: background 0.35s, color 0.35s, border-color 0.35s, box-shadow 0.35s;
+    }
+    
+    .inn-pip.done {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--ta-dark);
+      border-color: var(--ta-dark);
+    }
+    
+    .inn-pip.current {
+      background: var(--ta);
+      color: var(--ink);
+      border-color: var(--ta);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      font-weight: 700;
+    }
+    
+    /* Situation cards */
+    .sit-card {
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 5px;
+      padding: 0.8rem 0.9rem;
+    }
+    
+    .sit-lbl {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.54rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ta);
+      margin-bottom: 0.3rem;
+      display: block;
+      transition: color 0.35s;
+    }
+    
+    .sit-val {
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.88rem;
+      color: var(--cream);
+    }
+    
+    .sit-val.accent {
+      color: var(--ta);
+      transition: color 0.35s;
+    }
+    
+    /* ══════════════════════════════════════════════
+       DICE
+    ══════════════════════════════════════════════ */
+    .die-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+    
+    .die {
+      border-radius: 7px;
+      background: var(--cream);
+      border: 1.5px solid var(--parchment-dk);
+      box-shadow: 0 4px 0 var(--parchment-dk), var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 600;
+      color: var(--ink);
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    
+    .die:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 var(--parchment-dk);
+    }
+    
+    .d6 {
+      width: 50px;
+      height: 50px;
+      font-size: 1.45rem;
+    }
+    
+    .d4 {
+      width: 44px;
+      height: 44px;
+      font-size: 1.2rem;
+      border-radius: 4px;
+    }
+    
+    .d8 {
+      width: 48px;
+      height: 48px;
+      font-size: 1.35rem;
+      border-radius: 5px;
+    }
+    
+    .d12 {
+      width: 56px;
+      height: 56px;
+      font-size: 1.5rem;
+      border-radius: 9px;
+    }
+    
+    .die-result {
+      background: var(--tp-mid);
+      color: var(--ta-light);
+      border-color: var(--tp-bright);
+      box-shadow: 0 4px 0 var(--tp-dark), 0 0 14px rgba(0, 0, 0, 0.2), var(--shadow-sm);
+      transition: background 0.35s, color 0.35s, border-color 0.35s, box-shadow 0.35s;
+    }
+    
+    .die-lbl {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--parchment-dk);
+    }
+    
+    @keyframes roll {
+      0% {
+        transform: rotate(0deg) scale(1);
+      }
+      
+      22% {
+        transform: rotate(-17deg) scale(1.11);
+      }
+      
+      52% {
+        transform: rotate(14deg) scale(0.93);
+      }
+      
+      76% {
+        transform: rotate(-8deg) scale(1.05);
+      }
+      
+      100% {
+        transform: rotate(0deg) scale(1);
+      }
+    }
+    
+    .rolling {
+      animation: roll 0.38s cubic-bezier(.3, .6, .5, 1);
+    }
+    
+    /* ══════════════════════════════════════════════
+       BADGES
+    ══════════════════════════════════════════════ */
+    .badge {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.22rem 0.58rem;
+      border-radius: 2px;
+      display: inline-block;
+      transition: background 0.35s, color 0.35s, border-color 0.35s;
+    }
+    
+    .badge-accent {
+      background: var(--ta);
+      color: var(--ink);
+    }
+    
+    .badge-team {
+      background: var(--tp-mid);
+      color: var(--cream);
+    }
+    
+    .badge-red {
+      background: var(--red);
+      color: var(--cream);
+    }
+    
+    .badge-outline {
+      background: transparent;
+      border: 1px solid var(--ta);
+      color: var(--ta);
+    }
+    
+    .badge-wood {
+      background: var(--wood-mid);
+      color: var(--cream);
+    }
+    
+    .badge-chalk {
+      background: rgba(245, 240, 224, 0.12);
+      color: var(--parchment);
+      border: 1px solid rgba(245, 240, 224, 0.18);
+    }
+    
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.48rem;
+    }
+    
+    /* ══════════════════════════════════════════════
+       TOASTS
+    ══════════════════════════════════════════════ */
+    .toast-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-width: 340px;
+    }
+    
+    .toast {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+      padding: 0.7rem 0.9rem;
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(4px);
+      box-shadow: var(--shadow-md);
+      transition: border-color 0.35s;
+    }
+    
+    .toast-info {
+      border-left: 3px solid var(--ta);
+    }
+    
+    .toast-success {
+      border-left: 3px solid var(--pip-ball);
+    }
+    
+    .toast-danger {
+      border-left: 3px solid var(--red);
+    }
+    
+    .toast-icon {
+      font-size: 0.85rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    
+    .toast-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.64rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ta);
+      display: block;
+      margin-bottom: 0.13rem;
+      transition: color 0.35s;
+    }
+    
+    .toast-text {
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.77rem;
+      color: var(--cream);
+      line-height: 1.45;
+    }
+    
+    /* ══════════════════════════════════════════════
+       FORMS
+    ══════════════════════════════════════════════ */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.36rem;
+    }
+    
+    .form-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--parchment-dk);
+    }
+    
+    .form-input,
+    .form-select {
+      background: rgba(0, 0, 0, 0.32);
+      border: 1.5px solid rgba(245, 240, 224, 0.16);
+      border-radius: 3px;
+      padding: 0.5rem 0.72rem;
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.9rem;
+      color: var(--cream);
+      outline: none;
+      transition: border-color 0.15s;
+      width: 100%;
+    }
+    
+    .form-input:focus,
+    .form-select:focus {
+      border-color: var(--ta);
+    }
+    
+    .form-input::placeholder {
+      color: rgba(245, 240, 224, 0.28);
+    }
+    
+    .form-select {
+      cursor: pointer;
+    }
+    
+    .form-select option {
+      background: #1c2030;
+    }
+    
+    /* ══════════════════════════════════════════════
+       MODALS
+    ══════════════════════════════════════════════ */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 8, 6, 0.92);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      backdrop-filter: blur(3px);
+    }
+    
+    .modal-backdrop.hidden {
+      display: none;
+    }
+    
+    @keyframes modal-in {
+      from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.97);
+      }
+      
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+    
+    .modal {
+      background: linear-gradient(175deg, var(--tp-dark) 0%, var(--tp-deep) 100%);
+      border-radius: 8px;
+      max-width: 480px;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      animation: modal-in 0.22s cubic-bezier(.2, .8, .3, 1);
+      transition: background 0.35s;
+    }
+    
+    .modal-header {
+      padding: 1.2rem 1.7rem 1.1rem;
+      border-bottom: 2px solid var(--ta-dark);
+      position: relative;
+      transition: border-color 0.35s;
+    }
+    
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--ta);
+      line-height: 1.2;
+      transition: color 0.35s;
+    }
+    
+    .modal-sub {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--parchment-dk);
+      margin-top: 0.22rem;
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1.2rem;
+      background: none;
+      border: none;
+      color: var(--parchment-dk);
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 0.2rem;
+      transition: color 0.12s;
+    }
+    
+    .modal-close:hover {
+      color: var(--cream);
+    }
+    
+    .modal-body {
+      padding: 1.4rem 1.7rem;
+      color: var(--cream);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+    
+    .modal-footer {
+      padding: 1rem 1.7rem 1.4rem;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.6rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    
+    /* Decision tiles */
+    .decision-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin: 1rem 0 0.2rem;
+    }
+    
+    .dec-tile {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      padding: 0.78rem 0.88rem;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    
+    .dec-tile:hover {
+      border-color: var(--ta);
+      background: rgba(255, 255, 255, 0.06);
+    }
+    
+    .dec-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--cream);
+      display: block;
+    }
+    
+    .dec-desc {
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.67rem;
+      color: var(--parchment-dk);
+      display: block;
+      margin-top: 0.2rem;
+    }
+    
+    /* Result modal */
+    .result-center {
+      text-align: center;
+      padding: 0.65rem 0;
+    }
+    
+    .result-dice {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 0.9rem;
+    }
+    
+    .result-outcome {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.1rem;
+      font-weight: 900;
+      color: var(--ta);
+      line-height: 1;
+      margin-bottom: 0.35rem;
+      transition: color 0.35s;
+    }
+    
+    .result-detail {
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.84rem;
+      color: var(--parchment-dk);
+    }
+    
+    /* ══════════════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════════════ */
+    @media (max-width: 640px) {
+
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+      
+      .decision-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .header-title {
+        font-size: 2.2rem;
+      }
+      
+      .wrap {
+        padding: 0 1rem 4rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  
+  <!-- ══════════════ MODALS ══════════════ -->
+  
+  <div class="modal-backdrop hidden" id="modal-decision">
+    <div class="modal">
+      <div class="modal-header wood">
+        <h2 class="modal-title">Manager's Decision</h2>
+        <p class="modal-sub">Top 7th · Runners on 1st &amp; 2nd · 1 Out</p>
+        <button class="modal-close" onclick="closeModal('modal-decision')">✕</button>
+      </div>
+      <div class="modal-body">
+        <span style="font-family:'Playfair Display';font-size:1.05rem;font-weight:700;color:var(--ta);transition:color .35s">M. Torres</span>
+        steps in batting .312. Pitcher is showing 87 pitches and losing command up in the zone. How do you want to play this?
+        <div class="decision-grid">
+          <button class="dec-tile" onclick="closeModal('modal-decision')"><span class="dec-title">⚔️ Swing Away</span><span class="dec-desc">Roll 2d6 — full at-bat</span></button>
+          <button class="dec-tile" onclick="closeModal('modal-decision')"><span class="dec-title">📐 Sacrifice Bunt</span><span class="dec-desc">Advance runners, risk out</span></button>
+          <button class="dec-tile" onclick="closeModal('modal-decision')"><span class="dec-title">🏃 Hit &amp; Run</span><span class="dec-desc">Runners move on pitch</span></button>
+          <button class="dec-tile" onclick="closeModal('modal-decision')"><span class="dec-title">👁 Take the Pitch</span><span class="dec-desc">Work the count, draw walk</span></button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-decision')">Cancel</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal-backdrop hidden" id="modal-result">
+    <div class="modal">
+      <div class="modal-header wood">
+        <h2 class="modal-title">At-Bat Result</h2>
+        <p class="modal-sub">Torres · Swing Away · 2d6 → 11</p>
+        <button class="modal-close" onclick="closeModal('modal-result')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="result-center">
+          <div class="result-dice">
+            <div class="die-wrap">
+              <div class="die d6 die-result" style="cursor:default">5</div><span class="die-lbl">d6</span>
+            </div>
+            <span style="font-family:'IBM Plex Mono';font-size:1.5rem;color:var(--parchment-dk);align-self:center;line-height:1">+</span>
+            <div class="die-wrap">
+              <div class="die d6 die-result" style="cursor:default">6</div><span class="die-lbl">d6</span>
+            </div>
+            <span style="font-family:'IBM Plex Mono';font-size:1.5rem;color:var(--parchment-dk);align-self:center;line-height:1">=</span>
+            <span style="font-family:'IBM Plex Mono';font-size:2.2rem;font-weight:600;color:var(--ta);align-self:center;line-height:1;transition:color .35s">11</span>
+          </div>
+          <div class="result-outcome">DOUBLE</div>
+          <div class="result-detail">Scores 2 runs · Torres advances to 2nd base</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="closeModal('modal-result')">Continue →</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal-backdrop hidden" id="modal-profile">
+    <div class="modal">
+      <div class="modal-header wood">
+        <h2 class="modal-title">Player Profile</h2>
+        <p class="modal-sub">Mike "Iron" Torres · #24 · 3B</p>
+        <button class="modal-close" onclick="closeModal('modal-profile')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;gap:1.2rem;align-items:flex-start;margin-bottom:1rem;">
+          <div class="card" style="cursor:default;flex-shrink:0;">
+            <div class="card-top"><span class="card-team-tag js-abbr">RVT</span><span class="card-pos-tag">3B</span></div>
+            <div class="card-portrait">🧢</div>
+            <div class="card-name">Mike "Iron" Torres</div>
+            <hr class="card-divider">
+            <div class="card-stats">
+              <div class="card-stat"><span class="cs-val">.312</span><span class="cs-lbl">AVG</span></div>
+              <div class="card-stat"><span class="cs-val">18</span><span class="cs-lbl">HR</span></div>
+              <div class="card-stat"><span class="cs-val">2d6</span><span class="cs-lbl">Dice</span></div>
+            </div>
+            <div class="card-dice-row">
+              <div class="mini-die hot">5</div>
+              <div class="mini-die hot">6</div>
+            </div>
+          </div>
+          <div style="flex:1">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.7rem 1rem;margin-bottom:.8rem">
+              <div><span style="font-family:'IBM Plex Mono';font-size:.54rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ta);display:block;margin-bottom:2px;transition:color .35s">AVG</span><span style="font-family:'IBM Plex Mono';font-size:1.2rem;font-weight:600;color:var(--ta-light);transition:color .35s">.312</span></div>
+              <div><span style="font-family:'IBM Plex Mono';font-size:.54rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ta);display:block;margin-bottom:2px;transition:color .35s">OPS</span><span style="font-family:'IBM Plex Mono';font-size:1.2rem;font-weight:600;color:var(--ta-light);transition:color .35s">.891</span></div>
+              <div><span style="font-family:'IBM Plex Mono';font-size:.54rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ta);display:block;margin-bottom:2px;transition:color .35s">HR</span><span style="font-family:'IBM Plex Mono';font-size:1.2rem;font-weight:600;color:var(--cream)">18</span></div>
+              <div><span style="font-family:'IBM Plex Mono';font-size:.54rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ta);display:block;margin-bottom:2px;transition:color .35s">RBI</span><span style="font-family:'IBM Plex Mono';font-size:1.2rem;font-weight:600;color:var(--cream)">64</span></div>
+            </div>
+            <div class="badge-row">
+              <span class="badge badge-accent">🔥 Hot Streak</span>
+              <span class="badge badge-team">Power Hitter</span>
+              <span class="badge badge-outline">+1 vs LHP</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:.85rem;color:var(--parchment-dk);line-height:1.6">Torres excels against left-handed pitching. When the opposing pitcher throws from the left side, add +1 to all dice roll results this at-bat.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-profile')">Close</button>
+        <button class="btn btn-primary btn-sm" onclick="closeModal('modal-profile')">Select Batter</button>
+      </div>
+    </div>
+  </div>
+  
+  
+  <!-- ══════════════ TEAM SWITCHER ══════════════ -->
+  
+  <div class="switcher-outer">
+    <div class="switcher-panel wood">
+      <span class="switcher-label">Team</span>
+      <div class="switcher-pills">
+        
+        <button class="team-pill active" data-team="mudhens" onclick="setTeam('mudhens', this)">
+          <div class="pill-dots">
+            <div class="pill-dot" style="background:#2d5a3d"></div>
+            <div class="pill-dot" style="background:#c9a84c"></div>
+          </div>
+          <span class="pill-abbr">RVT</span>
+          <span class="pill-name">Mudhens</span>
+        </button>
+        
+        <button class="team-pill" data-team="miners" onclick="setTeam('miners', this)">
+          <div class="pill-dots">
+            <div class="pill-dot" style="background:#2a3d62"></div>
+            <div class="pill-dot" style="background:#c06030"></div>
+          </div>
+          <span class="pill-abbr">IRW</span>
+          <span class="pill-name">Miners</span>
+        </button>
+        
+        <button class="team-pill" data-team="gulls" onclick="setTeam('gulls', this)">
+          <div class="pill-dots">
+            <div class="pill-dot" style="background:#2a5860"></div>
+            <div class="pill-dot" style="background:#d4a84b"></div>
+          </div>
+          <span class="pill-abbr">BSG</span>
+          <span class="pill-name">Gulls</span>
+        </button>
+        
+        <button class="team-pill" data-team="dusters" onclick="setTeam('dusters', this)">
+          <div class="pill-dots">
+            <div class="pill-dot" style="background:#5a2828"></div>
+            <div class="pill-dot" style="background:#c8a060"></div>
+          </div>
+          <span class="pill-abbr">RRD</span>
+          <span class="pill-name">Dusters</span>
+        </button>
+        
+        <button class="team-pill" data-team="blues" onclick="setTeam('blues', this)">
+          <div class="pill-dots">
+            <div class="pill-dot" style="background:#283860"></div>
+            <div class="pill-dot" style="background:#a8b8d0"></div>
+          </div>
+          <span class="pill-abbr">CFB</span>
+          <span class="pill-name">Blues</span>
+        </button>
+        
+      </div>
+    </div>
+  </div>
+  
+  
+  <!-- ══════════════ PAGE CONTENT ══════════════ -->
+  <div class="wrap">
+    
+    <!-- GAME HEADER -->
+    <div class="game-header wood wood-bevel">
+      <div class="header-inner">
+        <div class="header-pre">⬥ Season Edition ⬥</div>
+        <div class="header-title">
+          <span class="header-rule"></span>
+          Diamond Strategy
+          <span class="header-rule"></span>
+        </div>
+        <div class="header-team js-team-name">Riverton Mudhens</div>
+        <div class="header-sub">Baseball Simulation · Card &amp; Dice Edition</div>
+      </div>
+    </div>
+    
+    <!-- SECTION: Team Color Tokens -->
+    <div class="section">
+      <div class="eyebrow">Team Color Tokens — switch team above to update</div>
+      <div class="palette-row">
+        <div class="swatch">
+          <div class="swatch-block js-swatch-tp-deep"></div>
+          <div class="swatch-info"><span class="swatch-name">Primary Deep</span><span class="swatch-hex js-hex-tp-deep">#0f2218</span></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block js-swatch-tp-dark"></div>
+          <div class="swatch-info"><span class="swatch-name">Primary Dark</span><span class="swatch-hex js-hex-tp-dark">#1c3a28</span></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block js-swatch-tp-mid"></div>
+          <div class="swatch-info"><span class="swatch-name">Primary Mid</span><span class="swatch-hex js-hex-tp-mid">#2d5a3d</span></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block js-swatch-tp-bright"></div>
+          <div class="swatch-info"><span class="swatch-name">Primary Bright</span><span class="swatch-hex js-hex-tp-bright">#3d7a52</span></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block js-swatch-ta"></div>
+          <div class="swatch-info"><span class="swatch-name">Accent</span><span class="swatch-hex js-hex-ta">#c9a84c</span></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block js-swatch-ta-light"></div>
+          <div class="swatch-info"><span class="swatch-name">Accent Light</span><span class="swatch-hex js-hex-ta-light">#e8c97a</span></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block js-swatch-ta-dark"></div>
+          <div class="swatch-info"><span class="swatch-name">Accent Dark</span><span class="swatch-hex js-hex-ta-dark">#8a6520</span></div>
+        </div>
+      </div>
+      <div style="margin-top:1rem" class="palette-row">
+        <div class="swatch">
+          <div class="swatch-block" style="background:#2e1a0a"></div>
+          <div class="swatch-info"><span class="swatch-name">Wood Dark</span><span class="swatch-hex">#2e1a0a</span></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block" style="background:#6b3f1e"></div>
+          <div class="swatch-info"><span class="swatch-name">Wood Mid</span><span class="swatch-hex">#6b3f1e</span></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block" style="background:#f5f0e0"></div>
+          <div class="swatch-info"><span class="swatch-name">Cream</span><span class="swatch-hex">#f5f0e0</span></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block" style="background:#ede0c0"></div>
+          <div class="swatch-info"><span class="swatch-name">Parchment</span><span class="swatch-hex">#ede0c0</span></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block" style="background:#8b2020"></div>
+          <div class="swatch-info"><span class="swatch-name">Out Red</span><span class="swatch-hex">#8b2020</span></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block" style="background:#3a8a50"></div>
+          <div class="swatch-info"><span class="swatch-name">Ball Green</span><span class="swatch-hex">#3a8a50</span></div>
+        </div>
+      </div>
+    </div>
+    
+    <hr class="gold-rule">
+    
+    <!-- SECTION: Typography -->
+    <div class="section">
+      <div class="eyebrow">Typography</div>
+      <div class="type-stack">
+        <div class="type-row">
+          <div class="t-display">Diamond Strategy</div><span class="type-meta">Playfair Display 900 · Title / Result Reveal</span>
+        </div>
+        <div class="type-row">
+          <div class="t-heading">Top of the Seventh Inning</div><span class="type-meta">Playfair Display 700 · Section Headings</span>
+        </div>
+        <div class="type-row">
+          <div class="t-sub">Starting Lineup · Home Team</div><span class="type-meta">Oswald 600 · Scoreboard Labels / Positions</span>
+        </div>
+        <div class="type-row">
+          <div class="t-body">The count is 3–2 with runners on the corners. One roll could break this game open — or strand them all. Choose carefully.</div><span class="type-meta">Source Serif 4 400 · Body / Narration</span>
+        </div>
+        <div class="type-row">
+          <div class="t-mono">2d6 + 1 modifier → roll 11 → DOUBLE</div><span class="type-meta">IBM Plex Mono · Stats / Dice Notation</span>
+        </div>
+        <div class="type-row">
+          <div class="t-stat">.312 / .391 / .891</div><span class="type-meta">IBM Plex Mono 600 · Large Stat Display</span>
+        </div>
+      </div>
+    </div>
+    
+    <hr class="gold-rule">
+    
+    <!-- SECTION: Buttons -->
+    <div class="section">
+      <div class="eyebrow">Buttons &amp; Controls</div>
+      <div style="display:flex;flex-direction:column;gap:.9rem">
+        <div class="flex-wrap">
+          <button class="btn btn-primary btn-lg">⚾ Roll the Dice</button>
+          <button class="btn btn-primary">Take Action</button>
+          <button class="btn btn-primary btn-sm">Confirm</button>
+        </div>
+        <div class="flex-wrap">
+          <button class="btn btn-team">Next Batter →</button>
+          <button class="btn btn-wood">📋 View Lineup</button>
+          <button class="btn btn-secondary">Skip Turn</button>
+          <button class="btn btn-danger">⚡ Pinch Hit</button>
+        </div>
+        <div class="flex-wrap">
+          <button class="btn btn-primary" disabled>Roll Dice</button>
+          <button class="btn btn-team" disabled>Next Batter</button>
+          <button class="btn btn-danger" disabled>Remove</button>
+          <span style="font-family:'IBM Plex Mono';font-size:.58rem;color:var(--parchment-dk);align-self:center">← disabled</span>
+        </div>
+      </div>
+    </div>
+    
+    <hr class="gold-rule">
+    
+    <!-- SECTION: 9-Card Lineup Trough -->
+    <div class="section">
+      <div class="eyebrow">9-Card Batting Lineup · Felt Trough View</div>
+      <div class="trough-outer wood">
+        <div class="trough-label js-team-name-abbr">⚾ Riverton Mudhens — Home Lineup</div>
+        <div class="trough-felt">
+          <div class="lineup-scroll">
+            
+            <div class="lineup-slot">
+              <div class="order-ring ring-accent">1</div>
+              <div class="card active">
+                <div class="card-top"><span class="card-team-tag js-abbr">RVT</span><span class="card-pos-tag">CF</span></div>
+                <div class="card-portrait">🧢</div>
+                <div class="card-name">J. Carpenter</div>
+                <hr class="card-divider">
+                <div class="card-stats">
+                  <div class="card-stat"><span class="cs-val">.291</span><span class="cs-lbl">AVG</span></div>
+                  <div class="card-stat"><span class="cs-val">8</span><span class="cs-lbl">HR</span></div>
+                  <div class="card-stat"><span class="cs-val">2d6</span><span class="cs-lbl">Dice</span></div>
+                </div>
+                <div class="card-dice-row">
+                  <div class="mini-die">4</div>
+                  <div class="mini-die">3</div>
+                </div>
+              </div>
+              <span class="slot-label lbl-batting">▶ AT BAT</span>
+            </div>
+            
+            <div class="lineup-slot">
+              <div class="order-ring ring-dim">2</div>
+              <div class="card on-deck">
+                <div class="card-top"><span class="card-team-tag js-abbr">RVT</span><span class="card-pos-tag">SS</span></div>
+                <div class="card-portrait">🧢</div>
+                <div class="card-name">R. Delgado</div>
+                <hr class="card-divider">
+                <div class="card-stats">
+                  <div class="card-stat"><span class="cs-val">.278</span><span class="cs-lbl">AVG</span></div>
+                  <div class="card-stat"><span class="cs-val">5</span><span class="cs-lbl">HR</span></div>
+                  <div class="card-stat"><span class="cs-val">2d6</span><span class="cs-lbl">Dice</span></div>
+                </div>
+                <div class="card-dice-row">
+                  <div class="mini-die">—</div>
+                  <div class="mini-die">—</div>
+                </div>
+              </div>
+              <span class="slot-label lbl-deck">ON DECK</span>
+            </div>
+            
+            <div class="lineup-slot">
+              <div class="order-ring ring-dim">3</div>
+              <div class="card" onclick="openModal('modal-profile')">
+                <div class="card-top"><span class="card-team-tag js-abbr">RVT</span><span class="card-pos-tag">3B</span></div>
+                <div class="card-portrait">🧢</div>
+                <div class="card-name">M. Torres</div>
+                <hr class="card-divider">
+                <div class="card-stats">
+                  <div class="card-stat"><span class="cs-val">.312</span><span class="cs-lbl">AVG</span></div>
+                  <div class="card-stat"><span class="cs-val">18</span><span class="cs-lbl">HR</span></div>
+                  <div class="card-stat"><span class="cs-val">2d6</span><span class="cs-lbl">Dice</span></div>
+                </div>
+                <div class="card-dice-row">
+                  <div class="mini-die hot">5</div>
+                  <div class="mini-die hot">6</div>
+                </div>
+              </div>
+              <span class="slot-label lbl-blank">·</span>
+            </div>
+            
+            <div class="lineup-slot">
+              <div class="order-ring ring-dim">4</div>
+              <div class="card">
+                <div class="card-top"><span class="card-team-tag js-abbr">RVT</span><span class="card-pos-tag">LF</span></div>
+                <div class="card-portrait">🧢</div>
+                <div class="card-name">D. Washington</div>
+                <hr class="card-divider">
+                <div class="card-stats">
+                  <div class="card-stat"><span class="cs-val">.305</span><span class="cs-lbl">AVG</span></div>
+                  <div class="card-stat"><span class="cs-val">22</span><span class="cs-lbl">HR</span></div>
+                  <div class="card-stat"><span class="cs-val">3d6</span><span class="cs-lbl">Dice</span></div>
+                </div>
+                <div class="card-dice-row">
+                  <div class="mini-die">—</div>
+                  <div class="mini-die">—</div>
+                  <div class="mini-die">—</div>
+                </div>
+              </div>
+              <span class="slot-label lbl-blank">·</span>
+            </div>
+            
+            <div class="lineup-slot">
+              <div class="order-ring ring-dim">5</div>
+              <div class="card">
+                <div class="card-top"><span class="card-team-tag js-abbr">RVT</span><span class="card-pos-tag">RF</span></div>
+                <div class="card-portrait">🧢</div>
+                <div class="card-name">T. Okonkwo</div>
+                <hr class="card-divider">
+                <div class="card-stats">
+                  <div class="card-stat"><span class="cs-val">.287</span><span class="cs-lbl">AVG</span></div>
+                  <div class="card-stat"><span class="cs-val">14</span><span class="cs-lbl">HR</span></div>
+                  <div class="card-stat"><span class="cs-val">2d6</span><span class="cs-lbl">Dice</span></div>
+                </div>
+                <div class="card-dice-row">
+                  <div class="mini-die">—</div>
+                  <div class="mini-die">—</div>
+                </div>
+              </div>
+              <span class="slot-label lbl-blank">·</span>
+            </div>
+            
+            <div class="lineup-slot">
+              <div class="order-ring ring-dim">6</div>
+              <div class="card">
+                <div class="card-top"><span class="card-team-tag js-abbr">RVT</span><span class="card-pos-tag">1B</span></div>
+                <div class="card-portrait">🧢</div>
+                <div class="card-name">P. Nakamura</div>
+                <hr class="card-divider">
+                <div class="card-stats">
+                  <div class="card-stat"><span class="cs-val">.265</span><span class="cs-lbl">AVG</span></div>
+                  <div class="card-stat"><span class="cs-val">9</span><span class="cs-lbl">HR</span></div>
+                  <div class="card-stat"><span class="cs-val">2d6</span><span class="cs-lbl">Dice</span></div>
+                </div>
+                <div class="card-dice-row">
+                  <div class="mini-die">—</div>
+                  <div class="mini-die">—</div>
+                </div>
+              </div>
+              <span class="slot-label lbl-blank">·</span>
+            </div>
+            
+            <div class="lineup-slot">
+              <div class="order-ring ring-dim">7</div>
+              <div class="card">
+                <div class="card-top"><span class="card-team-tag js-abbr">RVT</span><span class="card-pos-tag">2B</span></div>
+                <div class="card-portrait">🧢</div>
+                <div class="card-name">B. McGee</div>
+                <hr class="card-divider">
+                <div class="card-stats">
+                  <div class="card-stat"><span class="cs-val">.244</span><span class="cs-lbl">AVG</span></div>
+                  <div class="card-stat"><span class="cs-val">4</span><span class="cs-lbl">HR</span></div>
+                  <div class="card-stat"><span class="cs-val">2d6</span><span class="cs-lbl">Dice</span></div>
+                </div>
+                <div class="card-dice-row">
+                  <div class="mini-die">—</div>
+                  <div class="mini-die">—</div>
+                </div>
+              </div>
+              <span class="slot-label lbl-blank">·</span>
+            </div>
+            
+            <div class="lineup-slot">
+              <div class="order-ring ring-dim">8</div>
+              <div class="card">
+                <div class="card-top"><span class="card-team-tag js-abbr">RVT</span><span class="card-pos-tag">C</span></div>
+                <div class="card-portrait">🧢</div>
+                <div class="card-name">F. Reyes</div>
+                <hr class="card-divider">
+                <div class="card-stats">
+                  <div class="card-stat"><span class="cs-val">.231</span><span class="cs-lbl">AVG</span></div>
+                  <div class="card-stat"><span class="cs-val">6</span><span class="cs-lbl">HR</span></div>
+                  <div class="card-stat"><span class="cs-val">1d6</span><span class="cs-lbl">Dice</span></div>
+                </div>
+                <div class="card-dice-row">
+                  <div class="mini-die">—</div>
+                </div>
+              </div>
+              <span class="slot-label lbl-blank">·</span>
+            </div>
+            
+            <div class="lineup-slot">
+              <div class="order-ring ring-dim">9</div>
+              <div class="card">
+                <div class="card-top"><span class="card-team-tag js-abbr">RVT</span><span class="card-pos-tag">P</span></div>
+                <div class="card-portrait">⚾</div>
+                <div class="card-name">A. Morales</div>
+                <hr class="card-divider">
+                <div class="card-stats">
+                  <div class="card-stat"><span class="cs-val">.178</span><span class="cs-lbl">AVG</span></div>
+                  <div class="card-stat"><span class="cs-val">1</span><span class="cs-lbl">HR</span></div>
+                  <div class="card-stat"><span class="cs-val">1d6</span><span class="cs-lbl">Dice</span></div>
+                </div>
+                <div class="card-dice-row">
+                  <div class="mini-die">—</div>
+                </div>
+              </div>
+              <span class="slot-label lbl-blank">·</span>
+            </div>
+            
+          </div>
+          <div style="font-family:'IBM Plex Mono';font-size:.5rem;color:var(--tp-bright);text-align:center;margin-top:.3rem;letter-spacing:.1em;transition:color .35s">Click card #3 (Torres) to open Player Profile · Cards scroll horizontally</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Clipboard lineup -->
+    <div class="section">
+      <div class="eyebrow">Lineup Card · Clipboard View</div>
+      <div style="padding-top:.5rem">
+        <div class="clipboard-wrap">
+          <div class="clip"></div>
+          <div class="clipboard">
+            <div class="cb-title js-team-name-abbr">Riverton Mudhens — Batting Order</div>
+            <div class="cb-row"><span class="cb-num">1</span><span class="cb-dots">................................................</span><span class="cb-name">Carpenter</span><span class="cb-pos">CF</span></div>
+            <div class="cb-row"><span class="cb-num">2</span><span class="cb-dots">................................................</span><span class="cb-name">Delgado</span><span class="cb-pos">SS</span></div>
+            <div class="cb-row"><span class="cb-num">3</span><span class="cb-dots">................................................</span><span class="cb-name">Torres</span><span class="cb-pos">3B</span></div>
+            <div class="cb-row"><span class="cb-num">4</span><span class="cb-dots">................................................</span><span class="cb-name">Washington</span><span class="cb-pos">LF</span></div>
+            <div class="cb-row"><span class="cb-num">5</span><span class="cb-dots">................................................</span><span class="cb-name">Okonkwo</span><span class="cb-pos">RF</span></div>
+            <div class="cb-row"><span class="cb-num">6</span><span class="cb-dots">................................................</span><span class="cb-name">Nakamura</span><span class="cb-pos">1B</span></div>
+            <div class="cb-row"><span class="cb-num">7</span><span class="cb-dots">................................................</span><span class="cb-name">McGee</span><span class="cb-pos">2B</span></div>
+            <div class="cb-row"><span class="cb-num">8</span><span class="cb-dots">................................................</span><span class="cb-name">Reyes</span><span class="cb-pos">C</span></div>
+            <div class="cb-row" style="border-bottom:none"><span class="cb-num">9</span><span class="cb-dots">................................................</span><span class="cb-name">Morales</span><span class="cb-pos">P</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <hr class="gold-rule">
+    
+    <!-- SECTION: Scoreboard -->
+    <div class="section">
+      <div class="eyebrow">Scoreboard</div>
+      <div class="scoreboard">
+        <div class="sb-grid">
+          <div class="sb-hcell left"></div>
+          <div class="sb-hcell">1</div>
+          <div class="sb-hcell">2</div>
+          <div class="sb-hcell">3</div>
+          <div class="sb-hcell">4</div>
+          <div class="sb-hcell">5</div>
+          <div class="sb-hcell">6</div>
+          <div class="sb-hcell active">7</div>
+          <div class="sb-hcell">8</div>
+          <div class="sb-hcell">9</div>
+          <div class="sb-hcell active">R</div>
+          <div class="sb-hcell">H</div>
+          <div class="sb-hcell">E</div>
+        </div>
+        <div class="sb-div"></div>
+        <div class="sb-grid">
+          <div class="sb-cell left">AWAY</div>
+          <div class="sb-cell">2</div>
+          <div class="sb-cell">0</div>
+          <div class="sb-cell">1</div>
+          <div class="sb-cell">0</div>
+          <div class="sb-cell">0</div>
+          <div class="sb-cell">3</div>
+          <div class="sb-cell active">—</div>
+          <div class="sb-cell">—</div>
+          <div class="sb-cell">—</div>
+          <div class="sb-cell total">6</div>
+          <div class="sb-cell">9</div>
+          <div class="sb-cell">1</div>
+        </div>
+        <div class="sb-grid">
+          <div class="sb-cell left home js-abbr-long">HOME ▶</div>
+          <div class="sb-cell">0</div>
+          <div class="sb-cell">3</div>
+          <div class="sb-cell">0</div>
+          <div class="sb-cell">2</div>
+          <div class="sb-cell">0</div>
+          <div class="sb-cell">1</div>
+          <div class="sb-cell active">—</div>
+          <div class="sb-cell">—</div>
+          <div class="sb-cell">—</div>
+          <div class="sb-cell total">6</div>
+          <div class="sb-cell">8</div>
+          <div class="sb-cell">0</div>
+        </div>
+      </div>
+    </div>
+    
+    <hr class="gold-rule">
+    
+    <!-- SECTION: Board Elements -->
+    <div class="section">
+      <div class="eyebrow">In-Game Board Elements</div>
+      <div class="board-cluster">
+        
+        <div>
+          <span class="b-section-title">Count</span>
+          <div class="count-panel">
+            <div class="count-row"><span class="count-lbl">Balls</span>
+              <div class="pips">
+                <div class="pip pip-ball on"></div>
+                <div class="pip pip-ball on"></div>
+                <div class="pip pip-ball on"></div>
+                <div class="pip pip-ball"></div>
+              </div>
+            </div>
+            <div class="count-row"><span class="count-lbl">Strikes</span>
+              <div class="pips">
+                <div class="pip pip-strike on"></div>
+                <div class="pip pip-strike on"></div>
+                <div class="pip pip-strike"></div>
+              </div>
+            </div>
+            <div class="count-row"><span class="count-lbl">Outs</span>
+              <div class="pips">
+                <div class="pip pip-out on"></div>
+                <div class="pip pip-out"></div>
+                <div class="pip pip-out"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <span class="b-section-title">Bases</span>
+          <div style="background:var(--score-bg);border-radius:6px;padding:1rem;box-shadow:var(--shadow-inset);display:inline-block;transition:background .35s">
+            <div class="bases-field">
+              <div class="base b-second on"></div>
+              <div class="base b-third"></div>
+              <div class="base b-first on"></div>
+              <div class="base b-home"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <span class="b-section-title">Inning</span>
+          <div class="sit-card" style="margin-bottom:.65rem">
+            <span class="sit-lbl">Current</span>
+            <div class="sit-val">Top of the 7th</div>
+          </div>
+          <div class="inn-track">
+            <div class="inn-pip done">1</div>
+            <div class="inn-pip done">2</div>
+            <div class="inn-pip done">3</div>
+            <div class="inn-pip done">4</div>
+            <div class="inn-pip done">5</div>
+            <div class="inn-pip done">6</div>
+            <div class="inn-pip current">7</div>
+            <div class="inn-pip">8</div>
+            <div class="inn-pip">9</div>
+          </div>
+        </div>
+        
+        <div style="display:flex;flex-direction:column;gap:.6rem">
+          <span class="b-section-title">Situation</span>
+          <div class="sit-card"><span class="sit-lbl">At Bat</span>
+            <div class="sit-val">M. Torres · 3B · .312</div>
+          </div>
+          <div class="sit-card"><span class="sit-lbl">Pitcher</span>
+            <div class="sit-val">K. Holloway · 87 pitches</div>
+          </div>
+          <div class="sit-card"><span class="sit-lbl">Batter Edge</span>
+            <div class="sit-val accent">+1 vs LHP tonight</div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    
+    <hr class="gold-rule">
+    
+    <!-- SECTION: Dice -->
+    <div class="section">
+      <div class="eyebrow">Dice · Click to Roll</div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1.4rem">
+        <div class="die-wrap">
+          <div class="die d4" onclick="rollDie(this,4)">4</div><span class="die-lbl">d4</span>
+        </div>
+        <div class="die-wrap">
+          <div class="die d6" onclick="rollDie(this,6)">3</div><span class="die-lbl">d6</span>
+        </div>
+        <div class="die-wrap">
+          <div class="die d8" onclick="rollDie(this,8)">7</div><span class="die-lbl">d8</span>
+        </div>
+        <div class="die-wrap">
+          <div class="die d12" onclick="rollDie(this,12)">11</div><span class="die-lbl">d12</span>
+        </div>
+        <div class="die-wrap">
+          <div class="die d6 die-result" onclick="rollDie(this,6)">6</div><span class="die-lbl">Result</span>
+        </div>
+      </div>
+      <div style="background:rgba(0,0,0,0.25);border-radius:6px;padding:1rem 1.2rem;display:inline-flex;flex-direction:column;gap:.6rem">
+        <span style="font-family:'IBM Plex Mono';font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ta);transition:color .35s">Multi-Dice Roll</span>
+        <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end">
+          <div class="die-wrap">
+            <div class="die d6" id="md1">5</div><span class="die-lbl">d6</span>
+          </div>
+          <span style="font-family:'IBM Plex Mono';font-size:1.3rem;color:var(--parchment-dk);align-self:center;line-height:1">+</span>
+          <div class="die-wrap">
+            <div class="die d6" id="md2">6</div><span class="die-lbl">d6</span>
+          </div>
+          <span style="font-family:'IBM Plex Mono';font-size:1.3rem;color:var(--parchment-dk);align-self:center;line-height:1">=</span>
+          <span id="md-total" style="font-family:'IBM Plex Mono';font-size:2.2rem;font-weight:600;color:var(--ta);align-self:center;line-height:1;min-width:2ch;text-align:center;transition:color .35s">11</span>
+          <button class="btn btn-primary btn-sm" onclick="rollMulti()" style="align-self:center;margin-left:.2rem">Roll 2d6</button>
+        </div>
+      </div>
+    </div>
+    
+    <hr class="gold-rule">
+    
+    <!-- SECTION: Badges -->
+    <div class="section">
+      <div class="eyebrow">Badges &amp; Status Tags</div>
+      <div class="badge-row">
+        <span class="badge badge-accent">🔥 Hot Streak</span>
+        <span class="badge badge-team">Power Hitter</span>
+        <span class="badge badge-red">Injured</span>
+        <span class="badge badge-red">Ejected</span>
+        <span class="badge badge-outline">Veteran</span>
+        <span class="badge badge-outline">+1 vs LHP</span>
+        <span class="badge badge-wood">Pinch Runner</span>
+        <span class="badge badge-team">Starting P</span>
+        <span class="badge badge-chalk">Fatigued</span>
+        <span class="badge badge-accent">MVP</span>
+      </div>
+    </div>
+    
+    <hr class="gold-rule">
+    
+    <!-- SECTION: Toasts -->
+    <div class="section">
+      <div class="eyebrow">Notifications &amp; Toasts</div>
+      <div class="toast-stack">
+        <div class="toast toast-info">
+          <div class="toast-icon">📋</div>
+          <div><span class="toast-title">Manager's Note</span><span class="toast-text">Holloway is at 87 pitches. Consider pulling him before the 8th if the lead narrows.</span></div>
+        </div>
+        <div class="toast toast-success">
+          <div class="toast-icon">⚾</div>
+          <div><span class="toast-title">Run Scores!</span><span class="toast-text">Washington crosses the plate. Home team leads 7–6 after the Torres double.</span></div>
+        </div>
+        <div class="toast toast-danger">
+          <div class="toast-icon">✕</div>
+          <div><span class="toast-title">Inning Over</span><span class="toast-text">Third out recorded. Make a pitching change before the next half-inning begins.</span></div>
+        </div>
+      </div>
+    </div>
+    
+    <hr class="gold-rule">
+    
+    <!-- SECTION: Modals -->
+    <div class="section">
+      <div class="eyebrow">Modals &amp; Overlays</div>
+      <div class="flex-wrap">
+        <button class="btn btn-primary" onclick="openModal('modal-decision')">📋 Manager's Decision</button>
+        <button class="btn btn-team" onclick="openModal('modal-result')">⚾ At-Bat Result</button>
+        <button class="btn btn-wood" onclick="openModal('modal-profile')">👤 Player Profile</button>
+      </div>
+    </div>
+    
+    <hr class="gold-rule">
+    
+    <!-- SECTION: Forms -->
+    <div class="section">
+      <div class="eyebrow">Forms &amp; Inputs</div>
+      <div style="max-width:520px">
+        <div class="grid-2" style="margin-bottom:1rem">
+          <div class="form-group">
+            <label class="form-label">Team Name</label>
+            <input class="form-input" type="text" placeholder="Riverton Mudhens">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Season Year</label>
+            <input class="form-input" type="text" placeholder="1952">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Batting Position</label>
+            <select class="form-select">
+              <option>1 — Lead-off</option>
+              <option>2 — Contact</option>
+              <option selected>3 — Run Producer</option>
+              <option>4 — Cleanup</option>
+              <option>5 — Power</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Dice Modifier</label>
+            <select class="form-select">
+              <option>+0 (standard)</option>
+              <option selected>+1 (advantage)</option>
+              <option>+2 (hot streak)</option>
+              <option>−1 (fatigue)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Manager's Notes</label>
+          <input class="form-input" type="text" placeholder="e.g. Pull Torres if he reaches a full count…">
+        </div>
+      </div>
+    </div>
+    
+  </div><!-- /wrap -->
+  
+  <script>
+    /* ────────────────────────────────────────
+     TEAM DATA
+  ──────────────────────────────────────── */
+    const TEAMS = {
+      mudhens: {
+        name: 'Riverton Mudhens',
+        abbr: 'RVT',
+        tpDeep: '#0f2218',
+        tpDark: '#1c3a28',
+        tpMid: '#2d5a3d',
+        tpBright: '#3d7a52',
+        ta: '#c9a84c',
+        taLight: '#e8c97a',
+        taDark: '#8a6520',
+        scoreBg: '#090f0c',
+      },
+      miners: {
+        name: 'Ironwood Miners',
+        abbr: 'IRW',
+        tpDeep: '#0d1525',
+        tpDark: '#1a2540',
+        tpMid: '#2a3d62',
+        tpBright: '#3a5585',
+        ta: '#c06030',
+        taLight: '#e08858',
+        taDark: '#7a3010',
+        scoreBg: '#08090f',
+      },
+      gulls: {
+        name: 'Bayside Gulls',
+        abbr: 'BSG',
+        tpDeep: '#0d2028',
+        tpDark: '#1a3840',
+        tpMid: '#2a5860',
+        tpBright: '#3a7882',
+        ta: '#d4a84b',
+        taLight: '#f0cc72',
+        taDark: '#906818',
+        scoreBg: '#080f12',
+      },
+      dusters: {
+        name: 'Redrock Dusters',
+        abbr: 'RRD',
+        tpDeep: '#200c0c',
+        tpDark: '#3a1818',
+        tpMid: '#5a2828',
+        tpBright: '#7a3838',
+        ta: '#c8a060',
+        taLight: '#e8c080',
+        taDark: '#886020',
+        scoreBg: '#100808',
+      },
+      blues: {
+        name: 'Crestfall Blues',
+        abbr: 'CFB',
+        tpDeep: '#0c1020',
+        tpDark: '#182038',
+        tpMid: '#283860',
+        tpBright: '#384880',
+        ta: '#a8b8d0',
+        taLight: '#c8d8f0',
+        taDark: '#6878a0',
+        scoreBg: '#08080f',
+      },
+    };
+    
+    /* ────────────────────────────────────────
+       TEAM SWITCHING
+    ──────────────────────────────────────── */
+    function setTeam(key, btn) {
+      const html = document.documentElement;
+      
+      // Fade out
+      html.style.opacity = '0.45';
+      
+      setTimeout(() => {
+        // Swap data-team
+        html.setAttribute('data-team', key);
+        
+        // Update pill active states
+        document.querySelectorAll('.team-pill').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // Update JS-driven content
+        const t = TEAMS[key];
+        
+        document.querySelectorAll('.js-team-name').forEach(el => el.textContent = t.name);
+        document.querySelectorAll('.js-team-name-abbr').forEach(el => el.textContent = `⚾ ${t.name} — Home Lineup`);
+        document.querySelectorAll('.js-abbr').forEach(el => el.textContent = t.abbr);
+        document.querySelectorAll('.js-abbr-long').forEach(el => el.textContent = `${t.abbr} ▶`);
+        
+        // Update swatch blocks & hex labels
+        const swatchMap = {
+          'js-swatch-tp-deep': [t.tpDeep, 'js-hex-tp-deep'],
+          'js-swatch-tp-dark': [t.tpDark, 'js-hex-tp-dark'],
+          'js-swatch-tp-mid': [t.tpMid, 'js-hex-tp-mid'],
+          'js-swatch-tp-bright': [t.tpBright, 'js-hex-tp-bright'],
+          'js-swatch-ta': [t.ta, 'js-hex-ta'],
+          'js-swatch-ta-light': [t.taLight, 'js-hex-ta-light'],
+          'js-swatch-ta-dark': [t.taDark, 'js-hex-ta-dark'],
+        };
+        Object.entries(swatchMap).forEach(([cls, [color, hexCls]]) => {
+          const el = document.querySelector('.' + cls);
+          if (el) el.style.backgroundColor = color;
+          const hex = document.querySelector('.' + hexCls);
+          if (hex) hex.textContent = color;
+        });
+        
+        // Clipboard title
+        document.querySelectorAll('.cb-title').forEach(el => el.textContent = `${t.name} — Batting Order`);
+        
+        // Fade back in
+        html.style.opacity = '1';
+      }, 180);
+    }
+    
+    // Init swatches on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const t = TEAMS['mudhens'];
+      const map = {
+        'js-swatch-tp-deep': t.tpDeep,
+        'js-swatch-tp-dark': t.tpDark,
+        'js-swatch-tp-mid': t.tpMid,
+        'js-swatch-tp-bright': t.tpBright,
+        'js-swatch-ta': t.ta,
+        'js-swatch-ta-light': t.taLight,
+        'js-swatch-ta-dark': t.taDark,
+      };
+      Object.entries(map).forEach(([cls, color]) => {
+        const el = document.querySelector('.' + cls);
+        if (el) el.style.backgroundColor = color;
+      });
+    });
+    
+    /* ────────────────────────────────────────
+       MODALS
+    ──────────────────────────────────────── */
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    
+    document.querySelectorAll('.modal-backdrop').forEach(el => {
+      el.addEventListener('click', e => { if (e.target === el) el.classList.add('hidden'); });
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') document.querySelectorAll('.modal-backdrop:not(.hidden)').forEach(el => el.classList.add('hidden'));
+    });
+    
+    /* ────────────────────────────────────────
+       DICE
+    ──────────────────────────────────────── */
+    function rollDie(el, sides) {
+      el.classList.add('rolling');
+      setTimeout(() => {
+        el.textContent = Math.floor(Math.random() * sides) + 1;
+        el.classList.remove('rolling');
+      }, 380);
+    }
+    
+    function rollMulti() {
+      const d1 = document.getElementById('md1');
+      const d2 = document.getElementById('md2');
+      const tot = document.getElementById('md-total');
+      [d1, d2].forEach(d => d.classList.add('rolling'));
+      tot.style.opacity = '0.3';
+      const v1 = Math.floor(Math.random() * 6) + 1;
+      const v2 = Math.floor(Math.random() * 6) + 1;
+      setTimeout(() => {
+        d1.textContent = v1;
+        d2.textContent = v2;
+        tot.textContent = v1 + v2;
+        tot.style.opacity = '1';
+        [d1, d2].forEach(d => d.classList.remove('rolling'));
+      }, 380);
+    }
+  </script>
+</body>
+
+</html>

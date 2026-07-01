@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ballpark Sim - UI Theme Demo</title>
+    <style>
+        /* --- THEME VARIABLES (Easily change colors here for customization) --- */
+        :root {
+            --primary-color: #E81828;       /* Phillies Red */
+            --secondary-color: #002D62;     /* Accent Deep Blue */
+            --bg-main: #F4F3EF;             /* Ballpark Cream/Off-White */
+            --bg-card: #FFFFFF;             /* Pure White for clean contrast */
+            --text-dark: #1A1A1A;           /* Charcoal for crisp legibility */
+            --text-light: #FFFFFF;          /* Light text for dark backgrounds */
+            --field-green: #2E7D32;         /* Accent Grass Green for wins/success */
+            --border-radius: 8px;           /* Clean, slightly rounded corners */
+            --font-display: 'Impact', 'Arial Black', sans-serif; /* Jersey-style headers */
+            --font-body: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* --- GLOBAL STYLES --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            border-bottom: 4px solid var(--secondary-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 2rem;
+        }
+
+        h2 {
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 5px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        @media (min-width: 768px) {
+            .grid-layout {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        /* --- DASHBOARDS & BOARDS --- */
+        .board {
+            background-color: var(--bg-card);
+            border: 2px solid var(--secondary-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .scoreboard {
+            background-color: #111; /* Classic dark stadium scoreboard */
+            color: #FFB300; /* Amber/Neon digits */
+            font-family: monospace;
+            font-size: 1.5rem;
+            padding: 15px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            border: 4px solid #333;
+            margin-bottom: 15px;
+        }
+
+        .scoreboard-stat span {
+            display: block;
+            font-size: 0.8rem;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        /* --- BUTTONS & INTERACTIVES --- */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-family: var(--font-display);
+            font-size: 1rem;
+            text-transform: uppercase;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: transform 0.1s ease, filter 0.2s ease;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: var(--text-light);
+        }
+
+        .btn-utility {
+            background-color: #E0E0E0;
+            color: var(--text-dark);
+            font-family: var(--font-body);
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        /* --- THE 9-BASEBALL-CARD LINEUP (SINGLE ROW) --- */
+        .lineup-scroll-container {
+            width: 100%;
+            overflow-x: auto;
+            padding: 15px 5px;
+            margin-bottom: 25px;
+            background-color: rgba(0, 0, 0, 0.03);
+            border-radius: var(--border-radius);
+            /* Custom scrollbar for ballpark look */
+        }
+
+        .lineup-scroll-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        .lineup-scroll-container::-webkit-scrollbar-track {
+            background: #E0E0E0;
+            border-radius: var(--border-radius);
+        }
+        .lineup-scroll-container::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: var(--border-radius);
+        }
+
+        .lineup-row {
+            display: flex;
+            gap: 15px;
+            width: max-content; /* Forces all children to stay inline */
+        }
+
+        /* The Individual Player Card */
+        .player-card {
+            width: 160px;
+            background: var(--bg-card);
+            border: 3px solid var(--primary-color);
+            border-radius: 6px;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .player-card::before {
+            content: '';
+            position: absolute;
+            top: 2px; left: 2px; right: 2px; bottom: 2px;
+            border: 1px solid var(--secondary-color);
+            pointer-events: none;
+            border-radius: 4px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 4px;
+            margin-bottom: 8px;
+        }
+
+        .player-pos {
+            background-color: var(--secondary-color);
+            color: var(--text-light);
+            font-size: 0.75rem;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .player-num {
+            font-family: var(--font-display);
+            color: var(--primary-color);
+        }
+
+        .player-name {
+            font-weight: bold;
+            font-size: 0.95rem;
+            text-align: center;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Card Stats Matrix */
+        .card-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 4px;
+            font-size: 0.75rem;
+            background: #F9F9F9;
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid #E0E0E0;
+        }
+
+        .stat-box {
+            text-align: center;
+        }
+        .stat-label {
+            color: #666;
+            display: block;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+        }
+        .stat-val {
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        /* --- MODAL DIALOG --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            /* Hidden by default in actual execution: display: none; */
+        }
+
+        .modal-content {
+            background-color: var(--bg-card);
+            border: 4px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            max-width: 450px;
+            width: 90%;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            color: var(--secondary-color);
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .modal-body {
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        /* Simple placeholder graphic for dice results inside modal */
+        .dice-box {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 36px;
+            text-align: center;
+            border: 2px solid var(--text-dark);
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 1.4rem;
+            margin: 5px;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Ballpark Simulator</h1>
+        <div>
+            <button class="btn btn-utility" onclick="alert('Color customization trigger!')">Change Team Color</button>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- LINEUP TRACKER ROW -->
+        <h2>Active Batting Lineup (9-Card Row)</h2>
+        <div class="lineup-scroll-container">
+            <div class="lineup-row">
+                
+                <!-- Card 1 -->
+                <div class="player-card">
+                    <div class="card-header">
+                        <span class="player-pos">CF</span>
+                        <span class="player-num">#7</span>
+                    </div>
+                    <div class="player-name">T. Turner</div>
+                    <div class="card-stats">
+                        <div class="stat-box"><span class="stat-label">AVG</span><span class="stat-val">.302</span></div>
+                        <div class="stat-box"><span class="stat-label">HR</span><span class="stat-val">12</span></div>
+                        <div class="stat-box"><span class="stat-label">OBP</span><span class="stat-val">.355</span></div>
+                        <div class="stat-box"><span class="stat-label">SPD</span><span class="stat-val">A+</span></div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="player-card">
+                    <div class="card-header">
+                        <span class="player-pos">SS</span>
+                        <span class="player-num">#5</span>
+                    </div>
+                    <div class="player-name">B. Stott</div>
+                    <div class="card-stats">
+                        <div class="stat-box"><span class="stat-label">AVG</span><span class="stat-val">.267</span></div>
+                        <div class="stat-box"><span class="stat-label">HR</span><span class="stat-val">8</span></div>
+                        <div class="stat-box"><span class="stat-label">OBP</span><span class="stat-val">.329</span></div>
+                        <div class="stat-box"><span class="stat-label">SPD</span><span class="stat-val">B</span></div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="player-card">
+                    <div class="card-header">
+                        <span class="player-pos">DH</span>
+                        <span class="player-num">#3</span>
+                    </div>
+                    <div class="player-name">B. Harper</div>
+                    <div class="card-stats">
+                        <div class="stat-box"><span class="stat-label">AVG</span><span class="stat-val">.295</span></div>
+                        <div class="stat-box"><span class="stat-label">HR</span><span class="stat-val">28</span></div>
+                        <div class="stat-box"><span class="stat-label">OBP</span><span class="stat-val">.401</span></div>
+                        <div class="stat-box"><span class="stat-label">SPD</span><span class="stat-val">B-</span></div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="player-card">
+                    <div class="card-header">
+                        <span class="player-pos">3B</span>
+                        <span class="player-num">#28</span>
+                    </div>
+                    <div class="player-name">A. Bohm</div>
+                    <div class="card-stats">
+                        <div class="stat-box"><span class="stat-label">AVG</span><span class="stat-val">.280</span></div>
+                        <div class="stat-box"><span class="stat-label">HR</span><span class="stat-val">15</span></div>
+                        <div class="stat-box"><span class="stat-label">OBP</span><span class="stat-val">.342</span></div>
+                        <div class="stat-box"><span class="stat-label">SPD</span><span class="stat-val">C</span></div>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="player-card">
+                    <div class="card-header">
+                        <span class="player-pos">RF</span>
+                        <span class="player-num">#8</span>
+                    </div>
+                    <div class="player-name">N. Castellanos</div>
+                    <div class="card-stats">
+                        <div class="stat-box"><span class="stat-label">AVG</span><span class="stat-val">.254</span></div>
+                        <div class="stat-box"><span class="stat-label">HR</span><span class="stat-val">19</span></div>
+                        <div class="stat-box"><span class="stat-label">OBP</span><span class="stat-val">.308</span></div>
+                        <div class="stat-box"><span class="stat-label">SPD</span><span class="stat-val">C-</span></div>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="player-card">
+                    <div class="card-header">
+                        <span class="player-pos">LF</span>
+                        <span class="player-num">#16</span>
+                    </div>
+                    <div class="player-name">B. Marsh</div>
+                    <div class="card-stats">
+                        <div class="stat-box"><span class="stat-label">AVG</span><span class="stat-val">.261</span></div>
+                        <div class="stat-box"><span class="stat-label">HR</span><span class="stat-val">11</span></div>
+                        <div class="stat-box"><span class="stat-label">OBP</span><span class="stat-val">.335</span></div>
+                        <div class="stat-box"><span class="stat-label">SPD</span><span class="stat-val">B+</span></div>
+                    </div>
+                </div>
+
+                <!-- Card 7 -->
+                <div class="player-card">
+                    <div class="card-header">
+                        <span class="player-pos">C</span>
+                        <span class="player-num">#10</span>
+                    </div>
+                    <div class="player-name">J. Realmuto</div>
+                    <div class="card-stats">
+                        <div class="stat-box"><span class="stat-label">AVG</span><span class="stat-val">.258</span></div>
+                        <div class="stat-box"><span class="stat-label">HR</span><span class="stat-val">14</span></div>
+                        <div class="stat-box"><span class="stat-label">OBP</span><span class="stat-val">.318</span></div>
+                        <div class="stat-box"><span class="stat-label">SPD</span><span class="stat-val">A</span></div>
+                    </div>
+                </div>
+
+                <!-- Card 8 -->
+                <div class="player-card">
+                    <div class="card-header">
+                        <span class="player-pos">1B</span>
+                        <span class="player-num">#2</span>
+                    </div>
+                    <div class="player-name">K. Clemens</div>
+                    <div class="card-stats">
+                        <div class="stat-box"><span class="stat-label">AVG</span><span class="stat-val">.232</span></div>
+                        <div class="stat-box"><span class="stat-label">HR</span><span class="stat-val">4</span></div>
+                        <div class="stat-box"><span class="stat-label">OBP</span><span class="stat-val">.290</span></div>
+                        <div class="stat-box"><span class="stat-label">SPD</span><span class="stat-val">C</span></div>
+                    </div>
+                </div>
+
+                <!-- Card 9 -->
+                <div class="player-card">
+                    <div class="card-header">
+                        <span class="player-pos">2B</span>
+                        <span class="player-num">#61</span>
+                    </div>
+                    <div class="player-name">C. Sosa</div>
+                    <div class="card-stats">
+                        <div class="stat-box"><span class="stat-label">AVG</span><span class="stat-val">.250</span></div>
+                        <div class="stat-box"><span class="stat-label">HR</span><span class="stat-val">3</span></div>
+                        <div class="stat-box"><span class="stat-label">OBP</span><span class="stat-val">.298</span></div>
+                        <div class="stat-box"><span class="stat-label">SPD</span><span class="stat-val">B</span></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- MAIN LAYOUT PIECES -->
+        <div class="grid-layout">
+            
+            <!-- Left Side: Main Play Dashboard -->
+            <div class="board">
+                <h2>Field & Action Trackers</h2>
+                <p style="margin-bottom: 15px;">Use buttons to settle at-bats, execute strategy decisions, or roll your virtual dice arrays.</p>
+                
+                <div class="btn-group">
+                    <button class="btn btn-primary">Roll Dice (At-Bat)</button>
+                    <button class="btn btn-secondary">Intentional Walk</button>
+                    <button class="btn btn-utility">Bunt Runner</button>
+                    <button class="btn btn-utility">Steal Base</button>
+                </div>
+            </div>
+
+            <!-- Right Side: Scoreboard / Tracker Stand -->
+            <div class="board">
+                <h2>Game Status</h2>
+                
+                <!-- Digital Scoreboard -->
+                <div class="scoreboard">
+                    <div class="scoreboard-stat"><span>Away</span>0</div>
+                    <div class="scoreboard-stat"><span>Home</span>3</div>
+                    <div class="scoreboard-stat"><span>Inning</span>▲ 4th</div>
+                </div>
+
+                <div class="scoreboard">
+                    <div class="scoreboard-stat"><span>Balls</span>2</div>
+                    <div class="scoreboard-stat"><span>Strikes</span>1</div>
+                    <div class="scoreboard-stat"><span>Outs</span>2</div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- INLINE STATIC MODAL DEMO (To see layout & design context) -->
+    <div class="modal-overlay" id="demoModal">
+        <div class="modal-content">
+            <div class="modal-title">🎲 Dice Roll Result</div>
+            <div class="modal-body">
+                <p style="margin-bottom: 10px;">Bryce Harper rolled a <strong>7</strong> against the pitcher card:</p>
+                <div style="text-align: center; margin: 15px 0;">
+                    <div class="dice-box">3</div>
+                    <div class="dice-box">4</div>
+                </div>
+                <p style="color: var(--field-green); font-weight: bold; text-align: center; font-size: 1.2rem;">RESULT: DOUBLE ⚾</p>
+            </div>
+            <div class="btn-group" style="justify-content: flex-end;">
+                <button class="btn btn-secondary" onclick="document.getElementById('demoModal').style.display='none'">Advance Runners</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
