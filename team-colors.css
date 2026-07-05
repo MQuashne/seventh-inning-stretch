@@ -1,7 +1,127 @@
     :root,
+        [data-team="LAA"] {
+      --tp: #ba0021;
+      --ts: #003263;
+    }
+    
     [data-team="ARI"] {
-      --tp: #AA182C;
+      --tp: #aa182c;
       --ts: #000000;
+    }
+    
+    [data-team="BAL"] {
+      --tp: #000000;
+      --ts: #df4601;
+    }
+    
+    [data-team="BOS"] {
+      --tp: #0d2b56;
+      --ts: #bd3039;
+    }
+    
+    [data-team="CHC"] {
+      --tp: #0e3386;
+      --ts: #cc3433;
+    }
+    
+    [data-team="CIN"] {
+      --tp: #c6011f;
+      --ts: #000000;
+    }
+    
+    [data-team="CLE"] {
+      --tp: #002b5c;
+      --ts: #e31937;
+    }
+    
+    [data-team="COL"] {
+      --tp: #33006f;
+      --ts: #c4ced4;
+    }
+    
+    [data-team="DET"] {
+      --tp: #0a2240;
+      --ts: #ff4713;
+    }
+    
+    [data-team="HOU"] {
+      --tp: #002d62;
+      --ts: #eb6e1f;
+    }
+    
+    [data-team="KC"] {
+      --tp: #0031a7;
+      --ts: #ba9863;
+    }
+    
+    [data-team="LAD"] {
+      --tp: #005a9c;
+      --ts: #ef3e42;
+    }
+    
+    [data-team="WSH"] {
+      --tp: #ab0003;
+      --ts: #11225b;
+    }
+    
+    [data-team="NYM"] {
+      --tp: #002d72;
+      --ts: #ff5910;
+    }
+    
+    [data-team="OAK"] {
+      --tp: #003831;
+      --ts: #efb21e;
+    }
+    
+    [data-team="PIT"] {
+      --tp: #000000;
+      --ts: #fdb827;
+    }
+    
+    [data-team="SD"] {
+      --tp: #2f241d;
+      --ts: #ffc425;
+    }
+    
+    [data-team="SEA"] {
+      --tp: #0c2c56;
+      --ts: #005c5c;
+    }
+    
+    [data-team="SF"] {
+      --tp: #000000;
+      --ts: #fd5a1e;
+    }
+    
+    [data-team="STL"] {
+      --tp: #be0a14;
+      --ts: #001541;
+    }
+    
+    [data-team="TB"] {
+      --tp: #092c5c;
+      --ts: #8fbce6;
+    }
+    
+    [data-team="TEX"] {
+      --tp: #1e376d;
+      --ts: #c0111f;
+    }
+    
+    [data-team="TOR"] {
+      --tp: #134a8e;
+      --ts: #1d2d5c;
+    }
+    
+    [data-team="MIN"] {
+      --tp: #031f40;
+      --ts: #e20e32;
+    }
+    
+    [data-team="PHI"] {
+      --tp: #c20c31;
+      --ts: #002D72;
     }
     
     [data-team="ATL"] {
@@ -9,51 +129,35 @@
       --ts: #ba0c2f;
     }
     
-    [data-team="BAL"] {
-      --tp: #DF4601;
-      --ts: #000000;
-    }
-    
-    [data-team="PHI"] {
-      --tp: #E81828;
-      --ts: #002d72;
-    }
-    
     [data-team="CWS"] {
-  --tp: #000000;
-  --ts: #C4CED4;
-}
-
-    [data-team="LAA"] {
-      --tp: #ba0021;
-      --ts: #003236;
+      --tp: #000000;
+      --ts: #c4ced4;
     }
-   
-   [data-team="CHC"] {
-  --tp: #0e3386;
-  --ts: #cc3433;
-}
-
-[data-team="CIN"] {
-  --tp: #c6011f;
-  --ts: #000000;
-}
-
-[data-team="CLE"] {
-  --tp: #002b5c;
-  --ts: #e31937;
-}
-
-[data-team="COL"] {
-  --tp: #33006f;
-  --ts: #c4ced4;
-}
-   
-   
-   
+    
+    [data-team="MIA"] {
+      --tp: #000000;
+      --ts: #00a3e0;
+    }
+    
+    [data-team="NYY"] {
+      --tp: #132448;
+      --ts: #c4ced4;
+    }
+    
+    [data-team="MIL"] {
+      --tp: #13294b;
+      --ts: #ffc72c;
+    }
+    
+    
+    
     :root {
       --tp-light: oklch(from var(--tp) calc(l + 0.12) c h);
       --tp-dark: oklch(from var(--tp) calc(l - 0.12) c h);
       --ts-light: oklch(from var(--ts) calc(l + 0.12) c h);
       --ts-dark: oklch(from var(--ts) calc(l - 0.12) c h);
+      --tp-text: contrast-color(var(--tp));
+      --ts-text: contrast-color(var(--ts));
     }
+    
+    

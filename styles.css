@@ -39,12 +39,13 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    justify-content:flex-start;
     /* Takes full window height */
 }
 
 .main-content {
-    flex: 1;
     padding:0 5%;
+    flex:1;
     
 }
 
@@ -352,7 +353,7 @@ body {
 .section-ts {
     display: flex;
     flex-direction: column;
-    background: var(--ts-dark);
+    background: var(--ts);
     position: relative;
     padding: 2%;
 }
@@ -429,4 +430,49 @@ body {
     width: 100%;
     flex: 1;
     font-weight: 400;
+}
+#insert{
+    width:30vw;
+    height:calc(30vw * 3.5 / 2.5);
+    display:flex;
+}
+#insert svg{
+    width:100%;
+    height:auto;
+    aspect-ratio: 7 / 5;
+}
+
+#flexbox-outcomes{
+    width:195px;
+    height:61px;
+    position:absolute;
+    top:285px;
+    left:4px;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-items:center;
+    gap:2px;
+}
+
+.outcome{
+    height:calc(50% - 2px);
+    width:calc(50% - 2px);
+   
+   
+}
+
+.outcome svg{
+    height: 100%;
+    display: inline;
+
+}
+
+#card-test{
+  
+    overflow:hidden;
+    width:50vw;
+}
+#card-test svg{
+    
 }

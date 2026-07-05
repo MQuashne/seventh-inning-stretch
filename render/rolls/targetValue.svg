@@ -9,7 +9,7 @@ a 10 10 0 0 0 10 10
 h 60
 a 10 10 0 0 0 10 -10
 v -50
-" stroke="white" stroke-width="2"/>
-<text x="125" y="55" fill="white" font-family="Arial" text-anchor="middle" alignment-baseline="middle" font-size="60px" font-weight="800">#</text>
-  <text x="50" y="55" fill="white" font-family="Arial" text-anchor="middle" alignment-baseline="middle" font-size="60px" font-weight="800">X</text>
+" stroke="white" stroke-width="2" class="tp-stroke"/>
+<text x="125" y="55" fill="white" font-family="Arial" text-anchor="middle" alignment-baseline="middle" font-size="60px" font-weight="800" class="tp-text">#</text>
+  <text x="50" y="55" fill="white" font-family="Arial" text-anchor="middle" alignment-baseline="middle" font-size="60px" font-weight="800" class="tp-text">X</text>
 </svg>

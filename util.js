@@ -19,6 +19,18 @@ export const $a = id => document.querySelectorAll(`.${id}`);
 
 export const on = (el, event, cb) => el.addEventListener(event, cb);
 
+export async function loadCard(file,container) {
+  const response = await fetch(file);
+  const svg = await response.text();
+  container.innerHTML=svg;
+}
+
+export function randInt(min,max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 /*
-import {$n, $t, $c, $a, on} from '../util.js'
+import {$n, $t, $c, $a, on, randInt} from '../util.js'
 */

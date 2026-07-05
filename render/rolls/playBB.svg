@@ -11,8 +11,6 @@
     <path d="
   M 50 98
   l 48 -48
-  l -48 -48
-  l -48 48
   " stroke="white" stroke-width="4" />
 
 <!--
@@ -28,5 +26,5 @@ a 10 10 0 0 0 10 -10
 v -50
 " stroke="white" stroke-width="2"/>
 -->
-<text x="50" y="53" fill="white" font-family="Arial" text-anchor="middle" alignment-baseline="middle" font-size="36px" font-weight="800">3B</text>
+<text x="50" y="53" fill="white" font-family="Arial" text-anchor="middle" alignment-baseline="middle" font-size="42px" font-weight="800">BB</text>
 </svg>

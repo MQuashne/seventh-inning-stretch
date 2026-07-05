@@ -2,12 +2,14 @@ import { players } from '../model/players.js'
 import { pitchers } from '../model/pitchers.js'
 import { G } from '../model/game.js'
 import { renderCalendarEvents } from '../render/renderCalendarEvents.js'
-import {navSetup} from './nav.js'
-import {value} from '../render/rollSymbols.js'
+import { navSetup } from './nav.js'
+import { $n, $t, $c, $a, on, loadCard, randInt } from '../util.js'
+import { buildCard } from '../render/buildCard.js'
 
-const $t = id => document.getElementById(id);
-const $c = id => document.querySelector(`.${id}`);
-const on = (el, event, cb) => el.addEventListener(event, cb);
+
+
+
+
 
 function shuffle(array) {
   
@@ -41,8 +43,11 @@ export function gameSetup() {
   navSetup();
   //Show Calendar
   renderCalendarEvents();
-  const insert=$t("insert");
-  insert.innerHTML=value(3,2);
+  
+  const cardTest = $t("card-test");
+  cardTest.innerHTML = buildCard(players[0]);
+  
+
   
   //Show roster
   /*const lineupDiv = $t("lineup");
