@@ -23,6 +23,11 @@
     src: url("../../../public/assets/BaseballClubSolid-E4X69.ttf");
 }
 
+@font-face {
+    font-family: 'Proxima Nova';
+    src: url("https://www.mlbstatic.com/mlb.com/fonts/proxima-nova-regular.woff2")
+}
+
 body {
     /*background-color: #2d5a3D;*/
     box-sizing: border-box;
@@ -458,21 +463,26 @@ body {
 .outcome{
     height:calc(50% - 2px);
     width:calc(50% - 2px);
-   
-   
 }
 
 .outcome svg{
     height: 100%;
     display: inline;
-
 }
 
 #card-test{
-  
-    overflow:hidden;
+   /* overflow:hidden;
     width:50vw;
+    height:auto;*/
+    width:50vw;
+   
 }
-#card-test svg{
-    
+
+
+.glyph {
+    width: 0.9em;
+    height: 0.9em;
+    display: inline-block;
+    vertical-align: -0.12em;
+    flex: none;
 }

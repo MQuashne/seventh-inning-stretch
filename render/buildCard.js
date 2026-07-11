@@ -1,4 +1,5 @@
-import {renderCondition} from './rollSymbols.js'
+import { renderCondition, box } from './rollSymbols.js'
+import { buildPlay } from './rolls/plays.js'
 
 export function buildCard(player) {
   /*---------
@@ -21,12 +22,6 @@ export function buildCard(player) {
     // Return black if bright, white if dark
     return (yiq >= 128) ? '#000000' : '#FFFFFF';
   }
-  
-  
-  
-  
-  
-  
   
   let tierColor = "#C4CED4";
   
@@ -58,15 +53,15 @@ export function buildCard(player) {
   
   const defs = `  <defs id="defs1">
     <linearGradient id="linearGradient14686">
-      <stop style="stop-color:#ffc0c0;stop-opacity:.8" offset="0" id="stop14682"/>
-      <stop style="stop-color:#ffe0c0;stop-opacity:.6" offset=".13" id="stop14690"/>
-      <stop style="stop-color:#ffffc0;stop-opacity:.4" offset=".25" id="stop14692"/>
-      <stop style="stop-color:#c0ffc0;stop-opacity:.2" offset=".37" id="stop14694"/>
-      <stop style="stop-color:#c0c0ff;stop-opacity:.3" offset=".5" id="stop14684"/>
-      <stop style="stop-color:#ffc0ff;stop-opacity:.7" offset=".63" id="stop19042"/>
-      <stop style="stop-color:#ffc0c0;stop-opacity:.2" offset=".749" id="stop19044"/>
-      <stop style="stop-color:#ffe0c0;stop-opacity:.4" offset=".87" id="stop19046"/>
-      <stop style="stop-color:#ffffc0;stop-opacity:.7" offset="1" id="stop19048"/>
+      <stop style="stop-color:#ffc0c0;stop-opacity:.8" offset="0"/>
+      <stop style="stop-color:#ffe0c0;stop-opacity:.6" offset=".13"/>
+      <stop style="stop-color:#ffffc0;stop-opacity:.4" offset=".25"/>
+      <stop style="stop-color:#c0ffc0;stop-opacity:.2" offset=".37"/>
+      <stop style="stop-color:#c0c0ff;stop-opacity:.3" offset=".5"/>
+      <stop style="stop-color:#ffc0ff;stop-opacity:.7" offset=".63"/>
+      <stop style="stop-color:#ffc0c0;stop-opacity:.2" offset=".749"/>
+      <stop style="stop-color:#ffe0c0;stop-opacity:.4" offset=".87"/>
+      <stop style="stop-color:#ffffc0;stop-opacity:.7" offset="1"/>
     </linearGradient>
     <linearGradient xlink:href="#linearGradient14686" id="linearGradient16274" gradientUnits="userSpaceOnUse" x1="353.142" y1="213.878" x2="413.397" y2="163.044" gradientTransform="translate(-350.36 -124.291)" spreadMethod="pad"/>
     <path id="rect5833" d="M942 164h23v55h-23z"/>
@@ -77,8 +72,8 @@ export function buildCard(player) {
   </defs>`;
   cardSVG += defs;
   
-  const bg =`<image href="../public/assets/players/${player.id}.png" y="42" height="250" width="250" clip-path="url(#bgClip)"></image>`
-  cardSVG+=bg;
+  const bg = `<image href="../public/assets/players/${player.id}.png" y="42" height="250" width="250" clip-path="url(#bgClip)"></image>`
+  cardSVG += bg;
   
   const geom = `  <g id="card">
     <g id="card-art" transform="scale(3.7794)"><path id="left-bar-pri" style="stroke-width:.100889" class="tp" d="M0 0h5.292v92.604H0Z"/>
@@ -95,7 +90,7 @@ export function buildCard(player) {
     <path id="accent-tier" class="tier" style="stroke-width:.035477fill:white;" d="M0 9.575v.926h35.381l.926-.926z"/>`;
   cardSVG += geom;
   
-  const playerText = `    <text xml:space="preserve" style="font-size:3.95446px;-inkscape-font-specification:&quot;Papyrus, Normal&quot;;text-align:center;text-anchor:middle;fill:#eeff38;stroke:#000;stroke-width:0" x="17.995" y="5.918" id="player-name"><tspan style="font-style:normal;font-variant:normal;font-weight:400;font-stretch:normal;font-size:3.95446px;font-family:Arial;-inkscape-font-specification:Arial;fill:${tpText};fill-opacity:1;stroke:#fff;stroke-width:0;stroke-opacity:1" x="17.995" y="5.918" id="first-name">${player.first} <tspan style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-family:Arial;;fill:${tpText};fill-opacity:1;stroke:#fff;stroke-width:0;stroke-opacity:1" id="last-name">${player.last}</tspan></tspan></text>
+  const playerText = `<text xml:space="preserve" style="font-size:3.95446px;-inkscape-font-specification:&quot;Papyrus, Normal&quot;;text-align:center;text-anchor:middle;fill:#eeff38;stroke:#000;stroke-width:0" x="17.995" y="5.918" id="player-name"><tspan style="font-style:normal;font-variant:normal;font-weight:400;font-stretch:normal;font-size:3.95446px;font-family:Arial;-inkscape-font-specification:Arial;fill:${tpText};fill-opacity:1;stroke:#fff;stroke-width:0;stroke-opacity:1" x="17.995" y="5.918" id="first-name">${player.first} <tspan style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-family:Arial;;fill:${tpText};fill-opacity:1;stroke:#fff;stroke-width:0;stroke-opacity:1" id="last-name">${player.last}</tspan></tspan></text>
     <text xml:space="preserve" transform="translate(-254.506 -1.665)scale(.28642)" id="player-num" style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:26.6667px;font-family:Arial;;text-align:center;white-space:pre;shape-inside:url(#rect2178);display:inline;fill:${tierText};fill-opacity:1;stroke:#000;stroke-width:0"><tspan text-anchor="middle" x="1090.288" y="34.628" id="tspan1372">${player.number}</tspan></text>`;
   cardSVG += playerText;
   
@@ -126,51 +121,113 @@ export function buildCard(player) {
     cardSVG += mod;
   }
   
-  for (let i=0; i<player.tier;i++){
-  const star1 = `<path
+  for (let i = 0; i < player.tier; i++) {
+    const star1 = `<path
        style="fill-opacity:1;fill:#ffd100;stroke:#000000;stroke-width:0"
        id="star-1"
        d="m 274.76844,40.775703 -15.9704,14.014389 2.49087,21.101002 -18.2636,-10.858066 -19.29853,8.889518 4.68287,-20.725042 -14.41801,-15.606978 21.15778,-1.950715 10.38771,-18.535161 8.39335,19.519435 z"
        transform="matrix(0.06799823,-0.00356319,0.00356319,0.06799823,46.74298,${14 + 5.5 * i})" />`;
-  cardSVG += star1;
+    cardSVG += star1;
   }
-  /*
-  if (player.tier > 1) {
-    const star2 = `<path
-       style="fill-opacity:1;fill:#ffd100;stroke:#000000;stroke-width:0"
-       id="star-2"
-       d="m 274.76844,40.775703 -15.9704,14.014389 2.49087,21.101002 -18.2636,-10.858066 -19.29853,8.889518 4.68287,-20.725042 -14.41801,-15.606978 21.15778,-1.950715 10.38771,-18.535161 8.39335,19.519435 z"
-       transform="matrix(0.06799823,-0.00356319,0.00356319,0.06799823,46.74298,20.228033)" />`;
-    cardSVG += star2;
-  }
-  
-  if (player.tier > 2) {
-    const star3 = `     <path
-       style="fill-opacity:1;fill:#ffd100;stroke:#000000;stroke-width:0"
-       id="star-3"
-       d="m 274.76844,40.775703 -15.9704,14.014389 2.49087,21.101002 -18.2636,-10.858066 -19.29853,8.889518 4.68287,-20.725042 -14.41801,-15.606978 21.15778,-1.950715 10.38771,-18.535161 8.39335,19.519435 z"
-       transform="matrix(0.06799823,-0.00356319,0.00356319,0.06799823,46.742981,25.731555)" />`;
-    cardSVG += star3;
-  }
-  */
   cardSVG += "</g>"
-  //OUTCOME BUILDER, currently builds 4 every time
-  let outcomes = `<foreignObject x="4" y="285" width="195" height="61">
-  <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: stretch; gap: 1px; width: 100%; height: 100%;">`
   
-  player.outcomes.forEach((outcome) => {
-    outcomes+=`<div xmlns="http://www.w3.org/1999/xhtml" style="box-sizing:border-box;flex:1 1 calc(50% - 2px);min-height:calc(50% - 2px);max-width:75%;display:flex;justify-content:center;align-items:center;">${renderCondition[outcome.type](outcome.count ?? 1,outcome.target ?? 1,outcome.play)}</div>`
-  });
-
-  
-  outcomes+=`</div>
+  //ROLL CONDITIONS - BATTERS
+  if (player.condition) {
+    if (player.condition === "roll") {
+      const gap = 4; // px
+      const n = player.outcomes.length;
+      
+      let outcomes = `<foreignObject x="4" y="285" width="195" height="61">
+  <div xmlns="http://www.w3.org/1999/xhtml" style="box-sizing:border-box;display:flex;flex-wrap:wrap;justify-content:center;align-content:center;align-items:center;gap:${gap}px;width:100%;height:100%;">`;
+      
+      player.outcomes.forEach((outcome) => {
+        let w, h;
+        if (n === 1) {
+          w = '75%';
+          h = '100%';
+        } else if (n === 2) {
+          w = `calc(50% - ${gap / 2}px)`;
+          h = '100%';
+        } else {
+          // 3 or 4: two per row, each half height
+          w = `calc(50% - ${gap / 2}px)`;
+          h = `calc(50% - ${gap / 2}px)`;
+        }
+        
+        outcomes += `<div xmlns="http://www.w3.org/1999/xhtml" style="box-sizing:border-box;flex:0 0 ${w};width:${w};height:${h};display:flex;justify-content:center;align-items:center;">${renderCondition[outcome.type](outcome.count ?? 1, outcome.target ?? 1, outcome.play)}</div>`;
+      });
+      
+      outcomes += `</div>
   </foreignObject>`;
+      
+      cardSVG += outcomes;
+    } else if (player.condition === "opt" || player.condition === "auto") {
+      
+      //AUTO/OPT CONDITIONS
+      
+      let condition = `<foreignObject x="10" y="285" width="210" height="61"><div xmlns="http://www.w3.org/1999/xhtml" style="box-sizing:border-box;display:flex;justify-content:center;align-content:center;align-items:center;gap:2px;width:100%;height:100%;text-align:center;">`;
+      const conSymbol =
+        `<div xmlns="http://www.w3.org/1999/xhtml" style="box-sizing:border-box;width:8%;height:100%;display:flex;justify-content:center;align-items:center;flex:0.75; padding:1%"><svg width ="95%" height="95%" viewBox = "0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy= "50" r="45" stroke="white" fill="transparent" stroke-width="4"></circle>
+  ${player.action.type==="opt" ? `<text x="50" y="92" fill="white" font-family="Arial" text-anchor="middle" alignment-baseline="middle" font-size="144px" font-weight="800">*</text></svg>` : `<polygon points="75,50 35,70 35,30" fill="white"></polygon></svg>`}
+    </div>`;
+      condition += conSymbol;
+      const condText = `<div xmlns="http://www.w3.org/1999/xhtml" style="box-sizing:border-box;width:72%;min-width:0;word-break:break-word;overflow-wrap:break-word;color:white;font-family:Arial;font-size:0.8em;flex:3;">${player.action.desc}</div>`;
+      condition += condText;
+      
+      const condPlay = player.action.play ?
+        `<div xmlns="http://www.w3.org/1999/xhtml" style="box-sizing:border-box;width:20%;height:100%;display:flex;justify-content:center;align-items:center;flex:1;padding:0%;"><svg width="100%" xmlns="http://www.w3.org/2000/svg" viewBox = "0 0 125 100">${buildPlay(player.action.play,-10)}</svg></div>` : '';
+      
+      condition += condPlay
+      
+      condition += `</div></foreignObject>`;
+      cardSVG += condition;
+      
+      //SPECIAL CONDITIONS
+      
+    } else if (player.condition === "sp-ec") {
+      
+      //EDDIE CAMPBELL
+      
+      let condition = `<foreignObject x="10" y="285" width="210" height="61"><div xmlns="http://www.w3.org/1999/xhtml" style="box-sizing:border-box;display:flex;justify-content:center;align-items:center;gap:1px;width:100%;height:100%;flex-direction:column;">`;
+      condition += `<div style="width:100%;height:calc(50% - 6px);min-height:0;display:flex;justify-content:center;gap:1px;">`
+      condition += box("X");
+      condition += box("X");
+      condition += box("Y");
+      condition += box("Y");
+      condition += `<svg height="100%" xmlns="http://www.w3.org/2000/svg" viewBox = "0 0 125 100">${buildPlay("HR",-10)}</svg>`;
+      condition += "</div>";
+      condition += `<div style="width:100%;height:calc(50% + 4px);min-height:0;display:flex;justify-content:center;gap:10px;word-break:break-word;overflow-wrap:break-word;color:white;font-family:Arial;font-size:0.8em;text-align:center;">You may not use adjust tokens during this turn</div>`;
+      condition += `</div></foreignObject>`;
+      cardSVG += condition;
+    } else if (player.condition === "sp-kw") {
+      
+      //Kenny Williams
+      
+      let condition = `<foreignObject x="10" y="285" width="210" height="61"><div xmlns="http://www.w3.org/1999/xhtml" style="box-sizing:border-box;display:flex;justify-content:center;align-items:center;gap:1px;width:100%;height:100%;flex-direction:column;">`;
+      condition += `<div style="width:100%;height:58%;min-height:0;display:flex;justify-content:center;gap:1px;">`
+      condition += renderCondition["max"](0, 4, "2B");
+      condition += "</div>";
+      condition += `<div style="width:100%;height:calc(42% - 1px);min-height:0;display:flex;justify-content:center;gap:10px;word-break:break-word;overflow-wrap:break-word;color:white;font-family:Arial;font-size:0.8em;text-align:center;">If max is less than 4, all runners out</div>`;
+      condition += `</div></foreignObject>`;
+      cardSVG += condition;
+    } else if (player.condition === "sp-tr") {
+      
+      //Tomas Rivera
+      
+      let condition = `<foreignObject x="10" y="285" width="210" height="61"><div xmlns="http://www.w3.org/1999/xhtml" style="box-sizing:border-box;display:flex;justify-content:center;align-items:center;gap:1px;width:100%;height:100%;flex-direction:column;">`;
+      condition += `<div style="width:100%;height:40%;min-height:0;display:flex;justify-content:center;gap:1px;">`
+      condition += renderCondition["range"](0, 3, "1B");
+      condition += "</div>";
+      condition += `<div style="width:100%;height:calc(60% - 1px);min-height:0;display:flex;justify-content:center;gap:10px;word-break:break-word;overflow-wrap:break-word;color:white;font-family:Arial;font-size:0.8em;text-align:center;">and all runners advance one extra base. +1 d6 for each run scored.</div>`;
+      condition += `</div></foreignObject>`;
+      cardSVG += condition;
+    }
+  }
   
-  
-  cardSVG += outcomes;
+
   const foil = `<g id="foil" transform="scale(3.7794)"><path
        id="foil-cover"
-       style="opacity:0.4;mix-blend-mode:colir-dodge;fill:url(#linearGradient16274);fill-opacity:1;stroke:#000000;stroke-width:0"
+       style="opacity:0.4;mix-blend-mode:color-dodge;fill:url(#linearGradient16274);fill-opacity:1;stroke:#000000;stroke-width:0"
        d="M 5e-7,5.0000002e-7 V 11.112501 v 1.587501 1.852081 51.764798 7.9375 18.349784 H 66.14583 v -4.38009 -11.138864 -10.17767 -2.1146 -0.58756 -2.115644 -0.58756 -2.11511 -0.58756 -2.11512 -0.58756 -2.11512 -0.58756 -2.11512 -0.58756 -2.11511 -0.58756 -2.11512 -0.58756 -2.11512 -0.58704 -2.11564 -0.58756 -2.11511 V 37.178086 35.06349 11.112501 5e-7 Z M 42.350379,11.112501 h 18.50378 v 65.97271 h -5.84719 l -5.64771,-5.64772 h -4.77956 l -1.45469,-1.45469 h -2.11511 l 1.45469,1.45469 h -0.58756 l -1.4547,-1.45469 h -2.11511 l 1.45469,1.45469 h -0.58756 l -1.45469,-1.45469 h -2.11512 l 1.45469,1.45469 h -0.14211 l -5.12062,-5.12061 H 5.2916605 V 15.153593 l 0.60152,-0.60151 h 0.58756 l -0.91209,0.91209 h 2.11511 l 0.9120898,-0.91209 h 0.587559 l -0.9120788,0.91209 H 10.38644 l 0.91209,-0.91209 h 0.58756 l -0.91209,0.91209 h 2.11512 l 0.91209,-0.91209 h 0.58756 l -0.91209,0.91209 h 2.11512 l 0.91209,-0.91209 h 0.58756 l -0.91209,0.91209 h 2.11511 l 0.91209,-0.91209 h 0.58756 l -0.91209,0.91209 h 2.11512 l 0.91209,-0.91209 h 0.58756 l -0.91209,0.91209 h 2.11512 l 0.91209,-0.91209 h 0.58756 l -0.91209,0.91209 h 2.11512 l 0.91209,-0.91209 h 0.58756 l -0.91209,0.91209 h 2.11511 l 0.91209,-0.91209 h 6.81096 l 1.85208,-1.852081 h 1.88257 z" /></g>`;
   cardSVG += foil;
   
@@ -183,10 +240,4 @@ export function buildCard(player) {
   cardSVG += svgFooter;
   
   return cardSVG
-  
-  
-  
-  
-  
-  
 }

@@ -1,163 +1,764 @@
-    :root,
-        [data-team="LAA"] {
-      --tp: #ba0021;
-      --ts: #003263;
-    }
-    
-    [data-team="ARI"] {
-      --tp: #aa182c;
-      --ts: #000000;
-    }
-    
-    [data-team="BAL"] {
-      --tp: #000000;
-      --ts: #df4601;
-    }
-    
-    [data-team="BOS"] {
-      --tp: #0d2b56;
-      --ts: #bd3039;
-    }
-    
-    [data-team="CHC"] {
-      --tp: #0e3386;
-      --ts: #cc3433;
-    }
-    
-    [data-team="CIN"] {
-      --tp: #c6011f;
-      --ts: #000000;
-    }
-    
-    [data-team="CLE"] {
-      --tp: #002b5c;
-      --ts: #e31937;
-    }
-    
-    [data-team="COL"] {
-      --tp: #33006f;
-      --ts: #c4ced4;
-    }
-    
-    [data-team="DET"] {
-      --tp: #0a2240;
-      --ts: #ff4713;
-    }
-    
-    [data-team="HOU"] {
-      --tp: #002d62;
-      --ts: #eb6e1f;
-    }
-    
-    [data-team="KC"] {
-      --tp: #0031a7;
-      --ts: #ba9863;
-    }
-    
-    [data-team="LAD"] {
-      --tp: #005a9c;
-      --ts: #ef3e42;
-    }
-    
-    [data-team="WSH"] {
-      --tp: #ab0003;
-      --ts: #11225b;
-    }
-    
-    [data-team="NYM"] {
-      --tp: #002d72;
-      --ts: #ff5910;
-    }
-    
-    [data-team="OAK"] {
-      --tp: #003831;
-      --ts: #efb21e;
-    }
-    
-    [data-team="PIT"] {
-      --tp: #000000;
-      --ts: #fdb827;
-    }
-    
-    [data-team="SD"] {
-      --tp: #2f241d;
-      --ts: #ffc425;
-    }
-    
-    [data-team="SEA"] {
-      --tp: #0c2c56;
-      --ts: #005c5c;
-    }
-    
-    [data-team="SF"] {
-      --tp: #000000;
-      --ts: #fd5a1e;
-    }
-    
-    [data-team="STL"] {
-      --tp: #be0a14;
-      --ts: #001541;
-    }
-    
-    [data-team="TB"] {
-      --tp: #092c5c;
-      --ts: #8fbce6;
-    }
-    
-    [data-team="TEX"] {
-      --tp: #1e376d;
-      --ts: #c0111f;
-    }
-    
-    [data-team="TOR"] {
-      --tp: #134a8e;
-      --ts: #1d2d5c;
-    }
-    
-    [data-team="MIN"] {
-      --tp: #031f40;
-      --ts: #e20e32;
-    }
-    
-    [data-team="PHI"] {
-      --tp: #c20c31;
-      --ts: #002D72;
-    }
-    
-    [data-team="ATL"] {
-      --tp: #0c2340;
-      --ts: #ba0c2f;
-    }
-    
-    [data-team="CWS"] {
-      --tp: #000000;
-      --ts: #c4ced4;
-    }
-    
-    [data-team="MIA"] {
-      --tp: #000000;
-      --ts: #00a3e0;
-    }
-    
-    [data-team="NYY"] {
-      --tp: #132448;
-      --ts: #c4ced4;
-    }
-    
-    [data-team="MIL"] {
-      --tp: #13294b;
-      --ts: #ffc72c;
-    }
-    
-    
-    
-    :root {
-      --tp-light: oklch(from var(--tp) calc(l + 0.12) c h);
-      --tp-dark: oklch(from var(--tp) calc(l - 0.12) c h);
-      --ts-light: oklch(from var(--ts) calc(l + 0.12) c h);
-      --ts-dark: oklch(from var(--ts) calc(l - 0.12) c h);
-      --tp-text: contrast-color(var(--tp));
-      --ts-text: contrast-color(var(--ts));
-    }
-    
-    
+:root,
+[data-team="ARI"] {
+  --tp: #aa182c;
+  --ts: #000000;
+}
+
+[data-team="ATH"] {
+  --tp: #003831;
+  --ts: #efb21e;
+}
+
+[data-team="ATL"] {
+  --tp: #0c2340;
+  --ts: #ba0c2f;
+}
+
+[data-team="BAL"] {
+  --tp: #000000;
+  --ts: #df4601;
+}
+
+[data-team="BOS"] {
+  --tp: #0d2b56;
+  --ts: #bd3039;
+}
+
+[data-team="CHC"] {
+  --tp: #0e3386;
+  --ts: #cc3433;
+}
+
+[data-team="CWS"] {
+  --tp: #000000;
+  --ts: #c4ced4;
+}
+
+[data-team="CIN"] {
+  --tp: #c6011f;
+  --ts: #000000;
+}
+
+[data-team="CLE"] {
+  --tp: #002b5c;
+  --ts: #e31937;
+}
+
+[data-team="COL"] {
+  --tp: #33006f;
+  --ts: #c4ced4;
+}
+
+[data-team="DET"] {
+  --tp: #0a2240;
+  --ts: #ff4713;
+}
+
+[data-team="HOU"] {
+  --tp: #002d62;
+  --ts: #eb6e1f;
+}
+
+[data-team="KC"] {
+  --tp: #0031a7;
+  --ts: #ba9863;
+}
+
+[data-team="LAA"] {
+  --tp: #ba0021;
+  --ts: #003263;
+}
+
+[data-team="LAD"] {
+  --tp: #005a9c;
+  --ts: #ef3e42;
+}
+
+[data-team="MIA"] {
+  --tp: #000000;
+  --ts: #00a3e0;
+}
+
+[data-team="MIL"] {
+  --tp: #13294b;
+  --ts: #ffc72c;
+}
+
+[data-team="MIN"] {
+  --tp: #031f40;
+  --ts: #e20e32;
+}
+
+[data-team="NYM"] {
+  --tp: #002d72;
+  --ts: #ff5910;
+}
+
+[data-team="NYY"] {
+  --tp: #132448;
+  --ts: #c4ced4;
+}
+
+[data-team="PHI"] {
+  --tp: #c20c31;
+  --ts: #002D72;
+}
+
+[data-team="PIT"] {
+  --tp: #000000;
+  --ts: #fdb827;
+}
+
+[data-team="SD"] {
+  --tp: #2f241d;
+  --ts: #ffc425;
+}
+
+[data-team="SF"] {
+  --tp: #000000;
+  --ts: #fd5a1e;
+}
+
+[data-team="SEA"] {
+  --tp: #0c2c56;
+  --ts: #005c5c;
+}
+
+[data-team="STL"] {
+  --tp: #be0a14;
+  --ts: #001541;
+}
+
+[data-team="TB"] {
+  --tp: #092c5c;
+  --ts: #8fbce6;
+}
+
+[data-team="TEX"] {
+  --tp: #1e376d;
+  --ts: #c0111f;
+}
+
+[data-team="TOR"] {
+  --tp: #134a8e;
+  --ts: #1d2d5c;
+}
+
+[data-team="WSH"] {
+  --tp: #ab0003;
+  --ts: #11225b;
+}
+
+[data-team="ALB"] {
+  --tp: #333333;
+  --ts: #d31245;
+}
+
+[data-team="BUF"] {
+  --tp: #0054a4;
+  --ts: #ce1141;
+}
+
+[data-team="CHR"] {
+  --tp: #333333;
+  --ts: #00afdb;
+}
+
+[data-team="CBS"] {
+  --tp: #002b5c;
+  --ts: #a4d7f4;
+}
+
+[data-team="DRM"] {
+  --tp: #0054a4;
+  --ts: #b15c12;
+}
+
+[data-team="ELP"] {
+  --tp: #333333;
+  --ts: #d31245;
+}
+
+[data-team="GWI"] {
+  --tp: #002b5c;
+  --ts: #66b360;
+}
+
+[data-team="IND"] {
+  --tp: #00263a;
+  --ts: #c8102e;
+}
+
+[data-team="IOW"] {
+  --tp: #005596;
+  --ts: #e31937;
+}
+
+[data-team="JAX"] {
+  --tp: #002d62;
+  --ts: #ef3e42;
+}
+
+[data-team="LVG"] {
+  --tp: #0a2240;
+  --ts: #ff4d00;
+}
+
+[data-team="LHV"] {
+  --tp: #002d62;
+  --ts: #c41230;
+}
+
+[data-team="LOU"] {
+  --tp: #091f40;
+  --ts: #091f40;
+}
+
+[data-team="MRB"] {
+  --tp: #002b5c;
+  --ts: #d31245;
+}
+
+[data-team="NAS"] {
+  --tp: #002d6a;
+  --ts: #e31937;
+}
+
+[data-team="NOR"] {
+  --tp: #333333;
+  --ts: #00a160;
+}
+
+[data-team="OKC"] {
+  --tp: #005daa;
+  --ts: #89d1f4;
+}
+
+[data-team="OMA"] {
+  --tp: #004b8d;
+  --ts: #b4975a;
+}
+
+[data-team="REN"] {
+  --tp: #002b5c;
+  --ts: #d31245;
+}
+
+[data-team="ROC"] {
+  --tp: #333333;
+  --ts: #ee3124;
+}
+
+[data-team="RRE"] {
+  --tp: #041e42;
+  --ts: #9d2235;
+}
+
+[data-team="SRC"] {
+  --tp: #98002e;
+  --ts: #ba9765;
+}
+
+[data-team="SLC"] {
+  --tp: #333333;
+  --ts: #fdb913;
+}
+
+[data-team="SWB"] {
+  --tp: #002b5c;
+  --ts: #98002e;
+}
+
+[data-team="STP"] {
+  --tp: #00539f;
+  --ts: #e00276;
+}
+
+[data-team="SLS"] {
+  --tp: #002b54;
+  --ts: #42c4dd;
+}
+
+[data-team="SYR"] {
+  --tp: #004b8d;
+  --ts: #f47d30;
+}
+
+[data-team="TAC"] {
+  --tp: #002b5c;
+  --ts: #e31837;
+}
+
+[data-team="TOL"] {
+  --tp: #002b5c;
+  --ts: #ed174f;
+}
+
+[data-team="WOR"] {
+  --tp: #002b5c;
+  --ts: #e31937;
+}
+
+[data-team="AKR"] {
+  --tp: #333333;
+  --ts: #007dc3;
+}
+
+[data-team="ALT"] {
+  --tp: #b5121b;
+  --ts: #bb813b;
+}
+
+[data-team="AMA"] {
+  --tp: #003d79;
+  --ts: #e31937;
+}
+
+[data-team="ARK"] {
+  --tp: #333333;
+  --ts: #d31245;
+}
+
+[data-team="BLX"] {
+  --tp: #0067b1;
+  --ts: #e66d7b;
+}
+
+[data-team="BIN"] {
+  --tp: #002b5c;
+  --ts: #d31245;
+}
+
+[data-team="BIR"] {
+  --tp: #333333;
+  --ts: #d11242;
+}
+
+[data-team="CHG"] {
+  --tp: #333333;
+  --ts: #ef3e42;
+}
+
+[data-team="CHE"] {
+  --tp: #333333;
+  --ts: #f47d30;
+}
+
+[data-team="CGA"] {
+  --tp: #333333;
+  --ts: #ff8d6b;
+}
+
+[data-team="COR"] {
+  --tp: #002b5c;
+  --ts: #5091cd;
+}
+
+[data-team="ERI"] {
+  --tp: #333333;
+  --ts: #d31245;
+}
+
+[data-team="FRI"] {
+  --tp: #98002e;
+  --ts: #fff6dc;
+}
+
+[data-team="HBG"] {
+  --tp: #002d62;
+  --ts: #d31245;
+}
+
+[data-team="HFD"] {
+  --tp: #004b8d;
+  --ts: #00a160;
+}
+
+[data-team="KNX"] {
+  --tp: #005596;
+  --ts: #6799c8;
+}
+
+[data-team="MDL"] {
+  --tp: #002b5c;
+  --ts: #f3901d;
+}
+
+[data-team="MON"] {
+  --tp: #00245d;
+  --ts: #eeb111;
+}
+
+[data-team="NHM"] {
+  --tp: #002b5c;
+  --ts: #e31937;
+}
+
+[data-team="NWA"] {
+  --tp: #005596;
+  --ts: #ffda02;
+}
+
+[data-team="PEN"] {
+  --tp: #002d62;
+  --ts: #e20177;
+}
+
+[data-team="PRT"] {
+  --tp: #002b5c;
+  --ts: #e31837;
+}
+
+[data-team="REA"] {
+  --tp: #002d62;
+  --ts: #d31245;
+}
+
+[data-team="RIC"] {
+  --tp: #333333;
+  --ts: #d31245;
+}
+
+[data-team="RCY"] {
+  --tp: #333333;
+  --ts: #007dc3;
+}
+
+[data-team="SAN"] {
+  --tp: #002d62;
+  --ts: #ef3e42;
+}
+
+[data-team="SOM"] {
+  --tp: #00193f;
+  --ts: #7d000d;
+}
+
+[data-team="SPR"] {
+  --tp: #002b5c;
+  --ts: #d31245;
+}
+
+[data-team="TUL"] {
+  --tp: #005596;
+  --ts: #b9e0f7;
+}
+
+[data-team="WCH"] {
+  --tp: #002b5c;
+  --ts: #e31937;
+}
+
+[data-team="ASH"] {
+  --tp: #002b5c;
+  --ts: #86cebc;
+}
+
+[data-team="BEL"] {
+  --tp: #333333;
+  --ts: #009ddc;
+}
+
+[data-team="BGR"] {
+  --tp: #0c233f;
+  --ts: #f36c24;
+}
+
+[data-team="BRO"] {
+  --tp: #00245d;
+  --ts: #ed174f;
+}
+
+[data-team="CED"] {
+  --tp: #002d62;
+  --ts: #00a160;
+}
+
+[data-team="DTN"] {
+  --tp: #333333;
+  --ts: #00b259;
+}
+
+[data-team="EUG"] {
+  --tp: #333333;
+  --ts: #008265;
+}
+
+[data-team="EVE"] {
+  --tp: #002d62;
+  --ts: #d6e03d;
+}
+
+[data-team="FTW"] {
+  --tp: #004712;
+  --ts: #ee2a24;
+}
+
+[data-team="FRD"] {
+  --tp: #333333;
+  --ts: #f15d22;
+}
+
+[data-team="GLA"] {
+  --tp: #b8232f;
+  --ts: #006f51;
+}
+
+[data-team="GBO"] {
+  --tp: #333333;
+  --ts: #008752;
+}
+
+[data-team="GRN"] {
+  --tp: #002b5c;
+  --ts: #e31837;
+}
+
+[data-team="HIL"] {
+  --tp: #002d56;
+  --ts: #7ac143;
+}
+
+[data-team="HCS"] {
+  --tp: #002b5e;
+  --ts: #7ac143;
+}
+
+[data-team="HDV"] {
+  --tp: #002b5c;
+  --ts: #adafb2;
+}
+
+[data-team="JER"] {
+  --tp: #0067b1;
+  --ts: #d31245;
+}
+
+[data-team="LCO"] {
+  --tp: #002d56;
+  --ts: #fdb813;
+}
+
+[data-team="LNS"] {
+  --tp: #333333;
+  --ts: #e31837;
+}
+
+[data-team="PEO"] {
+  --tp: #002b5c;
+  --ts: #d31245;
+}
+
+[data-team="QCS"] {
+  --tp: #333333;
+  --ts: #00549e;
+}
+
+[data-team="ROM"] {
+  --tp: #333333;
+  --ts: #ee3124;
+}
+
+[data-team="SBD"] {
+  --tp: #005596;
+  --ts: #e31837;
+}
+
+[data-team="SPO"] {
+  --tp: #002d62;
+  --ts: #d31245;
+}
+
+[data-team="TRI"] {
+  --tp: #002d62;
+  --ts: #cfab7a;
+}
+
+[data-team="VAN"] {
+  --tp: #b30838;
+  --ts: #ed174f;
+}
+
+[data-team="WMI"] {
+  --tp: #002b5c;
+  --ts: #13b5ea;
+}
+
+[data-team="WIL"] {
+  --tp: #002d62;
+  --ts: #96c0e6;
+}
+
+[data-team="WSM"] {
+  --tp: #492f92;
+  --ts: #333333;
+}
+
+[data-team="WIS"] {
+  --tp: #98002e;
+  --ts: #c49d6f;
+}
+
+[data-team="AUG"] {
+  --tp: #333333;
+  --ts: #62bb46;
+}
+
+[data-team="BRA"] {
+  --tp: #333333;
+  --ts: #ffc425;
+}
+
+[data-team="CSC"] {
+  --tp: #00274c;
+  --ts: #fdb913;
+}
+
+[data-team="CLR"] {
+  --tp: #005695;
+  --ts: #d31245;
+}
+
+[data-team="CBA"] {
+  --tp: #002d5b;
+  --ts: #e1e558;
+}
+
+[data-team="DTA"] {
+  --tp: #005847;
+  --ts: #7ac143;
+}
+
+[data-team="DEL"] {
+  --tp: #333333;
+  --ts: #f26531;
+}
+
+[data-team="DUN"] {
+  --tp: #134a8e;
+  --ts: #6caddf;
+}
+
+[data-team="FAY"] {
+  --tp: #333333;
+  --ts: #e31837;
+}
+
+[data-team="FTM"] {
+  --tp: #6756a5;
+  --ts: #002b5c;
+}
+
+[data-team="FBG"] {
+  --tp: #002d62;
+  --ts: #d31245;
+}
+
+[data-team="FRE"] {
+  --tp: #333333;
+  --ts: #d31245;
+}
+
+[data-team="HIC"] {
+  --tp: #333333;
+  --ts: #ea1c2d;
+}
+
+[data-team="HCY"] {
+  --tp: #005596;
+  --ts: #d31245;
+}
+
+[data-team="INL"] {
+  --tp: #333333;
+  --ts: #f47735;
+}
+
+[data-team="JUP"] {
+  --tp: #333333;
+  --ts: #0081cf;
+}
+
+[data-team="KAN"] {
+  --tp: #003d79;
+  --ts: #e31b23;
+}
+
+[data-team="LKE"] {
+  --tp: #333333;
+  --ts: #e31837;
+}
+
+[data-team="LAK"] {
+  --tp: #002b5c;
+  --ts: #df7a1c;
+}
+
+[data-team="MYR"] {
+  --tp: #002b5c;
+  --ts: #007dc3;
+}
+
+[data-team="ONT"] {
+  --tp: #1a468c;
+  --ts: #ef3742;
+}
+
+[data-team="PBC"] {
+  --tp: #002b5c;
+  --ts: #e31245;
+}
+
+[data-team="RNC"] {
+  --tp: #003263;
+  --ts: #ce1141;
+}
+
+[data-team="SLM"] {
+  --tp: #0b2340;
+  --ts: #0455ad;
+}
+
+[data-team="SNJ"] {
+  --tp: #333333;
+  --ts: #f47735;
+}
+
+[data-team="SLU"] {
+  --tp: #004b8d;
+  --ts: #f47d30;
+}
+
+[data-team="STO"] {
+  --tp: #004b8d;
+  --ts: #e31937;
+}
+
+[data-team="TPA"] {
+  --tp: #00274c;
+  --ts: #0096d6;
+}
+
+[data-team="VIS"] {
+  --tp: #333333;
+  --ts: #d31245;
+}
+
+[data-team="WLS"] {
+  --tp: #00274c;
+  --ts: #98002e;
+}
+
+
+
+
+
+
+:root {
+  --tp-light: oklch(from var(--tp) calc(l + 0.12) c h);
+  --tp-dark: oklch(from var(--tp) calc(l - 0.12) c h);
+  --ts-light: oklch(from var(--ts) calc(l + 0.12) c h);
+  --ts-dark: oklch(from var(--ts) calc(l - 0.12) c h);
+  --tp-text: contrast-color(var(--tp));
+  --ts-text: contrast-color(var(--ts));
+}

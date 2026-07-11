@@ -6,8 +6,9 @@ export const pitchers = [
    name: "Donovan Goodman",
    number: 17,
    tier: 1,
-   team: "",
-   fatigue: 99
+   fatigue: 99,
+   ability:"rerollOne",
+   desc:"Reroll one die. Limit once per inning."
 },
 {
    id: "018",
@@ -16,8 +17,9 @@ export const pitchers = [
    name: "Richie Weaver",
    number: 18,
    tier: 1,
-   team: "",
-   fatigue: 99
+   fatigue: 99,
+   ability: "rerollOne",
+   desc: "Reroll one die. Limit once per inning."
 },
 {
    id: "027",
@@ -27,7 +29,9 @@ export const pitchers = [
    number: 27,
    tier: 2,
    team: "MIL",
-   fatigue: 3
+   fatigue: 3,
+   ability: "rerollSet",
+   desc:"Reroll any subset of dice."
 },
 {
    id: "028",
@@ -37,7 +41,9 @@ export const pitchers = [
    number: 28,
    tier: 2,
    team: "PIT",
-   fatigue: 2
+   fatigue: 2,
+   ability:"adjustOne",
+   desc:"Adjust one die up or down by one." 
 },
 {
    id: "029",
@@ -47,7 +53,9 @@ export const pitchers = [
    number: 29,
    tier: 2,
    team: "KC",
-   fatigue: 4
+   fatigue: 4,
+   ability:"addD6",
+   desc:"Add one die to the opponent's pool, then remove one die before resolving the inning."
 },
 {
    id: "030",
@@ -57,7 +65,9 @@ export const pitchers = [
    number: 30,
    tier: 2,
    team: "PHI",
-   fatigue: 2
+   fatigue: 2,
+   ability: "cancelOne",
+   desc: "Cancel one run scored this inning."
 },
 {
    id: "031",
@@ -66,8 +76,10 @@ export const pitchers = [
    name: "Dennis Evans",
    number: 31,
    tier: 2,
-   team: "FLA",
-   fatigue: 1
+   team: "MIA",
+   fatigue: 1,
+   ability:"setOne",
+   desc:"Set one die to any value."
 },
 {
    id: "039",
@@ -77,7 +89,9 @@ export const pitchers = [
    number: 39,
    tier: 3,
    team: "TOR",
-   fatigue: 6
+   fatigue: 6,
+   ability: "addD6",
+   desc: "Add one die to the opponent's pool, then remove one die before resolving the inning."
 },
 {
    id: "040",
@@ -87,7 +101,9 @@ export const pitchers = [
    number: 40,
    tier: 3,
    team: "DET",
-   fatigue: 2
+   fatigue: 2,
+   ability: "setOne",
+   desc: "Set one die to any value."
 },
 {
    id: "041",
@@ -97,7 +113,9 @@ export const pitchers = [
    number: 41,
    tier: 3,
    team: "CHC",
-   fatigue: 4
+   fatigue: 4,
+   ability: "adjustOne",
+   desc: "Adjust one die up or down by one."
 },
 {
    id: "042",
@@ -106,8 +124,10 @@ export const pitchers = [
    name: "Leroy Smith",
    number: 42,
    tier: 3,
-   team: "MON",
-   fatigue: 5
+   team: "WSH",
+   fatigue: 5,
+   ability: "rerollSet",
+   desc: "Reroll any subset of dice."
 },
 {
    id: "043",
@@ -117,7 +137,9 @@ export const pitchers = [
    number: 43,
    tier: 3,
    team: "STL",
-   fatigue: 3
+   fatigue: 3,
+   ability: "cancelOne",
+   desc: "Cancel one run scored this inning."
 },
 {
    id: "046",
@@ -127,7 +149,9 @@ export const pitchers = [
    number: 46,
    tier: 3,
    team: "TB",
-   fatigue: 1
+   fatigue: 1,
+   ability: "cancelAll",
+   desc: `Cancel all runs scored this inning. Fatigue tokens may not be removed during a game.`
 },
 {
    id: "047",
@@ -136,6 +160,8 @@ export const pitchers = [
    name: "Luis Torres",
    number: 47,
    tier: 2,
-   team: "WSH",
-   fatigue: 5
+   team: "BUF",
+   fatigue: 5,
+   ability:"addD10",
+   desc: "Add the d10 to the opponent's pool, then remove one die before resolving the inning."
 }]

@@ -5,6 +5,7 @@ import { renderCalendarEvents } from '../render/renderCalendarEvents.js'
 import { navSetup } from './nav.js'
 import { $n, $t, $c, $a, on, loadCard, randInt } from '../util.js'
 import { buildCard } from '../render/buildCard.js'
+import { buildCardProg } from '../render/buildCardProg.js'
 
 
 
@@ -45,8 +46,18 @@ export function gameSetup() {
   renderCalendarEvents();
   
   const cardTest = $t("card-test");
-  cardTest.innerHTML = buildCard(players[0]);
+  //cardTest.append(buildCardProg(players[0]));
+ 
   
+  pitchers.forEach((pitcher) => {
+    const cdiv=$n("div")
+    cdiv.append(buildCardProg(pitcher))
+    //cdiv.innerHTML=buildCard(player)
+    cardTest.append(cdiv);
+  })
+ 
+  //cardTest.innerHTML = buildCard(players[0]);
+ 
 
   
   //Show roster
