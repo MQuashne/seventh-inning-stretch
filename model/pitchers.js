@@ -7,6 +7,7 @@ export const pitchers = [
    number: 17,
    tier: 1,
    fatigue: 99,
+   used:0,
    ability:"rerollOne",
    desc:"Reroll one die. Limit once per inning."
 },
@@ -18,6 +19,7 @@ export const pitchers = [
    number: 18,
    tier: 1,
    fatigue: 99,
+   used:0,
    ability: "rerollOne",
    desc: "Reroll one die. Limit once per inning."
 },
@@ -30,6 +32,7 @@ export const pitchers = [
    tier: 2,
    team: "MIL",
    fatigue: 3,
+   used:0,
    ability: "rerollSet",
    desc:"Reroll any subset of dice."
 },
@@ -42,6 +45,7 @@ export const pitchers = [
    tier: 2,
    team: "PIT",
    fatigue: 2,
+   used:0,
    ability:"adjustOne",
    desc:"Adjust one die up or down by one." 
 },
@@ -54,6 +58,7 @@ export const pitchers = [
    tier: 2,
    team: "KC",
    fatigue: 4,
+   used:2,
    ability:"addD6",
    desc:"Add one die to the opponent's pool, then remove one die before resolving the inning."
 },
@@ -66,6 +71,7 @@ export const pitchers = [
    tier: 2,
    team: "PHI",
    fatigue: 2,
+   used:0,
    ability: "cancelOne",
    desc: "Cancel one run scored this inning."
 },
@@ -78,6 +84,7 @@ export const pitchers = [
    tier: 2,
    team: "MIA",
    fatigue: 1,
+   used:0,
    ability:"setOne",
    desc:"Set one die to any value."
 },
@@ -90,6 +97,7 @@ export const pitchers = [
    tier: 3,
    team: "TOR",
    fatigue: 6,
+   used:0,
    ability: "addD6",
    desc: "Add one die to the opponent's pool, then remove one die before resolving the inning."
 },
@@ -102,6 +110,7 @@ export const pitchers = [
    tier: 3,
    team: "DET",
    fatigue: 2,
+   used:0,
    ability: "setOne",
    desc: "Set one die to any value."
 },
@@ -114,6 +123,7 @@ export const pitchers = [
    tier: 3,
    team: "CHC",
    fatigue: 4,
+   used:0,
    ability: "adjustOne",
    desc: "Adjust one die up or down by one."
 },
@@ -126,6 +136,7 @@ export const pitchers = [
    tier: 3,
    team: "WSH",
    fatigue: 5,
+   used:0,
    ability: "rerollSet",
    desc: "Reroll any subset of dice."
 },
@@ -138,6 +149,7 @@ export const pitchers = [
    tier: 3,
    team: "STL",
    fatigue: 3,
+   used:0,
    ability: "cancelOne",
    desc: "Cancel one run scored this inning."
 },
@@ -150,6 +162,7 @@ export const pitchers = [
    tier: 3,
    team: "TB",
    fatigue: 1,
+   used:0,
    ability: "cancelAll",
    desc: `Cancel all runs scored this inning. Fatigue tokens may not be removed during a game.`
 },
@@ -162,6 +175,7 @@ export const pitchers = [
    tier: 2,
    team: "BUF",
    fatigue: 5,
+   used:0,
    ability:"addD10",
    desc: "Add the d10 to the opponent's pool, then remove one die before resolving the inning."
 }]

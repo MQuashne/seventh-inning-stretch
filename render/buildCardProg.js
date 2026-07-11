@@ -70,6 +70,7 @@ export function buildCardProg(player) {
   const ts = brandColors[pTeam].ts
   
   const tpText = getContrastColor(tp);
+  const tsText = getContrastColor(ts);
   const tierText = getContrastColor(tierColor);
   
   //Create SVG Shell  
@@ -237,7 +238,7 @@ export function buildCardProg(player) {
     height: 250,
     'clip-path': `url(#bgClip${player.id})`
   })
-  
+  if (player.id==="029"){console.log(bgImage.href)}
   svg.append(bgImage);
   
   // --------------------------------------------------------------------------
@@ -584,6 +585,81 @@ export function buildCardProg(player) {
     
     svg.append(mod);
   }
+  
+  //PITCHER FATIGUE
+  if (player.fatigue && player.fatigue < 12) {
+    const w = 130 / player.fatigue;
+    
+    const fObj = $ne('foreignObject');
+    $sao(fObj, {
+      x: 0,
+      y: 250,
+      width: 130,
+      height: 30
+    });
+    svg.append(fObj);
+    
+    const fBox = $n('div');
+    fBox.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+    $sao(fBox, {
+      style: {
+        boxSizing: "border-box",
+        display: "flex",
+        justifyContent: "left",
+        alignItems: "center",
+        alignContent: "center",
+        gap: `2px`,
+        width: "100%",
+        height: "100%"
+      }
+    })
+    fObj.append(fBox);
+    
+    for (let i = 1; i <= player.fatigue; i++) {
+      var fSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      fSvg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+      $sao(fSvg, {
+        width: w,
+        height: "100%",
+        viewBox: "0 0 100 100"
+      });
+      
+      const fPath = $ne('path');
+      $sao(fPath, {
+        d: "M50 10 Q53 10 55 13 L89 78 Q92 84 85 84 L15 84 Q8 84 11 78 L45 13 Q47 10 50 10 Z",
+        "stroke-width": 5,
+        stroke: i <= player.used ? "white" : `${tsText}80`,
+        fill: i <= player.used ? "#d32f2f" : "#ffffff30",
+        "stroke-dasharray": i <= player.used ? "none" : "10 5",
+      })
+      
+      fSvg.append(fPath);
+      
+      if (i <= player.used) {
+        const fRect = $ne('rect');
+        $sao(fRect, {
+          x: 46,
+          y: 28,
+          width: 8,
+          height: 34,
+          rx: 4,
+          fill: "white"
+        });
+        fSvg.append(fRect);
+        
+        const fDot = $ne('circle');
+        $sao(fDot, {
+          cx: 50,
+          cy: 70,
+          r: 4.5,
+          fill: "white"
+        });
+        fSvg.append(fDot);
+      }
+      fBox.append(fSvg);
+    }
+  }
+  
   // --------------------------------------------------------------------------
   // ADD CONDITIONS
   // --------------------------------------------------------------------------
@@ -995,16 +1071,68 @@ export function buildCardProg(player) {
     }
   }
   
-  const foil=$ne('rect');
-  $sao(foil,{
-    x:0,
-    y:0,
-    height:350,
-    width:250,
-    style:{
-      opacity:0.20,
-      "mix-blend-mode":"color-dodge",
-      fill:`url(#foil-gradient${player.id})`
+  // PITCHER TEXT
+  if (player.fatigue) {
+    
+    const fObj = $ne('foreignObject');
+$sao(fObj, {
+  x: 10,
+  y: 285,
+  width: 190,
+  height: 61
+})
+
+const fFlex = $n('div');
+fFlex.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+$sao(fFlex, {
+  style: {
+    boxSizing: "border-box",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    alignContent: "center",
+    gap: `$1px`,
+    width: "100%",
+    height: "100%",
+    flexDirection: "column"
+  }
+})
+fObj.append(fFlex);
+
+const fTex = $n('div');
+fTex.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+$sao(fTex, {
+  style: {
+    boxSizing: "border-box",
+    display: "flex",
+    gap: "10px",
+    width: "100%",
+    minHeight: 0,
+    justifyContent: "center",
+    wordBreak: "break-word",
+    overflowWrap: "break-word",
+    color: "white",
+    fontFamily: "Arial",
+    fontSize: "0.8em",
+    textAlign: "center"
+  }
+});
+fTex.textContent = player.desc;
+fFlex.append(fTex);
+svg.append(fObj);
+    
+  }
+  
+  const foil = $ne('rect');
+  $sao(foil, {
+    x: 0,
+    y: 0,
+    height: 350,
+    width: 250,
+    style: {
+      opacity: 0.20,
+      "mix-blend-mode": "color-dodge",
+      fill: `url(#foil-gradient${player.id})`
     }
   })
   svg.append(foil);

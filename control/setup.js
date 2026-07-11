@@ -48,10 +48,14 @@ export function gameSetup() {
   const cardTest = $t("card-test");
   //cardTest.append(buildCardProg(players[0]));
  
+  let pCards = [];
+  pCards.push(...players);
+  pCards.push(...pitchers);
+  pCards.sort((a,b) => a.id - b.id);
   
-  pitchers.forEach((pitcher) => {
+  pCards.forEach((card) => {
     const cdiv=$n("div")
-    cdiv.append(buildCardProg(pitcher))
+    cdiv.append(buildCardProg(card))
     //cdiv.innerHTML=buildCard(player)
     cardTest.append(cdiv);
   })
