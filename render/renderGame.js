@@ -126,11 +126,7 @@ ro.observe(runnerLayer);
   on(stealButton,"click", () => {
 console.log("clicky");
 gamebox.line_up_dice();
-console.log(document.body.contains(gamebox.renderer.domElement))
-console.log(document.querySelector('canvas') === gamebox.renderer.domElement)
-console.log(gamebox.scene.children.includes(gamebox.dices[0])
 )
-console.log(document.getEventListeners(rollButton).click.length  // Chrome DevTools only
 )
 
   })
