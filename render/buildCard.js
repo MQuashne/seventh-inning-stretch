@@ -1,5 +1,152 @@
 import { renderCondition, box } from './rollSymbols.js'
 import { buildPlay } from './rolls/plays.js'
+import { $n, $t, $c, $a, on, randInt } from '../util.js'
+import { teams } from '../model/teams.js'
+
+function $sao(element, attributes) {
+  Object.entries(attributes).forEach(([key, value]) => {
+    if (key === 'style' && typeof value === 'object') {
+      // Assign properties directly to the element's style object
+      Object.assign(element.style, value);
+    } else {
+      element.setAttribute(key, value);
+    }
+  });
+}
+
+const $sa = (svg, att, val) => svg.setAttribute(att, val);
+const $ne = (el) => {
+  const newEl = document.createElementNS('http://www.w3.org/2000/svg', el);
+  return newEl
+}
+
+function randBt(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+//======================
+// COMPONENT BUILDS 
+//======================
+
+// DICE
+
+export function buildDie(count, x = 0, y = 0) {
+  const die = $ne('g');
+  $sa(die, "viewBox", "0 0 27 27")
+  
+  const dice = $ne('path');
+  $sao(dice, {
+    style: {
+      fill: "white",
+      stroke: "black",
+      strokeWidth: 0.5,
+      strokeLinejoin: "round"
+    },
+    d: `M 0 0 v 21 l 6 6 v -21 z m 6 6 h 21 l -6 -6 h -21 z v 21 h 21 v -21 z`,
+    transform: `translate(${x},${y})`
+  })
+  die.append(dice);
+  
+  const dieText = $ne("text");
+  $sao(dieText, {
+    style: {
+      fontSize: 18,
+      fontFamily: `"Proxima Nova","Arial"`,
+      fontWeight: 700,
+      textAlign: "center",
+      textAnchor: "middle",
+      fill: "black"
+    },
+    x: 31,
+    y: 273
+  })
+  dieText.textContent = count;
+  die.append(dieText);
+  
+  return die
+}
+
+// REROLL
+export function buildReRoll(x = 0, y = 0) {
+  const reGrp = $ne('g');
+  $sa(reGrp, "viewBox", "0 0 11 11")
+  $sa(reGrp, "transform", `translate(${x},${y})`)
+  const reCircle = $ne('circle');
+  $sao(reCircle, {
+    style: {
+      fill: "#009400",
+      stroke: "black",
+      strokeWidth: 1
+    },
+    cx: 5.5,
+    cy: 5.5,
+    r: 11
+  })
+  reGrp.append(reCircle);
+  
+  const reArrow = $ne('path');
+  $sao(reArrow, {
+    style: {
+      stroke: "#fff",
+      strokeWidth: 2.5,
+      fill: "transparent"
+    },
+    d: `M 10 1 a 6.25 6.25 0 1 0 0 9`
+  })
+  reGrp.append(reArrow);
+  
+  const reHead = $ne('path');
+  $sao(reHead, {
+      style: {
+        stroke: "white",
+        strokeWidth: 2.5,
+        fill: "transparent"
+      },
+      d: `M 10 1 l 1 -1 l 0.75 3.25 l -3.5 -0.5 z`
+    }),
+    reGrp.append(reHead);
+  return reGrp
+}
+
+// MODIFIER
+export function buildMod(x, y) {
+  const mod = $ne('g');
+  $sa(mod, "viewBox", "0 0 23 23");
+  $sa(mod, "transform", `translate(${x} ${y})`);
+  
+  const modBox = $ne('rect');
+  $sao(modBox, {
+    style: {
+      stroke: "black",
+      strokeWidth: 1,
+      fill: "#ffef00"
+    },
+    x: 0,
+    y: 0,
+    width: 23,
+    height: 23,
+    rx: 2,
+    ry: 2
+  })
+  mod.append(modBox);
+  
+  const modNum = $ne('text');
+  $sao(modNum, {
+    style: {
+      fontSize: '18',
+      fontFamily: `"Helvetica Neue", "Arial"`,
+      fontWeight: 700,
+      textAlign: "center",
+      textAnchor: "middle",
+      fill: "black"
+    },
+    x: 12.5,
+    y: 18
+  })
+  modNum.textContent = "±1";
+  mod.append(modNum);
+  return mod
+}
 
 export function buildCard(player) {
   /*---------
@@ -7,237 +154,1011 @@ export function buildCard(player) {
   ----------*/
   const rootStyles = window.getComputedStyle(document.documentElement);
   
-  function getContrastColor(hexColor) {
-    // Remove the hash if it exists
-    const hex = hexColor.replace('#', '');
-    
-    // Convert hex to RGB
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-    
-    // Calculate YIQ (perceived luminance)
-    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
-    
-    // Return black if bright, white if dark
-    return (yiq >= 128) ? '#000000' : '#FFFFFF';
-  }
+function getContrastColor(hexColor) {
+  const cleanHex = hexColor.replace(/^#/, '');
   
-  let tierColor = "#C4CED4";
+  const r8 = parseInt(cleanHex.substring(0, 2), 16);
+  const g8 = parseInt(cleanHex.substring(2, 4), 16);
+  const b8 = parseInt(cleanHex.substring(4, 6), 16);
+  
+  const rgbDecimals = [r8, g8, b8].map(val => val / 255);
+  
+  const [r, g, b] = rgbDecimals.map(s => {
+    return s <= 0.03928 ?
+      s / 12.92 :
+      Math.pow((s + 0.055) / 1.055, 2.4);
+  });
+  
+  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  
+  return luminance > 0.1791 ? '#000000' : '#ffffff';
+}
+  
+  let tierColor = "#9D7051";
   
   switch (player.tier) {
     case 2:
-      tierColor = "#0068e6";
+      tierColor = "#C3C5C4";
       break;
     case 3:
-      tierColor = "#FFD100";
+      tierColor = "#F0D96C";
       break;
     default:
-      tierColor = "#C4CED4";
+      tierColor = "#9D7051";
   }
   
-  const tp = rootStyles.getPropertyValue('--tp').trim();
-  const ts = rootStyles.getPropertyValue('--ts').trim();
-  const tpText = getContrastColor(tp);
+  // const tp = rootStyles.getPropertyValue('--tp').trim();
+  //  const ts = rootStyles.getPropertyValue('--ts').trim();
+  
+  const pTeam = teams.find((t) => t.code===player.team);
+  
+  const tp = pTeam.tp;
+  const ts = pTeam.ts;
+  const td = pTeam.td;
+  const lbg = pTeam.lbg;
+  const tpText = pTeam.tpText;
+  const tsText = pTeam.tsText;
+  const lbgText = pTeam.lbgText;
+
+  
+  //const {tp,ts,td,lbg,tpText,tsText,lbgText} = getTeamColors(pTeam);
+  
+  
   const tierText = getContrastColor(tierColor);
   
-  let cardSVG = '';
-  //SVG Headers, always used
-  const svgHead = `<svg width="100%" height="350" viewBox="0 0 250 350" version="1.1" id="card${player.id}" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">`;
-  cardSVG += svgHead;
+  //Create SVG Shell  
+  var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+  svg.id = player.id;
   
-  const styles = `<style>
-    .tp{fill:${tp}}.ts{fill:${ts}}.tier{fill:${tierColor}}
-  </style>`;
-  cardSVG += styles;
+  const svgSt = {
+    width: "100%",
+    height: "100%",
+    viewBox: "0 0 250 350"
+  }
+  $sao(svg, svgSt)
+  //CREATE DEFS
+  const defs = $ne('defs');
   
-  const defs = `  <defs id="defs1">
-    <linearGradient id="linearGradient14686">
-      <stop style="stop-color:#ffc0c0;stop-opacity:.8" offset="0"/>
-      <stop style="stop-color:#ffe0c0;stop-opacity:.6" offset=".13"/>
-      <stop style="stop-color:#ffffc0;stop-opacity:.4" offset=".25"/>
-      <stop style="stop-color:#c0ffc0;stop-opacity:.2" offset=".37"/>
-      <stop style="stop-color:#c0c0ff;stop-opacity:.3" offset=".5"/>
-      <stop style="stop-color:#ffc0ff;stop-opacity:.7" offset=".63"/>
-      <stop style="stop-color:#ffc0c0;stop-opacity:.2" offset=".749"/>
-      <stop style="stop-color:#ffe0c0;stop-opacity:.4" offset=".87"/>
-      <stop style="stop-color:#ffffc0;stop-opacity:.7" offset="1"/>
-    </linearGradient>
-    <linearGradient xlink:href="#linearGradient14686" id="linearGradient16274" gradientUnits="userSpaceOnUse" x1="353.142" y1="213.878" x2="413.397" y2="163.044" gradientTransform="translate(-350.36 -124.291)" spreadMethod="pad"/>
-    <path id="rect5833" d="M942 164h23v55h-23z"/>
-    <path id="rect2178" d="M1065.61 10.607h49.02V41.82h-49.02z"/>
-    <clipPath id="bgClip">
-      <rect x="19" y="42" width="212" height="250"/>
-    </clipPath>
-  </defs>`;
-  cardSVG += defs;
+  // --------------------------------------------------------------------------
+  // CREATE GRADIENT
+  // --------------------------------------------------------------------------
   
-  const bg = `<image href="../public/assets/players/${player.id}.png" y="42" height="250" width="250" clip-path="url(#bgClip)"></image>`
-  cardSVG += bg;
+  //FoilGradient
+  const linGrad = $ne('linearGradient');
+  linGrad.id = `foil-gradient${player.id}`;
+  $sao(linGrad, {
+    x1: "100%",
+    x2: "0",
+    y1: 0,
+    y2: "100%"
+  });
   
-  const geom = `  <g id="card">
-    <g id="card-art" transform="scale(3.7794)"><path id="left-bar-pri" style="stroke-width:.100889" class="tp" d="M0 0h5.292v92.604H0Z"/>
-    <path id="right-bar-pri" class="tp" style="stroke-width:.0946423" d="M60.854 11.112h5.292v81.492h-5.292z"/>
-    <path id="top-bar-tier" class="tier" style="display:inline;stroke-width:.0870195;" d="M0 0h66.146v11.113H0Z"/>
-    <path id="top-bar-sec" class="ts" style="display:inline;fill-opacity:1;stroke-width:.103559" d="M0 0v12.7h40.763L53.446.018V0H.529Z"/>
-    <path id="top-bar-pri" class="tp" style="fill-opacity:1;stroke-width:.115386" d="M0 0v14.552h37.028L51.58 0Z"/>
-    <path id="stripes-top-sec" class="ts" style="display:inline;fill-opacity:1;stroke-width:.0950331" d="m.75 12.174-.75.75v2.115l2.866-2.865zm2.703 0-3.29 3.29h2.115l3.29-3.29zm2.703 0-3.29 3.29H4.98l3.29-3.29zm2.703 0-3.29 3.29h2.114l3.29-3.29zm2.702 0-3.29 3.29h2.115l3.29-3.29zm2.703 0-3.29 3.29h2.115l3.29-3.29zm2.703 0-3.29 3.29h2.115l3.29-3.29zm2.702 0-3.29 3.29h2.115l3.29-3.29zm2.703 0-3.29 3.29h2.115l3.29-3.29zm2.703 0-3.29 3.29H23.9l3.29-3.29zm2.702 0-3.29 3.29h2.115l3.29-3.29zm2.703 0-3.29 3.29h2.115l3.29-3.29z"/>
-    <path id="stripes-right-sec" class="ts" style="display:inline;fill-opacity:1;stroke-width:.0950331" d="M64.472 35.506v2.115l1.674 1.674v-2.114zm0 2.703v2.115l1.674 1.674v-2.115zm0 2.702v2.115l1.674 1.675v-2.115zm0 2.703v2.116l1.674 1.673v-2.115zm0 2.703v2.115l1.674 1.674v-2.115Zm0 2.702v2.115l1.674 1.675v-2.115zm0 2.703v2.115l1.674 1.674v-2.115zm0 2.703v2.115l1.674 1.674v-2.115zm0 2.702v2.115l1.674 1.675v-2.115Zm0 2.703v2.115l1.674 1.674v-2.115zm0 2.703v2.115l1.674 1.675v-2.116zm0 2.702v2.115l1.674 1.675V66.91z"/>
-    <path id="bottom-corner-tier" class="tier" style="fill-opacity:1;stroke-width:.0836697" d="M54.91 77.085v.003l11.234 11.235h.002V77.085Z"/>
-    <path id="bottom-bar-pri" class="tp" style="stroke-width:.149881" d="M0 71.438v21.166h66.146v-4.38L49.36 71.438Z"/>
-    <path id="stripes-bottom-sec" class="ts" style="display:inline;fill-opacity:1;stroke-width:.0950331" d="m35.604 69.983 3.29 3.29h2.116l-3.29-3.29zm2.703 0 3.29 3.29h2.115l-3.29-3.29zm2.703 0 3.29 3.29h2.115l-3.29-3.29z"/>
-    <path id="resoures-tier" class="ts" style="fill-opacity:1;stroke-width:.0647448" d="M0 66.317v7.937h39.688v-.046l-7.891-7.891z"/>
-    <path id="accent-tier" class="tier" style="stroke-width:.035477fill:white;" d="M0 9.575v.926h35.381l.926-.926z"/>`;
-  cardSVG += geom;
+  let gradDir = randInt(0, 1);
   
-  const playerText = `<text xml:space="preserve" style="font-size:3.95446px;-inkscape-font-specification:&quot;Papyrus, Normal&quot;;text-align:center;text-anchor:middle;fill:#eeff38;stroke:#000;stroke-width:0" x="17.995" y="5.918" id="player-name"><tspan style="font-style:normal;font-variant:normal;font-weight:400;font-stretch:normal;font-size:3.95446px;font-family:Arial;-inkscape-font-specification:Arial;fill:${tpText};fill-opacity:1;stroke:#fff;stroke-width:0;stroke-opacity:1" x="17.995" y="5.918" id="first-name">${player.first} <tspan style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-family:Arial;;fill:${tpText};fill-opacity:1;stroke:#fff;stroke-width:0;stroke-opacity:1" id="last-name">${player.last}</tspan></tspan></text>
-    <text xml:space="preserve" transform="translate(-254.506 -1.665)scale(.28642)" id="player-num" style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:26.6667px;font-family:Arial;;text-align:center;white-space:pre;shape-inside:url(#rect2178);display:inline;fill:${tierText};fill-opacity:1;stroke:#000;stroke-width:0"><tspan text-anchor="middle" x="1090.288" y="34.628" id="tspan1372">${player.number}</tspan></text>`;
-  cardSVG += playerText;
+  //GRADIENT STOPS
+  const stopData = [
+    { p: 0, c: "#ffc0c0", o: randBt(0.2, 0.8) },
+    { p: 0.08, c: "#ffe0c0", o: randBt(0.2, 0.8) },
+    { p: 0.16, c: "#fff0c0", o: randBt(0.2, 0.8) },
+    { p: 0.25, c: "#c0ffc0", o: randBt(0.2, 0.8) },
+    { p: 0.33, c: "#c0c0ff", o: randBt(0.2, 0.8) },
+    { p: 0.41, c: "#ffc0ff", o: randBt(0.2, 0.8) },
+    { p: 0.5, c: "#ffc0c0", o: randBt(0.2, 0.8) },
+    { p: 0.58, c: "#ffe0c0", o: randBt(0.2, 0.8) },
+    { p: 0.66, c: "#fff0c0", o: randBt(0.2, 0.8) },
+    { p: 0.75, c: "#c0ffc0", o: randBt(0.2, 0.8) },
+    { p: 0.83, c: "#c0c0ff", o: randBt(0.2, 0.8) },
+    { p: 0.91, c: "#ffc0ff", o: randBt(0.2, 0.8) },
+    { p: 1, c: "#ffc0c0", o: randBt(0.2, 0.8) }
+  ];
+  stopData.forEach((stop) => {
+    const st = $ne("stop");
+    $sao(st, {
+      offset: stop.p,
+      "stop-color": stop.c,
+      "stop-opacity": stop.o
+    });
+    
+    linGrad.append(st);
+  });
+  defs.append(linGrad);
   
-  if (player.dice) {
-    const dice = `   <g id="die" transform="matrix(.98897 0 0 .97233 -224.768 2.443)">
-      <path id="rect4020" style="fill:#fff;stroke:#000;stroke-width:.5;stroke-dasharray:none;stroke-linejoin:round" d="m236 67.8-1.6-1.6h-5.6l1.6 1.6zm-5.6 0-1.6-1.6v5.6l1.6 1.6zm5.6 0v5.6h-5.6v-5.6z"/>
-      <text xml:space="preserve" style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:6px;font-family:Arial;;text-align:center;text-anchor:middle;fill:#fff;fill-opacity:1;stroke:#000;stroke-width:.0476306;stroke-dasharray:none" x="233.2" y="72.7" id="die-num-1"><tspan id="tspan4214-6" style="font-size:6px;fill:#000;fill-opacity:1;stroke-width:.0476306;stroke-dasharray:none" x="233.2" y="72.7">${player.dice}</tspan></text>
-    </g>`;
-    cardSVG += dice;
+  //Metalic Black Gradient
+  const tierGrad = $ne('linearGradient');
+  tierGrad.id = `tier-gradient${player.id}`;
+  $sa(tierGrad, 'x1', gradDir === 0 ? '0%' : '100%');
+  $sa(tierGrad, 'x2', gradDir === 0 ? '100%' : '0%');
+  $sa(tierGrad, 'y1', "0");
+  $sa(tierGrad, 'y2', "0%");
+  
+  //GRADIENT STOPS
+  const blkStop = [
+    { p: 0, c: "#2e2e2e", o: 1 },
+    { p: 0.25 + randBt(-.1, .1), c: "#626262", o: 1 },
+    { p: 0.5 + randBt(-.1, .1), c: "#8B8B8B", o: 1 },
+    { p: 0.75 + randBt(-.1, .1), c: "#414141", o: 1 },
+    { p: 1, c: "#000000", o: 1 }
+  ];
+  
+  const bnzStop = [
+    { p: 0, c: "#C4a588", o: 1 },
+    { p: 0.33 + randBt(-.1, .1), c: "#895b40", o: 1 },
+    { p: 0.66 + randBt(-.1, .1), c: "#edcdb4", o: 1 },
+    { p: 1, c: "#8b5d3b", o: 1 }
+  ];
+  
+  
+  
+  const slvStop = [
+    { p: 0, c: "#b1b2b4", o: 1 },
+    { p: 0.25 + randBt(-.1, .1), c: "#7A7B7F", o: 1 },
+    { p: 0.5 + randBt(-.1, .1), c: "#F0F0F0", o: 1 },
+    { p: 0.75 + randBt(-.1, .1), c: "#A7A8AC", o: 1 },
+    { p: 1, c: "#EDEDED", o: 1 }
+  ];
+  
+  const gldStop = [
+    { p: 0, c: "#f6e073", o: 1 },
+    { p: 0.25 + randBt(-.1, .1), c: "#c28f1a", o: 1 },
+    { p: 0.5 + randBt(-.1, .1), c: "#f9e37a", o: 1 },
+    { p: 0.75 + randBt(-.1, .1), c: "#b78c1a", o: 1 },
+    { p: 1, c: "#f0d96c", o: 1 }
+  ];
+  
+  let tierStop = bnzStop;
+  if (player.tier === 2) {
+    tierStop = slvStop;
+  } else if (player.tier === 3) {
+    tierStop = gldStop;
   }
   
-  if (player.reRoll > 0) {
-    const reroll = `    <g id="reroll" transform="translate(-231.125 -.531)scale(1.01746)">
-      <circle style="fill:#009400;fill-opacity:1;stroke:#000;stroke-width:.264583;stroke-dasharray:none" id="reroll-circle" cx="242.623" cy="69.585" r="2.988"/>
-      <path id="reroll-arrow" style="fill:none;stroke:#fff;stroke-width:.762;stroke-opacity:1" d="M243.904 70.457a1.626 1.626 0 0 1-1.91.663 1.626 1.626 0 0 1-1.08-1.71 1.626 1.626 0 0 1 1.422-1.439 1.626 1.626 0 0 1 1.723 1.058"/>
-      <path id="reroll-arrow-head" style="fill:none;stroke:#fff;stroke-width:.698608;stroke-opacity:1" d="m244.192 69.419-.386-.184.564-.206z"/>
-    </g>`;
-    cardSVG += reroll;
+  tierStop.forEach((stop) => {
+    const st = $ne("stop");
+    $sao(st, {
+      offset: stop.p,
+      "stop-color": stop.c,
+      "stop-opacity": stop.o
+    });
+    tierGrad.append(st);
+  });
+  defs.append(tierGrad);
+  
+  // --------------------------------------------------------------------------
+  // CLIP BACKGROUND
+  // --------------------------------------------------------------------------
+  const clip = $ne('clipPath');
+  clip.id = `bgClip${player.id}`;
+  const clRect = $ne('rect');
+  $sao(clRect, {
+    x: 19,
+    y: 42,
+    width: 212,
+    height: 250
+  })
+  clip.append(clRect);
+  defs.append(clip);
+  svg.append(defs);
+  
+  //Clip whole card
+  const clipCard = $ne('clipPath');
+  clipCard.id = `cardClip${player.id}`;
+  const cdRect = $ne('rect');
+  $sao(cdRect, {
+    x: 0,
+    y: 0,
+    width: 250,
+    height: 350
+  })
+  
+  clipCard.append(cdRect);
+  defs.append(clipCard);
+  svg.append(defs);
+  
+  // --------------------------------------------------------------------------
+  // ADD PLAYER IMAGE
+  // --------------------------------------------------------------------------
+  const bgImage = $ne('image');
+  bgImage.id = `bg-image-${player.id}`;
+  $sao(bgImage, {
+    'href': `../public/assets/players/${player.id}.png`,
+    y: 42,
+    width: 250,
+    height: 250,
+    'clip-path': `url(#bgClip${player.id})`
+  })
+  if (player.id === "029") { console.log(bgImage.href) }
+  svg.append(bgImage);
+  
+  // --------------------------------------------------------------------------
+  // ADD CARD TEMPLATE ELEMENTS
+  // --------------------------------------------------------------------------
+  const template = $ne('g');
+  template.id = `template${player.id}`
+  $sa(template, 'clip-path', `url(#cardClip${player.id})`);
+  
+  //Left bar primary
+  const leftBar = $ne('rect');
+  leftBar.id = `left-bar-prim-${player.id}`;
+  $sao(leftBar, {
+    x: 0,
+    y: 0,
+    width: 20,
+    height: 350,
+    fill: tp
+  });
+  
+  template.append(leftBar);
+  
+  //Right bar primary
+  const rightBar = $ne('rect');
+  rightBar.id = `right-bar-prim-${player.id}`;
+  $sao(rightBar, {
+    x: 230,
+    y: 0,
+    width: 20,
+    height: 350,
+    fill: tp
+  });
+  template.append(rightBar);
+  
+  //Top bar tier
+  const topBarT = $ne('rect');
+  topBarT.id = `top-bar-tier-${player.id}`;
+  $sao(topBarT, {
+    x: 150,
+    y: 0,
+    width: 100,
+    height: 42,
+    fill: `url(#${`tier-gradient${player.id}`}`
+  });
+  
+  template.append(topBarT);
+  
+  //Top bar secondary
+  const topBarS = $ne('path');
+  topBarS.id = `top-bar-secondary-${player.id}`;
+  $sao(topBarS, {
+    d: 'M 0 0 v 48 h 155 l 48 -48 z',
+    fill: ts
+  });
+  template.append(topBarS);
+  
+  //Top bar primary
+  const topBarP = $ne('path');
+  topBarP.id = `top-bar-primary-${player.id}`;
+  $sao(topBarP, {
+    d: 'M 0 0 v 55 h 140 l 55 -55 z',
+    fill: tp
+  });
+  
+  template.append(topBarP);
+  
+  //Bottom bar tier
+  const botBarT = $ne('rect');
+  botBarT.id = `bottom-bar-tier-${player.id}`;
+  $sao(botBarT, {
+    x: 100,
+    y: 290,
+    width: 150,
+    height: 60,
+    fill: `url(#${`tier-gradient${player.id}`}`
+  });
+  
+  template.append(botBarT);
+  
+  //Bottom bar primary
+  const botBarP = $ne('path');
+  botBarP.id = `bottom-bar-primary-${player.id}`;
+  $sao(botBarP, {
+    d: 'M 0 270 v 80 h 250 v -17 l -63 -63 z',
+    fill: tp
+  });
+  template.append(botBarP);
+  
+  //Resource bar secondary
+  const resBarS = $ne('path');
+  resBarS.id = `resource-bar-secondary-${player.id}`;
+  $sa(resBarS, 'd', 'M 0 250 v 30 h 150 l -30 -30 z');
+  $sa(resBarS, 'fill', ts);
+  template.append(resBarS);
+  
+  //Top Stripe Set
+  
+  for (let i = 0; i < 12; i++) {
+    const stripe = $ne('rect');
+    $sao(stripe, {
+      x: 0 + (10 * i),
+      y: 46,
+      width: 8,
+      height: 12,
+      fill: ts,
+      transform: `translate(${4 + (10 * i)},52) skewX(-45) translate(-${4 + (10 * i)},-52)`
+    });
+    template.append(stripe);
   }
   
-  if (player.modifier > 0) {
-    const mod = `    <g id="modifier" style="display:inline" transform="translate(-3.06 -2.133)">
-      <rect style="fill:#ffef00;fill-opacity:1;stroke:#000;stroke-width:.224989;stroke-dasharray:none;stroke-opacity:1" id="modifier-square" width="6.125" height="6.125" x="25.302" y="69.339" rx=".579" ry=".579"/>
-      <text xml:space="preserve" transform="translate(-180.702 32.99)scale(.22087)" id="modifier-number" style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:26.6667px;font-family:Arial;;text-align:center;white-space:pre;shape-inside:url(#rect5833);display:inline;fill:#ffef00;fill-opacity:1;stroke:#000;stroke-width:1;stroke-dasharray:none;stroke-opacity:1"><tspan x="946.085" y="188.02" id="tspan1376"><tspan style="fill:#000;stroke:none" id="tspan1374">1</tspan></tspan></text>
-      <text xml:space="preserve" style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:4.65317px;font-family:Arial;text-align:center;text-anchor:middle;fill:#000;fill-opacity:1;stroke:none;stroke-width:.174494;stroke-dasharray:none;stroke-opacity:1" x="27.058" y="73.482" id="modifier-plus"><tspan id="tspan6563" style="stroke-width:.174494" x="27.058" y="73.482">+</tspan></text>
-      <text xml:space="preserve" style="font-style:normal;font-variant:normal;font-weight:700;font-stretch:normal;font-size:6.18591px;font-family:Arial;text-align:center;text-anchor:middle;fill:#000;fill-opacity:1;stroke:none;stroke-width:.231972;stroke-dasharray:none;stroke-opacity:1" x="19.221" y="104.721" id="modifier-minus" transform="scale(1.39674 .71595)"><tspan id="tspan6563-1" style="stroke-width:.231972" x="19.221" y="104.721">-</tspan></text>
-    </g>`;
-    cardSVG += mod;
+  //Bottom Stripe Set
+  for (let i = 0; i < 3; i++) {
+    const stripe = $ne('rect');
+    $sao(stripe, {
+      x: 142 + (10 * i),
+      y: 264,
+      width: 8,
+      height: 12,
+      fill: ts,
+      transform: `translate(${146 + (10 * i)},270) skewX(45) translate(-${146 + (10 * i)},-270)`
+    });
+    template.append(stripe);
   }
   
+  //Side Stripe Set
+  for (let i = 0; i < 12; i++) {
+    const stripe = $ne('rect');
+    $sao(stripe, {
+      y: 150 + (10 * i),
+      x: 242,
+      height: 8,
+      width: 12,
+      fill: ts,
+      transform: `translate(248,${179 + (10 * i)}) skewY(45) translate(-248,-${179 + (10 * i)})`
+    });
+    template.append(stripe);
+  }
+  
+  //Accent Bar Tier
+  const accBar = $ne('path');
+  accBar.id = `accent-bar-${player.id}`;
+  $sao(accBar, {
+    d: 'M 0 36 v 4 h 134 l 4 -4 z',
+    fill: `url(#${`tier-gradient${player.id}`}`
+  })
+  template.append(accBar);
+  
+  //STARS
   for (let i = 0; i < player.tier; i++) {
-    const star1 = `<path
-       style="fill-opacity:1;fill:#ffd100;stroke:#000000;stroke-width:0"
-       id="star-1"
-       d="m 274.76844,40.775703 -15.9704,14.014389 2.49087,21.101002 -18.2636,-10.858066 -19.29853,8.889518 4.68287,-20.725042 -14.41801,-15.606978 21.15778,-1.950715 10.38771,-18.535161 8.39335,19.519435 z"
-       transform="matrix(0.06799823,-0.00356319,0.00356319,0.06799823,46.74298,${14 + 5.5 * i})" />`;
-    cardSVG += star1;
+    const star = $ne("polygon");
+    let ys = 55
+    let xs = 232
+    $sao(star, {
+      points: '8,0 10,6 16,6 12,10 14,16 8,13 2,16 4,10 0,6 6,6',
+      fill: `url(#${`tier-gradient${player.id}`}`,
+      transform: `translate(232,${55 + 26*i})`
+    })
+    template.append(star);
   }
-  cardSVG += "</g>"
   
-  //ROLL CONDITIONS - BATTERS
+  const tLogo = $ne('image');
+  tLogo.id = `team-logo-${player.id}`;
+  $sao(tLogo, {
+    x: 175,
+    y: 45,
+    width: 50,
+    height: 50,
+    href: `https://www.mlbstatic.com/team-logos/team-cap-on-dark/${pTeam.tid}.svg`,
+    onerror: `this.onerror=null; this.setAttribute('href', 'https://www.mlbstatic.com/team-logos/${pTeam.tid}.svg')`
+  })
+  
+  template.append(tLogo);
+  svg.append(template);
+  
+  // --------------------------------------------------------------------------
+  // ADD CARD TEXT ELEMENTS
+  // --------------------------------------------------------------------------
+  const playerName = $ne('text');
+  playerName.id = `player-name-${player.id}`;
+  $sao(playerName, {
+    style: {
+      fontSize: 16,
+      fontFamily: `"Proxima Nova","Arial"`,
+      textAlign: "left",
+      textAnchor: "left",
+      fill: tpText
+    },
+    x: 10,
+    y: 24
+  })
+  
+  const firstName = $ne('tspan');
+  firstName.id = `first-name-${player.id}`;
+  firstName.textContent = `${player.first} `;
+  playerName.append(firstName);
+  
+  const lastName = $ne('tspan');
+  lastName.id = `last-name-${player.id}`;
+  lastName.style.fontWeight = "700";
+  lastName.textContent = `${player.last}`;
+  playerName.append(lastName);
+  svg.append(playerName);
+  
+  const playerNum = $ne('text');
+  playerNum.id = `player-num-${player.id}`;
+  $sao(playerNum, {
+    style: {
+      fontSize: 30,
+      fontFamily: `"Helvetica Neue","Arial"`,
+      fontWeight: 600,
+      textAlign: "center",
+      textAnchor: "middle",
+      fill: "black"
+    },
+    x: 215,
+    y: 32
+  })
+  
+  playerNum.textContent = player.number;
+  svg.append(playerNum);
+  
+  // --------------------------------------------------------------------------
+  // ADD RESOURCES
+  // --------------------------------------------------------------------------
+  
+  //Dice
+  if (player.dice > 0) {
+    svg.append(buildDie(player.dice, 15, 251.5));
+  }
+  
+  //reRoll
+  if (player.reRoll > 0) {
+    svg.append(buildReRoll(63.5, 259.5));
+  }
+  
+  //Modifier
+  if (player.modifier > 0) {
+    svg.append(buildMod(84, 254));
+    console.log("found one")
+  }
+  
+  //PITCHER FATIGUE
+  if (player.fatigue && player.fatigue < 12) {
+    const w = 130 / player.fatigue;
+    
+    const fObj = $ne('foreignObject');
+    $sao(fObj, {
+      x: 0,
+      y: 250,
+      width: 130,
+      height: 30
+    });
+    svg.append(fObj);
+    
+    const fBox = $n('div');
+    fBox.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+    $sao(fBox, {
+      style: {
+        boxSizing: "border-box",
+        display: "flex",
+        justifyContent: "left",
+        alignItems: "center",
+        alignContent: "center",
+        gap: `2px`,
+        width: "100%",
+        height: "100%"
+      }
+    })
+    fObj.append(fBox);
+    
+    for (let i = 1; i <= player.fatigue; i++) {
+      var fSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      fSvg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+      $sao(fSvg, {
+        width: w,
+        height: "100%",
+        viewBox: "0 0 100 100"
+      });
+      
+      const fPath = $ne('path');
+      $sao(fPath, {
+        d: "M50 10 Q53 10 55 13 L89 78 Q92 84 85 84 L15 84 Q8 84 11 78 L45 13 Q47 10 50 10 Z",
+        "stroke-width": 5,
+        stroke: i <= player.used ? "white" : `${tsText}80`,
+        fill: i <= player.used ? "#d32f2f" : "#ffffff30",
+        "stroke-dasharray": i <= player.used ? "none" : "10 5",
+      })
+      
+      fSvg.append(fPath);
+      
+      if (i <= player.used) {
+        const fRect = $ne('rect');
+        $sao(fRect, {
+          x: 46,
+          y: 28,
+          width: 8,
+          height: 34,
+          rx: 4,
+          fill: "white"
+        });
+        fSvg.append(fRect);
+        
+        const fDot = $ne('circle');
+        $sao(fDot, {
+          cx: 50,
+          cy: 70,
+          r: 4.5,
+          fill: "white"
+        });
+        fSvg.append(fDot);
+      }
+      fBox.append(fSvg);
+    }
+  }
+  
+  // --------------------------------------------------------------------------
+  // ADD CONDITIONS
+  // --------------------------------------------------------------------------
   if (player.condition) {
     if (player.condition === "roll") {
       const gap = 4; // px
       const n = player.outcomes.length;
       
-      let outcomes = `<foreignObject x="4" y="285" width="195" height="61">
-  <div xmlns="http://www.w3.org/1999/xhtml" style="box-sizing:border-box;display:flex;flex-wrap:wrap;justify-content:center;align-content:center;align-items:center;gap:${gap}px;width:100%;height:100%;">`;
+      const outcomeObj = $ne('foreignObject');
+      $sao(outcomeObj, {
+        x: 4,
+        y: 285,
+        width: 195,
+        height: 61
+      })
+      
+      const outFlex = $n('div');
+      outFlex.id = `outcomes-${player.id}`;
+      outFlex.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+      $sao(outFlex, {
+        style: {
+          boxSizing: "border-box",
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          alignItems: "center",
+          alignContent: "center",
+          gap: `${gap}px`,
+          width: "100%",
+          height: "100%"
+        }
+      })
+      outcomeObj.append(outFlex);
+      
+      // Add condition boxes - size based on count 
+      const w = n === 1 ? '75%' : `calc(50% - ${gap / 2}px)`;
+      const h = n < 3 ? '100%' : `calc(50% - ${gap / 2}px)`
       
       player.outcomes.forEach((outcome) => {
-        let w, h;
-        if (n === 1) {
-          w = '75%';
-          h = '100%';
-        } else if (n === 2) {
-          w = `calc(50% - ${gap / 2}px)`;
-          h = '100%';
-        } else {
-          // 3 or 4: two per row, each half height
-          w = `calc(50% - ${gap / 2}px)`;
-          h = `calc(50% - ${gap / 2}px)`;
-        }
         
-        outcomes += `<div xmlns="http://www.w3.org/1999/xhtml" style="box-sizing:border-box;flex:0 0 ${w};width:${w};height:${h};display:flex;justify-content:center;align-items:center;">${renderCondition[outcome.type](outcome.count ?? 1, outcome.target ?? 1, outcome.play)}</div>`;
-      });
+        const oBox = $n('div');
+        oBox.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+        $sao(oBox, {
+          style: {
+            boxSizing: "border-box",
+            flex: `0 0 ${w}`,
+            width: w,
+            height: h,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+          }
+        })
+        oBox.append(renderCondition[outcome.type](outcome.count ?? 1, outcome.target ?? 1, outcome.play))
+        outFlex.append(oBox);
+      })
+      svg.append(outcomeObj);
       
-      outcomes += `</div>
-  </foreignObject>`;
-      
-      cardSVG += outcomes;
     } else if (player.condition === "opt" || player.condition === "auto") {
       
-      //AUTO/OPT CONDITIONS
+      const gap = 4
+      const outcomeObj = $ne('foreignObject');
+      $sao(outcomeObj, {
+        x: 10,
+        y: 285,
+        width: 210,
+        height: 61
+      })
       
-      let condition = `<foreignObject x="10" y="285" width="210" height="61"><div xmlns="http://www.w3.org/1999/xhtml" style="box-sizing:border-box;display:flex;justify-content:center;align-content:center;align-items:center;gap:2px;width:100%;height:100%;text-align:center;">`;
-      const conSymbol =
-        `<div xmlns="http://www.w3.org/1999/xhtml" style="box-sizing:border-box;width:8%;height:100%;display:flex;justify-content:center;align-items:center;flex:0.75; padding:1%"><svg width ="95%" height="95%" viewBox = "0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy= "50" r="45" stroke="white" fill="transparent" stroke-width="4"></circle>
-  ${player.action.type==="opt" ? `<text x="50" y="92" fill="white" font-family="Arial" text-anchor="middle" alignment-baseline="middle" font-size="144px" font-weight="800">*</text></svg>` : `<polygon points="75,50 35,70 35,30" fill="white"></polygon></svg>`}
-    </div>`;
-      condition += conSymbol;
-      const condText = `<div xmlns="http://www.w3.org/1999/xhtml" style="box-sizing:border-box;width:72%;min-width:0;word-break:break-word;overflow-wrap:break-word;color:white;font-family:Arial;font-size:0.8em;flex:3;">${player.action.desc}</div>`;
-      condition += condText;
+      const outFlex = $n('div');
+      outFlex.id = `outcomes-${player.id}`;
+      outFlex.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+      $sao(outFlex, {
+        style: {
+          boxSizing: "border-box",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          alignContent: "center",
+          textAlign: "center",
+          gap: `${gap}px`,
+          width: "100%",
+          height: "100%"
+        }
+      })
       
-      const condPlay = player.action.play ?
-        `<div xmlns="http://www.w3.org/1999/xhtml" style="box-sizing:border-box;width:20%;height:100%;display:flex;justify-content:center;align-items:center;flex:1;padding:0%;"><svg width="100%" xmlns="http://www.w3.org/2000/svg" viewBox = "0 0 125 100">${buildPlay(player.action.play,-10)}</svg></div>` : '';
       
-      condition += condPlay
+      const symFlex = $n('div');
+      symFlex.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+      $sao(symFlex, {
+        style: {
+          boxSizing: "border-box",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          alignContent: "center",
+          textAlign: "center",
+          flex: 0.75,
+          width: "8%",
+          height: "100%",
+          padding: "1%"
+        }
+      });
       
-      condition += `</div></foreignObject>`;
-      cardSVG += condition;
+      var symSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      symSvg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+      $sao(symSvg, {
+        width: "95%",
+        height: "95%",
+        viewBox: "0 0 100 100"
+      })
       
-      //SPECIAL CONDITIONS
+      var sCircle = $ne('circle');
+      $sao(sCircle, {
+        cx: 50,
+        cy: 50,
+        r: 45,
+        stroke: "white",
+        fill: "transparent",
+        "stroke-width": 4
+      });
+      symSvg.append(sCircle);
       
+      if (player.action.type === "opt") {
+        const sText = $ne('text');
+        $sao(sText, {
+          x: 50,
+          y: 92,
+          fill: "white",
+          "font-family": "Arial",
+          "text-anchor": "middle",
+          "alignment-baseline": "middle",
+          "font-size": "144",
+          "font-weight": "800"
+        });
+        sText.textContent = "*"
+        symSvg.append(sText);
+        
+      } else {
+        
+        const sPoly = $ne('polygon');
+        $sao(sPoly, {
+          points: "75,50 35,70 35,30",
+          fill: "white"
+        });
+        symSvg.append(sPoly);
+      }
+      symFlex.append(symSvg);
+      outFlex.append(symFlex);
+      
+      const conFlex = $n('div');
+      conFlex.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+      $sao(conFlex, {
+        style: {
+          boxSizing: "border-box",
+          flex: 3,
+          width: "72%",
+          minWidth: 0,
+          padding: "1%",
+          wordBreak: "break-word",
+          overflowWrap: "break-word",
+          color: "white",
+          fontFamily: "Arial",
+          fontSize: "0.8em"
+        }
+      });
+      conFlex.textContent = player.action.desc;
+      outFlex.append(conFlex);
+      if (player.action.play) {
+        const playFlex = $n('div');
+        playFlex.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+        $sao(playFlex, {
+          style: {
+            boxSizing: "border-box",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            alignContent: "center",
+            flex: 1,
+            width: "20%",
+            height: "100%",
+            padding: "0%"
+          }
+        })
+        
+        var playSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        playSvg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+        $sao(playSvg, {
+          width: "100%",
+          viewBox: "0 0 125 100",
+          xmlns: "http://www.w3.org/2000/svg"
+        });
+        playSvg.append(buildPlay(player.action.play, false, false));
+        playFlex.append(playSvg);
+        outFlex.append(playFlex);
+      }
+      outcomeObj.append(outFlex);
+      svg.append(outcomeObj);
     } else if (player.condition === "sp-ec") {
-      
       //EDDIE CAMPBELL
       
-      let condition = `<foreignObject x="10" y="285" width="210" height="61"><div xmlns="http://www.w3.org/1999/xhtml" style="box-sizing:border-box;display:flex;justify-content:center;align-items:center;gap:1px;width:100%;height:100%;flex-direction:column;">`;
-      condition += `<div style="width:100%;height:calc(50% - 6px);min-height:0;display:flex;justify-content:center;gap:1px;">`
-      condition += box("X");
-      condition += box("X");
-      condition += box("Y");
-      condition += box("Y");
-      condition += `<svg height="100%" xmlns="http://www.w3.org/2000/svg" viewBox = "0 0 125 100">${buildPlay("HR",-10)}</svg>`;
-      condition += "</div>";
-      condition += `<div style="width:100%;height:calc(50% + 4px);min-height:0;display:flex;justify-content:center;gap:10px;word-break:break-word;overflow-wrap:break-word;color:white;font-family:Arial;font-size:0.8em;text-align:center;">You may not use adjust tokens during this turn</div>`;
-      condition += `</div></foreignObject>`;
-      cardSVG += condition;
+      const ecObj = $ne('foreignObject');
+      $sao(ecObj, {
+        x: 10,
+        y: 285,
+        width: 210,
+        height: 61
+      })
+      
+      const ecFlex = $n('div');
+      ecFlex.id = `outcomes-${player.id}`;
+      ecFlex.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+      $sao(ecFlex, {
+        style: {
+          boxSizing: "border-box",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          alignContent: "center",
+          gap: `$1px`,
+          width: "100%",
+          height: "100%",
+          flexDirection: "column"
+        }
+      })
+      ecObj.append(ecFlex);
+      
+      const ecCon = $n('div');
+      ecCon.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+      $sao(ecCon, {
+        style: {
+          width: "100%",
+          height: "calc(50% - 6px)",
+          minHeight: 0,
+          display: "flex",
+          justifyContent: "center",
+          gap: "1px"
+        }
+      });
+      ecFlex.append(ecCon);
+      ecCon.append(box("X"));
+      ecCon.append(box("X"));
+      ecCon.append(box("Y"));
+      ecCon.append(box("Y"));
+      
+      var ecSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      ecSvg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+      $sao(ecSvg, {
+        viewBox: "0 0 125 100",
+        xmlns: "http://www.w3.org/2000/svg"
+      });
+      
+      ecSvg.append(buildPlay("HR", false, false));
+      ecCon.append(ecSvg);
+      
+      const ecTex = $n('div');
+      ecTex.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+      $sao(ecTex, {
+        style: {
+          boxSizing: "border-box",
+          display: "flex",
+          gap: "10px",
+          width: "100%",
+          height: 'calc(50% + 4px)',
+          minHeight: 0,
+          justifyContent: "center",
+          wordBreak: "break-word",
+          overflowWrap: "break-word",
+          color: "white",
+          fontFamily: "Arial",
+          fontSize: "0.8em",
+          textAlign: "center"
+        }
+      });
+      ecTex.textContent = "You may not use adjust tokens during this turn";
+      ecFlex.append(ecTex);
+      svg.append(ecObj);
     } else if (player.condition === "sp-kw") {
+      //KENNY WILLIAMS
       
-      //Kenny Williams
+      const kwObj = $ne('foreignObject');
+      $sao(kwObj, {
+        x: 10,
+        y: 285,
+        width: 210,
+        height: 61
+      })
       
-      let condition = `<foreignObject x="10" y="285" width="210" height="61"><div xmlns="http://www.w3.org/1999/xhtml" style="box-sizing:border-box;display:flex;justify-content:center;align-items:center;gap:1px;width:100%;height:100%;flex-direction:column;">`;
-      condition += `<div style="width:100%;height:58%;min-height:0;display:flex;justify-content:center;gap:1px;">`
-      condition += renderCondition["max"](0, 4, "2B");
-      condition += "</div>";
-      condition += `<div style="width:100%;height:calc(42% - 1px);min-height:0;display:flex;justify-content:center;gap:10px;word-break:break-word;overflow-wrap:break-word;color:white;font-family:Arial;font-size:0.8em;text-align:center;">If max is less than 4, all runners out</div>`;
-      condition += `</div></foreignObject>`;
-      cardSVG += condition;
+      const kwFlex = $n('div');
+      kwFlex.id = `outcomes-${player.id}`;
+      kwFlex.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+      $sao(kwFlex, {
+        style: {
+          boxSizing: "border-box",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          alignContent: "center",
+          gap: `$1px`,
+          width: "100%",
+          height: "100%",
+          flexDirection: "column"
+        }
+      })
+      kwObj.append(kwFlex);
+      
+      const kwCon = $n('div');
+      kwCon.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+      $sao(kwCon, {
+        style: {
+          width: "100%",
+          height: "58%",
+          minHeight: 0,
+          display: "flex",
+          justifyContent: "center",
+          gap: "1px"
+        }
+      });
+      kwFlex.append(kwCon);
+      kwCon.append(renderCondition['max'](0, 4, "2B"));
+      
+      const kwTex = $n('div');
+      kwTex.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+      $sao(kwTex, {
+        style: {
+          boxSizing: "border-box",
+          display: "flex",
+          gap: "10px",
+          width: "100%",
+          height: '42%',
+          minHeight: 0,
+          justifyContent: "center",
+          wordBreak: "break-word",
+          overflowWrap: "break-word",
+          color: "white",
+          fontFamily: "Arial",
+          fontSize: "0.8em",
+          textAlign: "center"
+        }
+      });
+      kwTex.textContent = "If max is less than 4, all runners out";
+      kwFlex.append(kwTex);
+      svg.append(kwObj);
     } else if (player.condition === "sp-tr") {
+      //TOMAS RIVERA
       
-      //Tomas Rivera
+      const trObj = $ne('foreignObject');
+      $sao(trObj, {
+        x: 10,
+        y: 285,
+        width: 210,
+        height: 61
+      })
       
-      let condition = `<foreignObject x="10" y="285" width="210" height="61"><div xmlns="http://www.w3.org/1999/xhtml" style="box-sizing:border-box;display:flex;justify-content:center;align-items:center;gap:1px;width:100%;height:100%;flex-direction:column;">`;
-      condition += `<div style="width:100%;height:40%;min-height:0;display:flex;justify-content:center;gap:1px;">`
-      condition += renderCondition["range"](0, 3, "1B");
-      condition += "</div>";
-      condition += `<div style="width:100%;height:calc(60% - 1px);min-height:0;display:flex;justify-content:center;gap:10px;word-break:break-word;overflow-wrap:break-word;color:white;font-family:Arial;font-size:0.8em;text-align:center;">and all runners advance one extra base. +1 d6 for each run scored.</div>`;
-      condition += `</div></foreignObject>`;
-      cardSVG += condition;
+      const trFlex = $n('div');
+      trFlex.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+      $sao(trFlex, {
+        style: {
+          boxSizing: "border-box",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          alignContent: "center",
+          gap: `$1px`,
+          width: "100%",
+          height: "100%",
+          flexDirection: "column"
+        }
+      })
+      trObj.append(trFlex);
+      
+      const trCon = $n('div');
+      trCon.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+      $sao(trCon, {
+        style: {
+          width: "100%",
+          height: "40%",
+          minHeight: 0,
+          display: "flex",
+          justifyContent: "center",
+          gap: "1px"
+        }
+      });
+      trFlex.append(trCon);
+      trCon.append(renderCondition["range"](0, 3, "1B"));
+      
+      const trTex = $n('div');
+      trTex.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+      $sao(trTex, {
+        style: {
+          boxSizing: "border-box",
+          display: "flex",
+          gap: "10px",
+          width: "100%",
+          height: 'calc(60% - 2px)',
+          minHeight: 0,
+          justifyContent: "center",
+          wordBreak: "break-word",
+          overflowWrap: "break-word",
+          color: "white",
+          fontFamily: "Arial",
+          fontSize: "0.8em",
+          textAlign: "center"
+        }
+      });
+      trTex.textContent = "and all runners advance one extra base. +1 d6 for each run scored.";
+      trFlex.append(trTex);
+      svg.append(trObj);
     }
   }
   
-
-  const foil = `<g id="foil" transform="scale(3.7794)"><path
-       id="foil-cover"
-       style="opacity:0.4;mix-blend-mode:color-dodge;fill:url(#linearGradient16274);fill-opacity:1;stroke:#000000;stroke-width:0"
-       d="M 5e-7,5.0000002e-7 V 11.112501 v 1.587501 1.852081 51.764798 7.9375 18.349784 H 66.14583 v -4.38009 -11.138864 -10.17767 -2.1146 -0.58756 -2.115644 -0.58756 -2.11511 -0.58756 -2.11512 -0.58756 -2.11512 -0.58756 -2.11512 -0.58756 -2.11511 -0.58756 -2.11512 -0.58756 -2.11512 -0.58704 -2.11564 -0.58756 -2.11511 V 37.178086 35.06349 11.112501 5e-7 Z M 42.350379,11.112501 h 18.50378 v 65.97271 h -5.84719 l -5.64771,-5.64772 h -4.77956 l -1.45469,-1.45469 h -2.11511 l 1.45469,1.45469 h -0.58756 l -1.4547,-1.45469 h -2.11511 l 1.45469,1.45469 h -0.58756 l -1.45469,-1.45469 h -2.11512 l 1.45469,1.45469 h -0.14211 l -5.12062,-5.12061 H 5.2916605 V 15.153593 l 0.60152,-0.60151 h 0.58756 l -0.91209,0.91209 h 2.11511 l 0.9120898,-0.91209 h 0.587559 l -0.9120788,0.91209 H 10.38644 l 0.91209,-0.91209 h 0.58756 l -0.91209,0.91209 h 2.11512 l 0.91209,-0.91209 h 0.58756 l -0.91209,0.91209 h 2.11512 l 0.91209,-0.91209 h 0.58756 l -0.91209,0.91209 h 2.11511 l 0.91209,-0.91209 h 0.58756 l -0.91209,0.91209 h 2.11512 l 0.91209,-0.91209 h 0.58756 l -0.91209,0.91209 h 2.11512 l 0.91209,-0.91209 h 0.58756 l -0.91209,0.91209 h 2.11512 l 0.91209,-0.91209 h 0.58756 l -0.91209,0.91209 h 2.11511 l 0.91209,-0.91209 h 6.81096 l 1.85208,-1.852081 h 1.88257 z" /></g>`;
-  cardSVG += foil;
+  // PITCHER TEXT
+  if (player.fatigue) {
+    
+    const fObj = $ne('foreignObject');
+    $sao(fObj, {
+      x: 10,
+      y: 285,
+      width: 190,
+      height: 61
+    })
+    
+    const fFlex = $n('div');
+    fFlex.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+    $sao(fFlex, {
+      style: {
+        boxSizing: "border-box",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        alignContent: "center",
+        gap: `$1px`,
+        width: "100%",
+        height: "100%",
+        flexDirection: "column"
+      }
+    })
+    fObj.append(fFlex);
+    
+    const fTex = $n('div');
+    fTex.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://www.w3.org/1999/xhtml");
+    $sao(fTex, {
+      style: {
+        boxSizing: "border-box",
+        display: "flex",
+        gap: "10px",
+        width: "100%",
+        minHeight: 0,
+        justifyContent: "center",
+        wordBreak: "break-word",
+        overflowWrap: "break-word",
+        color: "white",
+        fontFamily: "Arial",
+        fontSize: "0.8em",
+        textAlign: "center"
+      }
+    });
+    fTex.textContent = player.desc;
+    fFlex.append(fTex);
+    svg.append(fObj);
+    
+  }
   
+  const foil = $ne('rect');
+  $sao(foil, {
+    x: 0,
+    y: 0,
+    height: 350,
+    width: 250,
+    style: {
+      opacity: 0.20,
+      "mix-blend-mode": "color-dodge",
+      fill: `url(#foil-gradient${player.id})`
+    }
+  })
+  svg.append(foil);
   
-  
-  
-  //SVG CLOSEOUT
-  
-  const svgFooter = `</g> </svg>`
-  cardSVG += svgFooter;
-  
-  return cardSVG
+  return svg
 }

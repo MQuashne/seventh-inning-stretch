@@ -20,15 +20,11 @@ resultDiv.textContent = result;
 //Create Modal
 export const modal = new Modal;
 
-/*
-const diceRoller=$t('diceRoller');
-const rollButton = $t('roll');
-on(rollButton, 'click', () => { box.start_throw() });
 
-const box = new DICE.dice_box(diceRoller);
-box.setDice("3d6");
-*/
+
+
+
+
 
 //--TEAM AND COLOR SELECT--
-/*colorSetup(box);*/
 gameSetup()

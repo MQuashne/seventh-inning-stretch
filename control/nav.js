@@ -1,5 +1,5 @@
 import {$n, $t, $c, $a, on} from '../util.js'
-
+/*
 function isolate(nodes, targetClass, op, lone) {
   nodes.forEach((node) => {
     op === "add" ? node.classList.add(targetClass) : node.classList.remove(targetClass);
@@ -17,4 +17,4 @@ export function navSetup() {
       isolate(navItems,"active","remove",e.currentTarget.id);
     })
   })
-}
+}*/

@@ -1,16 +1,29 @@
 import { players } from '../model/players.js'
 import { pitchers } from '../model/pitchers.js'
+import { opponents } from '../model/opponents.js'
 import { G } from '../model/game.js'
-import { renderCalendarEvents } from '../render/renderCalendarEvents.js'
-import { navSetup } from './nav.js'
-import { $n, $t, $c, $a, on, loadCard, randInt } from '../util.js'
+import { initCalendar } from '../render/renderCalendarEvents.js'
+
+import { renderSpringTraining, initSpringTraining } from '../render/renderSpringTraining.js'
+
+import { initLineup } from '../render/renderLineup.js'
+
+import { renderCover } from '../render/renderGameday.js'
+
+import { initNav, renderNav } from '../render/renderNav.js'
+import { $n, $t, $c, $a, on, findKey, loadCard, randInt } from '../util.js'
 import { buildCard } from '../render/buildCard.js'
-import { buildCardProg } from '../render/buildCardProg.js'
+import { buildOpp } from '../render/buildOpp.js'
+import Modal from '../render/modal.js'
+import { colorSetup, getTeamColors } from './colorControl.js'
+import { teamUnis, teamNames, leagueNames, evergreenJerseys } from '../dice/assets/teamColors.js'
+import { teams, leagues } from '../model/teams.js'
+import { endSpring } from './phase.js'
+import { brandColors } from '../render/brandColors.js'
+import { initGame } from '../render/renderGame.js'
+import { DICE } from '../dice/dice.js'
 
-
-
-
-
+export const allPlayers = [...players, ...pitchers];
 
 function shuffle(array) {
   
@@ -21,6 +34,15 @@ function shuffle(array) {
 };
 
 export function gameSetup() {
+  G.myTeam = document.documentElement.dataset.team;
+  G.thisTeam = teams.find((t) => t.code === document.documentElement.dataset.team)
+  $t('header-team-name').textContent = `${G.thisTeam.city} ${G.thisTeam.name}`;
+  const myColors = getTeamColors(G.myTeam);
+  
+  const root = document.documentElement;
+  root.style.setProperty('--td', G.thisTeam.td);
+  
+  const mainModal = new Modal();
   
   //Create 3 player decks
   const t1Players = players.filter(player => (player.tier === 1 && player.condition === "roll"));
@@ -30,39 +52,95 @@ export function gameSetup() {
   const t2Players = players.filter(player => (player.tier === 2 && player.condition === "roll"));
   const t2Pitchers = pitchers.filter(pitcher => (pitcher.tier === 2));
   t2Players.push(...t2Pitchers)
-  shuffle(t2Players);
+  shuffle(t2Players)
   const t3Players = players.filter(player => (player.tier === 3 && player.condition === "roll"));
   const t3Pitchers = pitchers.filter(pitcher => (pitcher.tier === 3));
   t3Players.push(...t3Pitchers)
   shuffle(t3Players);
-  
+  G.tier2Deck = t2Players;
+  G.tier3Deck = t3Players;
+  G.league = [...opponents];
+  /*
+  const diceRoller = $t('diceRoller');
+  const box = new DICE.dice_box(diceRoller);
+  box.setDice("4d6");
+  const rollButton = $t('roll');
+  on(rollButton, 'click', () => { box.start_throw() });
+  colorSetup(box);
+  */
   //Get initial Roster of T1 Players
-  G.batterRoster = t1Players.splice(0, 9);
-  G.pitcherRoster = t1Pitchers.splice(0, 1);
+  G.lineup.order = t1Players.splice(0, 9);
+  G.lineup.startPitcher = t1Pitchers.splice(0, 1)[0];
+  
+  
+  G.lineup.order.forEach((player) => player.team = G.thisTeam.code);
+  G.lineup.startPitcher.team = G.thisTeam.code;
+  
+  
+  
+  
+  //TESTING ONLY
+  G.season = "season";
+  const signings = G.tier2Deck.splice(0, 3);
+  signings.forEach((fng) => {
+    if (fng.fatigue) {
+      G.lineup.bullpen.push(fng);
+    } else {
+      G.lineup.bench.push(fng);
+    }
+  });
+  
+  const oppSignings = G.tier2Deck.splice(0, 3);
+  for (let i = 0; i < 3; i++) {
+    const opp = G.league.find(t => t.id === oppSignings[i].id);
+    G.opponents.push(opp);
+    const nextGame = G.schedule.find(event => event.id === `G${i+1}`);
+    nextGame.title = `${opp.city} ${opp.team}`;
+    if (i === 0) {
+      nextGame.status = "active";
+    }
+    G.schedule.find(event => event.id === `springTraining`).status = "past";
+    
+  }
+  
   
   //Set up nav buttons
-  navSetup();
-  //Show Calendar
-  renderCalendarEvents();
+  initNav();
+  initCalendar();
   
-  const cardTest = $t("card-test");
-  //cardTest.append(buildCardProg(players[0]));
- 
-  let pCards = [];
-  pCards.push(...players);
-  pCards.push(...pitchers);
-  pCards.sort((a,b) => a.id - b.id);
+  if (G.season === "spring") {
+    initSpringTraining();
+  }
   
-  pCards.forEach((card) => {
-    const cdiv=$n("div")
-    cdiv.append(buildCardProg(card))
-    //cdiv.innerHTML=buildCard(player)
-    cardTest.append(cdiv);
-  })
- 
+  initLineup();
+  G.game.order = G.lineup.order;
+  G.game.opponent = G.opponents[0];
+  renderCover();
+  // $t("gameday-cover").classList.add("hidden")
+  initGame();
+  
+  //GET REPLACEMENT OPTIONS
+  
+  /*
+  for (const[key,value] of Object.entries(brandColors)){
+   
+    const testPage=$t("color-logo-test");
+    const pSwatch=$n('div','color-logo-swatch',testPage);
+    const sSwatch=$n('div','color-logo-swatch',testPage);
+    const wSwatch=$n('div','color-logo-swatch',testPage);
+    //pSwatch.style.background=value.tp;
+   
+    
+    pSwatch.style.backgroundImage=`url("https://www.mlbstatic.com/team-logos/${value.tid}.svg"), linear-gradient(90deg,${value.tp},${value.tp})`;
+   sSwatch.style.backgroundImage=`url("https://www.mlbstatic.com/team-logos/${value.tid}.svg"), linear-gradient(90deg,${value.ts},${value.ts})`;
+   wSwatch.style.backgroundImage=`url("https://www.mlbstatic.com/team-logos/${value.tid}.svg"), linear-gradient(90deg,#FFFFFF,#FFFFFF)`;
+  }
+   */
+  
   //cardTest.innerHTML = buildCard(players[0]);
- 
-
+  
+  //https://prod-gameday.mlbstatic.com/responsive-gameday-assets/1.3.0/images/stadiums/[stadium_id].jpg
+  
   
   //Show roster
   /*const lineupDiv = $t("lineup");

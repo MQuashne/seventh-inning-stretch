@@ -9,6 +9,7 @@ export const players = [
   "dice": 2,
   "reRoll": 0,
   "modifier": 0,
+  "team":"MRB",
   "condition": "roll",
   "outcomes": [
   {
@@ -32,6 +33,7 @@ export const players = [
   "dice": 2,
   "reRoll": 1,
   "modifier": 0,
+  "team":"ELP",
   "condition": "roll",
   "outcomes": [
   {
@@ -50,6 +52,7 @@ export const players = [
   "dice": 1,
   "reRoll": 1,
   "modifier": 0,
+  "team":"JAX",
   "condition": "roll",
   "outcomes": [
   {
@@ -68,6 +71,7 @@ export const players = [
   "dice": 2,
   "reRoll": 0,
   "modifier": 0,
+  "team":"RRE",
   "condition": "roll",
   "outcomes": [
   {
@@ -86,6 +90,7 @@ export const players = [
   "dice": 1,
   "reRoll": 1,
   "modifier": 0,
+  "team":"OKC",
   "condition": "roll",
   "outcomes": [
   {
@@ -104,18 +109,19 @@ export const players = [
   "dice": 1,
   "reRoll": 0,
   "modifier": 0,
+  "team":"ROC",
   "condition": "roll",
   "outcomes": [
+    {
+  "type": "value",
+  "count": 2,
+  "target": 6,
+  "play": "HR"
+},
   {
     "type": "value",
     "count": 1,
     "target": 6,
-    "play": "2B"
-  },
-  {
-    "type": "value",
-    "count": 2,
-    "target":6,
     "play": "2B"
   }]
 },
@@ -129,17 +135,18 @@ export const players = [
   "dice": 2,
   "reRoll": 0,
   "modifier": 0,
+  "team":"ALB",
   "condition": "roll",
   "outcomes": [
   {
     "type": "match",
-    "count": 2,
-    "play": "1B"
+    "count": 3,
+    "play": "2B"
   },
   {
     "type": "match",
-    "count": 3,
-    "play": "2B"
+    "count": 2,
+    "play": "1B"
   }]
 },
 {
@@ -152,6 +159,7 @@ export const players = [
   "dice": 3,
   "reRoll": 0,
   "modifier": 0,
+  "team":"SRC",
   "condition": "opt",
   "action": { "type": "opt", "desc": " Remove 3 dice from your dice pool", "play": "SAC" }
 },
@@ -165,6 +173,7 @@ export const players = [
   "dice": 1,
   "reRoll": 0,
   "modifier": 1,
+  "team":"DRM",
   "condition": "sp-ec"
 },
 {
@@ -177,6 +186,7 @@ export const players = [
   "dice": 2,
   "reRoll": 0,
   "modifier": 0,
+  "team":"TOL",
   "condition": "roll",
   "outcomes": [{ "type": "sum", "target": 12, "play": "2B" }]
 },
@@ -190,6 +200,7 @@ export const players = [
   "dice": 0,
   "reRoll": 0,
   "modifier": 0,
+  "team":"TAC",
   "condition": "auto",
   "action": { "type": "auto", "desc": " +1 die per base runner. If 1st empty:", "play": "BB" }
   
@@ -204,7 +215,8 @@ export const players = [
   "dice": 1,
   "reRoll": 0,
   "modifier": 0,
-  "condition": "opt",
+  "team":"STP",
+  "condition": "auto",
   "action": { "type": "auto", "desc": `Remove 1 fatigue from the active pitcher`, "play": "SAC" }
 },
 {
@@ -217,7 +229,8 @@ export const players = [
   "dice": 0,
   "reRoll": 0,
   "modifier": 0,
-  "condition": "opt",
+  "team":"NOR",
+  "condition": "auto",
   "action": { "type": "auto", "desc": " Remove all dice and tokens from your pool", "play": "1B" }
 },
 {
@@ -230,12 +243,13 @@ export const players = [
   "dice": 1,
   "reRoll": 0,
   "modifier": 0,
+  "team":"LOU",
   "condition": "roll",
   "outcomes": [
   {
     "type": "range",
-    "target": 3,
-    "play": "BB"
+    "target": 5,
+    "play": "2B"
   },
   {
     "type": "range",
@@ -244,8 +258,8 @@ export const players = [
   },
   {
     "type": "range",
-    "target": 5,
-    "play": "2B"
+    "target": 3,
+    "play": "BB"
   }]
 },
 {
@@ -258,6 +272,7 @@ export const players = [
   "dice": 0,
   "reRoll": 0,
   "modifier": 0,
+  "team":"OMA",
   "condition": "sp-kw",
   "outcomes": [
   {
@@ -276,6 +291,7 @@ export const players = [
   "dice": 1,
   "reRoll": 1,
   "modifier": 0,
+  "team":"REN",
   "condition": "roll",
   "outcomes": [
   {
@@ -301,7 +317,7 @@ export const players = [
   "modifier": 0,
   "team": "SEA",
   "condition": "roll",
-  "outcomes": [{ "type": "sum", "target": "7", "play": "1B" }, { "type": "sum", "target": "11", "play": "2B" }]
+  "outcomes": [{ "type": "sum", "target": "11", "play": "2B" }, { "type": "sum", "target": "7", "play": "1B" }]
 },
 {
   "id": "020",
@@ -318,13 +334,13 @@ export const players = [
   "outcomes": [
   {
     "type": "straight",
-    "target": 2,
-    "play": "1B"
+    "target": 3,
+    "play": "2B"
   },
   {
     "type": "straight",
-    "target": 3,
-    "play": "2B"
+    "target": 2,
+    "play": "1B"
   }]
 },
 {
@@ -353,7 +369,7 @@ export const players = [
   "modifier": 0,
   "team": "TEX",
   "condition": "roll",
-  "outcomes": [{ "type": "over", "target": 5, "count": 1, "play": "1B" }, { "type": "over", "target": 5, "count": 2, "play": "2B" }]
+  "outcomes": [{ "type": "over", "target": 5, "count": 2, "play": "2B" }, { "type": "over", "target": 5, "count": 1, "play": "1B" }]
 },
 {
   "id": "023",
@@ -370,13 +386,13 @@ export const players = [
   "outcomes": [
   {
     "type": "even",
-    "count": 2,
-    "play": "1B"
+    "count": 3,
+    "play": "2B"
   },
   {
     "type": "even",
-    "count": 3,
-    "play": "2B"
+    "count": 2,
+    "play": "1B"
   }]
 },
 {
@@ -405,7 +421,7 @@ export const players = [
   {
     "type": "max",
     "target": 3,
-    "play": "1B"
+    "play": "SAC"
   }]
 },
 {
@@ -421,13 +437,13 @@ export const players = [
   "outcomes": [
   {
     "type": "unequal",
-    "count": 2,
-    "play": "1B"
+    "count": 3,
+    "play": "2B"
   },
   {
     "type": "unequal",
-    "count": 3,
-    "play": "2B"
+    "count": 2,
+    "play": "1B"
   }],
   "team": "CLE",
   "condition": "roll"
@@ -447,13 +463,13 @@ export const players = [
   "outcomes": [
   {
     "type": "match",
-    "count": 2,
-    "play": "1B"
+    "count": 3,
+    "play": "2B"
   },
   {
     "type": "match",
-    "count": 3,
-    "play": "2B"
+    "count": 2,
+    "play": "1B"
   }]
 },
 {
@@ -471,13 +487,13 @@ export const players = [
   "outcomes": [
   {
     "type": "match",
-    "count": 2,
-    "play": "2B"
+    "count": 3,
+    "play": "HR"
   },
   {
     "type": "match",
-    "count": 3,
-    "play": "HR"
+    "count": 2,
+    "play": "2B"
   }]
 },
 {
@@ -495,9 +511,9 @@ export const players = [
   "outcomes": [
   {
     "type": "over",
-    "count": 1,
+    "count": 3,
     "target": 4,
-    "play": "1B"
+    "play": "3B"
   },
   {
     "type": "over",
@@ -507,9 +523,9 @@ export const players = [
   },
   {
     "type": "over",
-    "count": 3,
+    "count": 1,
     "target": 4,
-    "play": "3B"
+    "play": "1B"
   }]
 },
 {
@@ -541,8 +557,8 @@ export const players = [
     "outcomes": [
   {
     "type": "straight",
-    "target": 2,
-    "play": "1B"
+    "target": 4,
+    "play": "HR"
   },
   {
     "type": "straight",
@@ -551,8 +567,8 @@ export const players = [
   },
       {
   "type": "straight",
-  "target": 4,
-  "play": "HR"
+  "target": 2,
+  "play": "1B"
 }
     ]
 },
@@ -792,7 +808,7 @@ export const players = [
   "dice": 0,
   "reroll": 0,
   "modifier": 0,
-  "team": "GWI",
+  "team": "BUF",
   "condition": "opt",
   "action":{"type":"opt","desc":"Roll d10, see reference card."}
 }]

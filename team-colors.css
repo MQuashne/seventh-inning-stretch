@@ -749,6 +749,60 @@
   --ts: #98002e;
 }
 
+[data-team="GAS"] {
+  --tp: #333333;
+  --ts: #ee2737;
+}
+
+[data-team="HGR"] {
+  --tp: #0c2340;
+  --ts: #c5003e;
+}
+
+[data-team="HPT"] {
+  --tp: #001489;
+  --ts: #c8102e;
+}
+
+[data-team="LCR "] {
+  --tp: #333333;
+  --ts: #c8102e;
+}
+
+[data-team="LEX"] {
+  --tp: #004c97;
+  --ts: #009f4d;
+}
+
+[data-team="LIS "] {
+  --tp: #333333;
+  --ts: #046a38;
+}
+
+[data-team="SMD "] {
+  --tp: #0c2340;
+  --ts: #7da1c4;
+}
+
+[data-team="SPC "] {
+  --tp: #333333;
+  --ts: #00677f;
+}
+
+[data-team="STA "] {
+  --tp: #333f48;
+  --ts: #e57200;
+}
+
+[data-team="YRK "] {
+  --tp: #0c2340;
+  --ts: #ffb81c;
+}
+
+[data-team="WVA "] {
+  --tp: #333333;
+  --ts: #00A3E0;
+}
 
 
 
@@ -757,6 +811,7 @@
 :root {
   --tp-light: oklch(from var(--tp) calc(l + 0.12) c h);
   --tp-dark: oklch(from var(--tp) calc(l - 0.12) c h);
+  --tp-vdark: oklch(from var(--tp-dark) calc(l - 0.12) c h);
   --ts-light: oklch(from var(--ts) calc(l + 0.12) c h);
   --ts-dark: oklch(from var(--ts) calc(l - 0.12) c h);
   --tp-text: contrast-color(var(--tp));

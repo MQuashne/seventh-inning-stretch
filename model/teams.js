@@ -1,280 +1,187 @@
-  {
-    id: "ANA",
-    city: "Anaheim",
-    name: "Angels",
-    fullName: "Anaheim Angels",
-    tier: 2,
-    player: "023"
-  },
-  {
-    id: "ARI",
-    city: "Arizona",
-    name: "Diamondbacks",
-    fullName: "Arizona Diamondbacks",
-    tier: 2,
-    player: "045"
-  },
-  {
-    id: "ATL",
-    city: "Atlanta",
-    name: "Braves",
-    fullName: "Atlanta Braves",
-    tier: 3,
-    player: "044"
-  },
-  {
-    id: "BAL",
-    city: "Baltimore",
-    name: "Orioles",
-    fullName: "Baltimore Orioles",
-    tier: 3,
-    player: "034"
-  },
-  {
-    id: "BKN",
-    city: "New York",
-    name: "Mets",
-    fullName: "New York Mets",
-    tier: 3,
-    player: "052"
-  },
-  {
-    id: "BOS",
-    city: "Boston",
-    name: "Red Sox",
-    fullName: "Boston Red Sox",
-    tier: 3,
-    player: "032"
-  },
-  {
-    id: "CHA",
-    city: "Charlotte",
-    name: "Knights",
-    fullName: "Charlotte Knights",
-    tier: 2,
-    player: "048"
-  },
-  {
-    id: "CHC",
-    city: "Chicago",
-    name: "Cubs",
-    fullName: "Chicago Cubs",
-    tier: 3,
-    player: "041"
-  },
-  {
-    id: "CIN",
-    city: "Cincinnati",
-    name: "Reds",
-    fullName: "Cincinnati Reds",
-    tier: 2,
-    player: "033"
-  },
-  {
-    id: "CLE",
-    city: "Cleveland",
-    name: "Guardians",
-    fullName: "Cleveland Guardians",
-    tier: 2,
-    player: "025"
-  },
-  {
-    id: "COL",
-    city: "Colorado",
-    name: "Rockies",
-    fullName: "Colorado Rockies",
-    tier: 2,
-    player: "021"
-  },
-  {
-    id: "DET",
-    city: "Detroit",
-    name: "Tigers",
-    fullName: "Detroit Tigers",
-    tier: 3,
-    player: "040"
-  },
-  {
-    id: "FLA",
-    city: "Florida",
-    name: "Marlins",
-    fullName: "Florida Marlins",
-    tier: 2,
-    player: "031"
-  },
-  {
-    id: "HOU",
-    city: "Houston",
-    name: "Astros",
-    fullName: "Houston Astros",
-    tier: 3,
-    player: "038"
-  },
-  {
-    id: "KC",
-    city: "Kansas City",
-    name: "Royals",
-    fullName: "Kansas City Royals",
-    tier: 2,
-    player: "029"
-  },
-  {
-    id: "LAD",
-    city: "Los Angeles",
-    name: "Dodgers",
-    fullName: "Los Angeles Dodgers",
-    tier: 3,
-    player: "036"
-  },
-  {
-    id: "MIL",
-    city: "Milwaukee",
-    name: "Brewers",
-    fullName: "Milwaukee Brewers",
-    tier: 2,
-    player: "027"
-  },
-  {
-    id: "MIN",
-    city: "Minnesota",
-    name: "Twins",
-    fullName: "Minnesota Twins",
-    tier: 2,
-    player: "026"
-  },
-  {
-    id: "MON",
-    city: "Montreal",
-    name: "Expos",
-    fullName: "Montreal Expos",
-    tier: 3,
-    player: "042"
-  },
-  {
-    id: "NAS",
-    city: "Nashville",
-    name: "Sounds",
-    fullName: "Nashville Sounds",
-    tier: 2,
-    player: "049"
-  },
-  {
-    id: "NYY",
-    city: "New York",
-    name: "Yankees",
-    fullName: "New York Yankees",
-    tier: 3,
-    player: "035"
-  },
-  {
-    id: "OAK",
-    city: "Oakland",
-    name: "Athletics",
-    fullName: "Oakland Athletics",
-    tier: 3,
-    player: "037"
-  },
-  {
-    id: "ORL",
-    city: "Orlando",
-    name: "Dreamers",
-    fullName: "Orlando Dreamers",
-    tier: 3,
-    player: "053"
-  },
-  {
-    id: "PHI",
-    city: "Philadelphia",
-    name: "Phillies",
-    fullName: "Philadelphia Phillies",
-    tier: 2,
-    player: "030"
-  },
-  {
-    id: "PIT",
-    city: "Pittsburgh",
-    name: "Pirates",
-    fullName: "Pittsburgh Pirates",
-    tier: 2,
-    player: "028"
-  },
-  {
-    id: "POR",
-    city: "Portland",
-    name: "Pioneers",
-    fullName: "Portland Pioneers",
-    tier: 3,
-    player: "051"
-  },
-  {
-    id: "SD",
-    city: "San Diego",
-    name: "Padres",
-    fullName: "San Diego Padres",
-    tier: 2,
-    player: "020"
-  },
-  {
-    id: "SEA",
-    city: "Seattle",
-    name: "Mariners",
-    fullName: "Seattle Mariners",
-    tier: 2,
-    player: "019"
-  },
-  {
-    id: "SF",
-    city: "San Francisco",
-    name: "Giants",
-    fullName: "San Francisco Giants",
-    tier: 2,
-    player: "024"
-  },
-  {
-    id: "SLC",
-    city: "Chicago",
-    name: "White Sox",
-    fullName: "Chicago White Sox",
-    tier: 3,
-    player: "050"
-  },
-  {
-    id: "STL",
-    city: "St Louis",
-    name: "Cardinals",
-    fullName: "St Louis Cardinals",
-    tier: 3,
-    player: "043"
-  },
-  {
-    id: "TB",
-    city: "Tampa Bay",
-    name: "Rays",
-    fullName: "Tampa Bay Rays",
-    tier: 3,
-    player: "046"
-  },
-  {
-    id: "TEX",
-    city: "Texas",
-    name: "Rangersq",
-    fullName: "Texas Rangersq",
-    tier: 2,
-    player: "022"
-  },
-  {
-    id: "TOR",
-    city: "Toronto",
-    name: "Blue Jays",
-    fullName: "Toronto Blue Jays",
-    tier: 3,
-    player: "039"
-  },
-  {
-    id: "WSH",
-    city: "Washington",
-    name: "Nationals",
-    fullName: "Washington Nationals",
-    tier: 2,
-    player: "047"
-  }
+export const teams = [
+  // MLB
+  { league: "MLB", code: "ARI", city: "Arizona", name: "Diamondbacks", tp: "#aa182c", ts: "#000000", lbg: "#aa182c", tid: "109", td: "#000000", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "MLB", code: "ATH", city: "Oakland", name: "Athletics", tp: "#003831", ts: "#efb21e", lbg: "#efb21e", tid: "133", td: "#003831", tpText: "#ffffff", tsText: "#000000", lbgText: "#000000" },
+  { league: "MLB", code: "ATL", city: "Atlanta", name: "Braves", tp: "#0c2340", ts: "#ba0c2f", lbg: "#0c2340", tid: "144", td: "#0c2340", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "MLB", code: "BAL", city: "Baltimore", name: "Orioles", tp: "#000000", ts: "#df4601", lbg: "#000000", tid: "110", td: "#000000", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "MLB", code: "BOS", city: "Boston", name: "Red Sox", tp: "#0d2b56", ts: "#bd3039", lbg: "#0d2b56", tid: "111", td: "#0d2b56", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "MLB", code: "CHC", city: "Chicago", name: "Cubs", tp: "#0e3386", ts: "#cc3433", lbg: "#0e3386", tid: "112", td: "#0e3386", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "MLB", code: "CWS", city: "Chicago", name: "White Sox", tp: "#000000", ts: "#c4ced4", lbg: "#000000", tid: "145", td: "#000000", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "MLB", code: "CIN", city: "Cincinatti", name: "Reds", tp: "#c6011f", ts: "#000000", lbg: "#FFFFFF", tid: "113", td: "#000000", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#000000" },
+  { league: "MLB", code: "CLE", city: "Cleveland", name: "Guardians", tp: "#002b5c", ts: "#e31937", lbg: "#002b5c", tid: "114", td: "#002b5c", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "MLB", code: "COL", city: "Colorado", name: "Rockies", tp: "#33006f", ts: "#c4ced4", lbg: "#33006f", tid: "115", td: "#33006f", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "MLB", code: "DET", city: "Detroit", name: "Tigers", tp: "#0a2240", ts: "#ff4713", lbg: "#ff4713", tid: "116", td: "#0a2240", tpText: "#ffffff", tsText: "#000000", lbgText: "#000000" },
+  { league: "MLB", code: "HOU", city: "Houston", name: "Astros", tp: "#002d62", ts: "#eb6e1f", lbg: "#002d62", tid: "117", td: "#002d62", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "MLB", code: "KC", city: "Kansas City", name: "Royals", tp: "#0031a7", ts: "#ba9863", lbg: "#FFFFFF", tid: "118", td: "#0031a7", tpText: "#ffffff", tsText: "#000000", lbgText: "#ba9863" },
+  { league: "MLB", code: "LAA", city: "Los Angeles", name: "Angels", tp: "#ba0021", ts: "#003263", lbg: "#ba0021", tid: "108", td: "#ba0021", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "MLB", code: "LAD", city: "Los Angeles", name: "Dodgers", tp: "#005a9c", ts: "#ef3e42", lbg: "#FFFFFF", tid: "119", td: "#005a9c", tpText: "#ffffff", tsText: "#000000", lbgText: "#ef3e42" },
+  { league: "MLB", code: "MIA", city: "Miami", name: "Marlins", tp: "#000000", ts: "#00a3e0", lbg: "#000000", tid: "146", td: "#000000", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "MLB", code: "MIL", city: "Milwaukee", name: "Brewers", tp: "#13294b", ts: "#ffc72c", lbg: "#13294b", tid: "158", td: "#13294b", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "MLB", code: "MIN", city: "Minnesota", name: "Twins", tp: "#031f40", ts: "#e20e32", lbg: "#FFFFFF", tid: "142", td: "#031f40", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#e20e32" },
+  { league: "MLB", code: "NYM", city: "New York", name: "Mets", tp: "#002d72", ts: "#ff5910", lbg: "#002d72", tid: "121", td: "#002d72", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "MLB", code: "NYY", city: "New York", name: "Yankees", tp: "#132448", ts: "#c4ced4", lbg: "#c4ced4", tid: "147", td: "#132448", tpText: "#ffffff", tsText: "#000000", lbgText: "#000000" },
+  { league: "MLB", code: "PHI", city: "Philadelphia", name: "Phillies", tp: "#c20c31", ts: "#020731", lbg: "#c20c31", tid: "143", td: "#020731", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "MLB", code: "PIT", city: "Pittsburgh", name: "Pirates", tp: "#000000", ts: "#fdb827", lbg: "#000000", tid: "134", td: "#000000", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "MLB", code: "SD", city: "San Diego", name: "Padres", tp: "#2f241d", ts: "#ffc425", lbg: "#ffc425", tid: "135", td: "#2f241d", tpText: "#ffffff", tsText: "#000000", lbgText: "#000000" },
+  { league: "MLB", code: "SF", city: "San Francisco", name: "Giants", tp: "#000000", ts: "#fd5a1e", lbg: "#000000", tid: "137", td: "#000000", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "MLB", code: "SEA", city: "Seattle", name: "Mariners", tp: "#0c2c56", ts: "#005c5c", lbg: "#0c2c56", tid: "136", td: "#0c2c56", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "MLB", code: "STL", city: "St Louis", name: "Cardinals", tp: "#be0a14", ts: "#001541", lbg: "#FFFFFF", tid: "138", td: "#001541", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#001541" },
+  { league: "MLB", code: "TB", city: "Tampa Bay", name: "Rays", tp: "#092c5c", ts: "#8fbce6", lbg: "#FFFFFF", tid: "139", td: "#092c5c", tpText: "#ffffff", tsText: "#000000", lbgText: "#8fbce6" },
+  { league: "MLB", code: "TEX", city: "Texas", name: "Rangers", tp: "#1e376d", ts: "#c0111f", lbg: "#FFFFFF", tid: "140", td: "#1e376d", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#c0111f" },
+  { league: "MLB", code: "TOR", city: "Toronto", name: "Blue Jays", tp: "#134a8e", ts: "#1d2d5c", lbg: "#134a8e", tid: "141", td: "#1d2d5c", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "MLB", code: "WSH", city: "Washington", name: "Nationals", tp: "#ab0003", ts: "#11225b", lbg: "#FFFFFF", tid: "120", td: "#11225b", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#11225b" },
+  
+  // AAA
+  { league: "AAA", code: "ALB", city: "Albuquerque", name: "Isotopes", tp: "#333333", ts: "#d31245", lbg: "#333333", tid: "342", td: "#333333", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AAA", code: "BUF", city: "Buffalo", name: "Bisons", tp: "#0054a4", ts: "#ce1141", lbg: "#0054a4", tid: "422", td: "#ce1141", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AAA", code: "CHR", city: "Charlotte", name: "Knights", tp: "#333333", ts: "#00afdb", lbg: "#333333", tid: "494", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AAA", code: "CBS", city: "Columbus", name: "Clippers", tp: "#002b5c", ts: "#a4d7f4", lbg: "#002b5c", tid: "445", td: "#002b5c", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AAA", code: "DRM", city: "Durham", name: "Bulls", tp: "#0054a4", ts: "#b15c12", lbg: "#0054a4", tid: "234", td: "#0054a4", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AAA", code: "ELP", city: "El Paso", name: "Chihuahuas", tp: "#333333", ts: "#d31245", lbg: "#333333", tid: "4904", td: "#333333", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AAA", code: "GWI", city: "Gwinnett", name: "Stripers", tp: "#002b5c", ts: "#66b360", lbg: "#002b5c", tid: "431", td: "#002b5c", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AAA", code: "IND", city: "Indianapolis", name: "Indians", tp: "#00263a", ts: "#c8102e", lbg: "#FFFFFF", tid: "484", td: "#00263a", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#c8102e" },
+  { league: "AAA", code: "IOW", city: "Iowa", name: "Cubs", tp: "#005596", ts: "#e31937", lbg: "#005596", tid: "451", td: "#e31937", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AAA", code: "JAX", city: "Jacksonville", name: "Jumbo Shrimp", tp: "#002d62", ts: "#ef3e42", lbg: "#002d62", tid: "564", td: "#002d62", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AAA", code: "LVG", city: "Las Vegas", name: "Aviators", tp: "#0a2240", ts: "#ff4d00", lbg: "#0a2240", tid: "400", td: "#0a2240", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AAA", code: "LHV", city: "Lehigh Valley", name: "Ironpigs", tp: "#002d62", ts: "#c41230", lbg: "#002d62", tid: "1410", td: "#002d62", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AAA", code: "LOU", city: "Louisville", name: "Bats", tp: "#091f40", ts: "#091f40", lbg: "#091f40", tid: "416", td: "#091f40", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AAA", code: "MRB", city: "Memphis", name: "Redbirds", tp: "#002b5c", ts: "#d31245", lbg: "#002b5c", tid: "235", td: "#002b5c", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AAA", code: "NAS", city: "Nashville", name: "Sounds", tp: "#002d6a", ts: "#e31937", lbg: "#002d6a", tid: "556", td: "#002d6a", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AAA", code: "NOR", city: "Norfolk", name: "Tides", tp: "#333333", ts: "#00a160", lbg: "#333333", tid: "568", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AAA", code: "OKC", city: "Oklahoma City", name: "Comets", tp: "#005daa", ts: "#89d1f4", lbg: "#005daa", tid: "238", td: "#005daa", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AAA", code: "OMA", city: "Omaha", name: "Storm Chasers", tp: "#004b8d", ts: "#b4975a", lbg: "#004b8d", tid: "541", td: "#004b8d", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AAA", code: "REN", city: "Reno", name: "Aces", tp: "#002b5c", ts: "#d31245", lbg: "#002b5c", tid: "2310", td: "#002b5c", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AAA", code: "ROC", city: "Rochester", name: "Red Wings", tp: "#333333", ts: "#ee3124", lbg: "#333333", tid: "534", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AAA", code: "RRE", city: "Round Rock", name: "Express", tp: "#041e42", ts: "#9d2235", lbg: "#041e42", tid: "102", td: "#041e42", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AAA", code: "SRC", city: "Sacramento", name: "River Cats", tp: "#98002e", ts: "#ba9765", lbg: "#98002e", tid: "105", td: "#98002e", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AAA", code: "SLC", city: "Salt Lake", name: "Bees", tp: "#333333", ts: "#fdb913", lbg: "#333333", tid: "561", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AAA", code: "SWB", city: "Scranton Wilkes-Barre", name: "Railriders", tp: "#002b5c", ts: "#98002e", lbg: "#002b5c", tid: "531", td: "#98002e", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AAA", code: "STP", city: "St Paul", name: "Saints", tp: "#00539f", ts: "#e0276", lbg: "#00539f", tid: "1960", td: "#00539f", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AAA", code: "SLS", city: "Sugar Land", name: "Space Cowboys", tp: "#002b54", ts: "#42c4dd", lbg: "#002b54", tid: "5434", td: "#002b54", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AAA", code: "SYR", city: "Syracuse", name: "Mets", tp: "#004b8d", ts: "#f47d30", lbg: "#004b8d", tid: "552", td: "#004b8d", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AAA", code: "TAC", city: "Tacoma", name: "Rainiers", tp: "#002b5c", ts: "#e31837", lbg: "#002b5c", tid: "529", td: "#002b5c", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AAA", code: "TOL", city: "Toledo", name: "Mud Hens", tp: "#002b5c", ts: "#ed174f", lbg: "#002b5c", tid: "512", td: "#002b5c", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AAA", code: "WOR", city: "Worcester", name: "Red Sox", tp: "#002b5c", ts: "#e31937", lbg: "#002b5c", tid: "533", td: "#002b5c", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  
+  // AA
+  { league: "AA", code: "AKR", city: "Akron", name: "Rubberducks", tp: "#333333", ts: "#007dc3", lbg: "#333333", tid: "402", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AA", code: "ALT", city: "Altoona", name: "Curve", tp: "#b5121b", ts: "#bb813b", lbg: "#b5121b", tid: "452", td: "#b5121b", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AA", code: "AMA", city: "Amarillo", name: "Sod Poodles", tp: "#003d79", ts: "#e31937", lbg: "#003d79", tid: "5368", td: "#003d79", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AA", code: "ARK", city: "Arkansas", name: "Travelers", tp: "#333333", ts: "#d31245", lbg: "#333333", tid: "574", td: "#333333", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AA", code: "BLX", city: "Biloxi", name: "Shuckers", tp: "#0067b1", ts: "#e66d7b", lbg: "#0067b1", tid: "5015", td: "#0067b1", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AA", code: "BIN", city: "Binghamton", name: "Rumble Ponies", tp: "#002b5c", ts: "#d31245", lbg: "#002b5c", tid: "505", td: "#002b5c", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AA", code: "BIR", city: "Birmingham", name: "Barons", tp: "#333333", ts: "#d11242", lbg: "#333333", tid: "247", td: "#333333", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AA", code: "CHG", city: "Chattanooga", name: "Lookouts", tp: "#333333", ts: "#ef3e42", lbg: "#333333", tid: "498", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AA", code: "CHE", city: "Chesapeake", name: "Baysox", tp: "#333333", ts: "#f47d30", lbg: "#333333", tid: "418", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AA", code: "CGA", city: "Columbus", name: "Clingstones", tp: "#333333", ts: "#ff8d6b", lbg: "#333333", tid: "6325", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AA", code: "COR", city: "Corpus Christi", name: "Hooks", tp: "#002b5c", ts: "#5091cd", lbg: "#FFFFFF", tid: "482", td: "#002b5c", tpText: "#ffffff", tsText: "#000000", lbgText: "#5091cd" },
+  { league: "AA", code: "ERI", city: "Erie", name: "Seawolves", tp: "#333333", ts: "#d31245", lbg: "#333333", tid: "106", td: "#333333", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AA", code: "FRI", city: "Frisco", name: "Roughriders", tp: "#98002e", ts: "#fff6dc", lbg: "#fff6dc", tid: "540", td: "#98002e", tpText: "#ffffff", tsText: "#000000", lbgText: "#000000" },
+  { league: "AA", code: "HBG", city: "Harrisburg", name: "Senators", tp: "#002d62", ts: "#d31245", lbg: "#002d62", tid: "547", td: "#002d62", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AA", code: "HFD", city: "Hartford", name: "Yard Goats", tp: "#004b8d", ts: "#00a160", lbg: "#004b8d", tid: "538", td: "#004b8d", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AA", code: "KNX", city: "Knoxville", name: "Smokies", tp: "#005596", ts: "#6799c8", lbg: "#005596", tid: "553", td: "#005596", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AA", code: "MDL", city: "Midland", name: "Rockhounds", tp: "#002b5c", ts: "#f3901d", lbg: "#002b5c", tid: "237", td: "#002b5c", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AA", code: "MON", city: "Montgomery", name: "Biscuits", tp: "#00245d", ts: "#eeb111", lbg: "#00245d", tid: "421", td: "#00245d", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AA", code: "NHM", city: "New Hampshire", name: "Fisher Cats", tp: "#002b5c", ts: "#e31937", lbg: "#002b5c", tid: "463", td: "#002b5c", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AA", code: "NWA", city: "Northwest Arkansas", name: "Naturals", tp: "#005596", ts: "#ffda02", lbg: "#005596", tid: "1350", td: "#005596", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AA", code: "PEN", city: "Pensacola", name: "Blue Wahoos", tp: "#002d62", ts: "#e20177", lbg: "#002d62", tid: "4124", td: "#002d62", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AA", code: "PRT", city: "Portland", name: "Sea Dogs", tp: "#002b5c", ts: "#e31837", lbg: "#002b5c", tid: "546", td: "#002b5c", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AA", code: "REA", city: "Reading", name: "Fightin Phils", tp: "#002d62", ts: "#d31245", lbg: "#002d62", tid: "522", td: "#002d62", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AA", code: "RIC", city: "Richmond", name: "Flying Squirrels", tp: "#333333", ts: "#d31245", lbg: "#333333", tid: "3410", td: "#333333", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AA", code: "RCY", city: "Rocket City", name: "Trash Pandas", tp: "#333333", ts: "#007dc3", lbg: "#333333", tid: "559", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AA", code: "SAN", city: "San Antonio", name: "Missions", tp: "#002d62", ts: "#ef3e42", lbg: "#002d62", tid: "510", td: "#002d62", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AA", code: "SOM", city: "Somerset", name: "Patriots", tp: "#00193f", ts: "#7d000d", lbg: "#00193f", tid: "1956", td: "#00193f", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AA", code: "SPR", city: "Springfield", name: "Cardinals", tp: "#002b5c", ts: "#d31245", lbg: "#002b5c", tid: "440", td: "#002b5c", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "AA", code: "TUL", city: "Tulsa", name: "Drillers", tp: "#005596", ts: "#b9e0f7", lbg: "#005596", tid: "260", td: "#005596", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "AA", code: "WCH", city: "Wichita", name: "Wind Surge", tp: "#002b5c", ts: "#e31937", lbg: "#002b5c", tid: "3898", td: "#002b5c", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  
+  // High-A
+  { league: "HA", code: "ASH", city: "Asheville", name: "Tourists", tp: "#002b5c", ts: "#86cebc", lbg: "#002b5c", tid: "573", td: "#002b5c", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "HA", code: "BEL", city: "Beloit", name: "Sky Carp", tp: "#333333", ts: "#009ddc", lbg: "#333333", tid: "554", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "HA", code: "BGR", city: "Bowling Green", name: "Hot Rods", tp: "#0c233f", ts: "#f36c24", lbg: "#0c233f", tid: "2498", td: "#0c233f", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "HA", code: "BRO", city: "Brooklyn", name: "Cyclones", tp: "#00245d", ts: "#ed174f", lbg: "#00245d", tid: "453", td: "#00245d", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "HA", code: "CED", city: "Cedar Rapids", name: "Kernels", tp: "#002d62", ts: "#00a160", lbg: "#002d62", tid: "492", td: "#002d62", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "HA", code: "DTN", city: "Dayton", name: "Dragons", tp: "#333333", ts: "#00b259", lbg: "#333333", tid: "459", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "HA", code: "EUG", city: "Eugene", name: "Emeralds", tp: "#333333", ts: "#008265", lbg: "#333333", tid: "461", td: "#333333", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "HA", code: "EVE", city: "Everett", name: "Aquasox", tp: "#002d62", ts: "#d6e03d", lbg: "#002d62", tid: "403", td: "#002d62", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "HA", code: "FTW", city: "Fort Wayne", name: "Tincaps", tp: "#004712", ts: "#ee2a24", lbg: "#004712", tid: "584", td: "#004712", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "HA", code: "FRD", city: "Frederick", name: "Keys", tp: "#333333", ts: "#f15d22", lbg: "#333333", tid: "493", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "HA", code: "GLA", city: "Great Lakes", name: "Loons", tp: "#b8232f", ts: "#006f51", lbg: "#b8232f", tid: "456", td: "#b8232f", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "HA", code: "GBO", city: "Greensboro", name: "Grasshoppers", tp: "#333333", ts: "#008752", lbg: "#333333", tid: "477", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "HA", code: "GRN", city: "Greenville", name: "Drive", tp: "#002b5c", ts: "#e31837", lbg: "#002b5c", tid: "428", td: "#002b5c", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "HA", code: "HIL", city: "Hillsboro", name: "Hops", tp: "#002d56", ts: "#7ac143", lbg: "#002d56", tid: "419", td: "#002d56", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "HA", code: "HCS", city: "Hub City", name: "Spartanburgers", tp: "#002b5e", ts: "#7ac143", lbg: "#002b5e", tid: "6324", td: "#002b5e", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "HA", code: "HDV", city: "Hudson Valley", name: "Renegades", tp: "#002b5c", ts: "#adafb2", lbg: "#002b5c", tid: "537", td: "#002b5c", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "HA", code: "JER", city: "Jersey Shore", name: "Blueclaws", tp: "#0067b1", ts: "#d31245", lbg: "#0067b1", tid: "427", td: "#d31245", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "HA", code: "LCO", city: "Lake County", name: "Captains", tp: "#002d56", ts: "#fdb813", lbg: "#002d56", tid: "437", td: "#002d56", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "HA", code: "LNS", city: "Lansing", name: "Lugnuts", tp: "#333333", ts: "#e31837", lbg: "#333333", tid: "499", td: "#333333", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "HA", code: "PEO", city: "Peoria", name: "Chiefs", tp: "#002b5c", ts: "#d31245", lbg: "#002b5c", tid: "443", td: "#002b5c", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "HA", code: "QCS", city: "Quad Cities", name: "River Bandits", tp: "#333333", ts: "#00549e", lbg: "#333333", tid: "565", td: "#333333", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "HA", code: "ROM", city: "Rome", name: "Emperors", tp: "#333333", ts: "#ee3124", lbg: "#333333", tid: "432", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "HA", code: "SBD", city: "South Bend", name: "Cubs", tp: "#005596", ts: "#e31837", lbg: "#005596", tid: "550", td: "#e31837", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "HA", code: "SPO", city: "Spokane", name: "Indians", tp: "#002d62", ts: "#d31245", lbg: "#002d62", tid: "486", td: "#002d62", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "HA", code: "TRI", city: "Tri-City", name: "Dust Devils", tp: "#002d62", ts: "#cfab7a", lbg: "#002d62", tid: "460", td: "#002d62", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "HA", code: "VAN", city: "Vancouver", name: "Canadians", tp: "#b30838", ts: "#ed174f", lbg: "#b30838", tid: "435", td: "#b30838", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "HA", code: "WMI", city: "West Michigan", name: "Whitecaps", tp: "#002b5c", ts: "#13b5ea", lbg: "#002b5c", tid: "582", td: "#002b5c", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "HA", code: "WIL", city: "Wilmington", name: "Blue Rocks", tp: "#002d62", ts: "#96c0e6", lbg: "#96c0e6", tid: "426", td: "#002d62", tpText: "#ffffff", tsText: "#000000", lbgText: "#000000" },
+  { league: "HA", code: "WSM", city: "Winston-Salem", name: "Dash", tp: "#492f92", ts: "#333333", lbg: "#492f92", tid: "580", td: "#333333", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "HA", code: "WIS", city: "Wisconsin", name: "Timber Rattlers", tp: "#98002e", ts: "#c49d6f", lbg: "#98002e", tid: "572", td: "#98002e", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  
+  // Low-A
+  { league: "LA", code: "AUG", city: "Augusta", name: "Greenjackets", tp: "#333333", ts: "#62bb46", lbg: "#333333", tid: "478", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "LA", code: "BRA", city: "Bradenton", name: "Marauders", tp: "#333333", ts: "#ffc425", lbg: "#333333", tid: "3390", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "LA", code: "CSC", city: "Charleston", name: "Riverdogs", tp: "#00274c", ts: "#fdb913", lbg: "#00274c", tid: "233", td: "#00274c", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "LA", code: "CLR", city: "Clearwater", name: "Threshers", tp: "#005695", ts: "#d31245", lbg: "#005695", tid: "566", td: "#d31245", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "LA", code: "CBA", city: "Columbia", name: "Fireflies", tp: "#002d5b", ts: "#e1e558", lbg: "#002d5b", tid: "3705", td: "#002d5b", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "LA", code: "DTA", city: "Daytona", name: "Tortugas", tp: "#005847", ts: "#7ac143", lbg: "#005847", tid: "450", td: "#005847", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "LA", code: "DEL", city: "Delmarva", name: "Shorebirds", tp: "#333333", ts: "#f26531", lbg: "#333333", tid: "548", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "LA", code: "DUN", city: "Dunedin", name: "Blue Jays", tp: "#134a8e", ts: "#6caddf", lbg: "#134a8e", tid: "424", td: "#134a8e", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "LA", code: "FAY", city: "Fayetteville", name: "Woodpeckers", tp: "#333333", ts: "#e31837", lbg: "#333333", tid: "3712", td: "#333333", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "LA", code: "FTM", city: "Fort Myers", name: "Mighty Mussels", tp: "#6756a5", ts: "#002b5c", lbg: "#6756a5", tid: "509", td: "#002b5c", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "LA", code: "FBG", city: "Fredericksburg", name: "Nationals", tp: "#002d62", ts: "#d31245", lbg: "#002d62", tid: "436", td: "#002d62", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "LA", code: "FRE", city: "Fresno", name: "Grizzlies", tp: "#333333", ts: "#d31245", lbg: "#333333", tid: "259", td: "#333333", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "LA", code: "HIC", city: "Hickory", name: "Crawdads", tp: "#333333", ts: "#ea1c2d", lbg: "#333333", tid: "448", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "LA", code: "HCY", city: "Hill City", name: "Howlers", tp: "#005596", ts: "#d31245", lbg: "#005596", tid: "481", td: "#d31245", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "LA", code: "INL", city: "Inland Empire", name: "66Ers", tp: "#333333", ts: "#f47735", lbg: "#333333", tid: "401", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "LA", code: "JUP", city: "Jupiter", name: "Hammerheads", tp: "#333333", ts: "#0081cf", lbg: "#333333", tid: "479", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "LA", code: "KAN", city: "Kannapolis", name: "Cannon Ballers", tp: "#003d79", ts: "#e31b23", lbg: "#003d79", tid: "487", td: "#003d79", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "LA", code: "LKE", city: "Lake Elsinore", name: "Storm", tp: "#333333", ts: "#e31837", lbg: "#333333", tid: "103", td: "#333333", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "LA", code: "LAK", city: "Lakeland", name: "Flying Tigers", tp: "#002b5c", ts: "#df7a1c", lbg: "#002b5c", tid: "570", td: "#002b5c", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "LA", code: "MYR", city: "Myrtle Beach", name: "Pelicans", tp: "#002b5c", ts: "#007dc3", lbg: "#002b5c", tid: "521", td: "#002b5c", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "LA", code: "ONT", city: "Ontario", name: "Tower Buzzers", tp: "#1a468c", ts: "#ef3742", lbg: "#1a468c", tid: "6482", td: "#1a468c", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "LA", code: "PBC", city: "Palm Beach", name: "Cardinals", tp: "#002b5c", ts: "#e31245", lbg: "#002b5c", tid: "279", td: "#002b5c", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "LA", code: "RNC", city: "Rancho Cucamonga", name: "Quakes", tp: "#003263", ts: "#ce1141", lbg: "#003263", tid: "526", td: "#003263", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "LA", code: "SLM", city: "Salem", name: "Ridgeyaks", tp: "#0b2340", ts: "#0455ad", lbg: "#0b2340", tid: "414", td: "#0b2340", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "LA", code: "SNJ", city: "San Jose", name: "Giants", tp: "#333333", ts: "#f47735", lbg: "#f47735", tid: "476", td: "#333333", tpText: "#ffffff", tsText: "#000000", lbgText: "#000000" },
+  { league: "LA", code: "SLU", city: "St Lucie", name: "Mets", tp: "#004b8d", ts: "#f47d30", lbg: "#004b8d", tid: "507", td: "#004b8d", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "LA", code: "STO", city: "Stockton", name: "Ports", tp: "#004b8d", ts: "#e31937", lbg: "#e31937", tid: "524", td: "#004b8d", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "LA", code: "TPA", city: "Tampa", name: "Tarpons", tp: "#00274c", ts: "#0096d6", lbg: "#00274c", tid: "587", td: "#00274c", tpText: "#ffffff", tsText: "#000000", lbgText: "#ffffff" },
+  { league: "LA", code: "VIS", city: "Visalia", name: "Rawhide", tp: "#333333", ts: "#d31245", lbg: "#333333", tid: "516", td: "#333333", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" },
+  { league: "LA", code: "WLS", city: "Wilson", name: "Warbirds", tp: "#00274c", ts: "#98002e", lbg: "#00274c", tid: "249", td: "#00274c", tpText: "#ffffff", tsText: "#ffffff", lbgText: "#ffffff" }
+];
+
+
+export const leagues = [{
+  code: "MLB",
+  name: "Major League Baseball"
+},
+{
+  code: "AAA",
+  name: "Minor League Triple-A"
+},
+{
+  code: "AA",
+  name: "Minor League Double-A"
+},
+{
+  code: "HA",
+  name: "Minor League High-A"
+},
+{
+  code: "LA",
+  name: "Minor League Low-A"
+},
+{
+  code: "ATL",
+  name: "Atlantic League"
+}]

@@ -34,6 +34,7 @@ export default class Modal {
       closeOnEscape: true,
       onOpen: null,
       onClose: null,
+      destroyPnClose: false,
       ...options
     };
     this.onClose = this.options.onClose;
@@ -57,6 +58,10 @@ export default class Modal {
     this.dialog.classList.add("hidden");
     this.isOpen = false;
     this.options.onClose && this.options.onClose();
+    
+    if (this.options.destroyOnClose){
+      this.destroy();
+    }
   }
   
   destroy() {
@@ -72,7 +77,7 @@ export default class Modal {
     
     this.header = $n("div", "modal-header");
     
-    this.body = $n("div", "modal-body");
+    this.body = $n("div", ["modal-body","lawn-stripes"]);
     
     this.actions = $n("div", "modal-actions");
     
@@ -136,6 +141,7 @@ export default class Modal {
     
     this.header.append(closeButton);
     
+    
   }
   
   renderBody() {
@@ -188,7 +194,9 @@ export default class Modal {
   
   "large",
   
-  "fullscreen"
+  "fullscreen",
+  
+  "adapt"
   
 );
 

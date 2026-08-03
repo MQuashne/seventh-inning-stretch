@@ -21,6 +21,17 @@
  * - adding sound effect
  * - adding roll results to notation returned in after_roll callback
  * - adding 'd9' option (d10 to be added to d100 properly)
+ * - fixed init/resize inside hidden containers: size-dependent setup (camera, light,
+ *   barriers, desk) moved out of the constructor and into reinit(), which now no-ops
+ *   until the container has real dimensions. Replaced the broken/non-functional
+ *   'resize' event binding (elements don't fire native resize events, callback had
+ *   wrong `this`, and `elem` was undefined) with a ResizeObserver that calls reinit()
+ *   once the container becomes visible/sized. Added camera guards to __animate/render
+ *   calls so nothing renders with an undefined camera.
+ * - after a roll settles, dice are auto-lined-up along the top edge of the desk
+ *   (line_up_dice) so the lower part of the canvas stays clear for a message/options
+ *   UI. Configurable via vars.lineup_* and can be skipped by passing false to
+ *   start_throw/roll's after_roll usage pattern (see line_up_dice).
  */
 
 
@@ -47,10 +58,19 @@ export const DICE = (function() {
         ambient_light_color: 0xf0f0f0,
         spot_light_color: 0x404040,
         desk_color: '#101010', //canvas background
-        desk_opacity: 0.5,
+        desk_opacity: 0,
         use_shadows: true,
-        use_adapvite_timestep: true //todo: setting this to false improves performace a lot. but the dice rolls don't look as natural...
+        use_adapvite_timestep: true, //todo: setting this to false improves performace a lot. but the dice rolls don't look as natural...
+        
+        // Where settled dice get tucked after a roll, as a fraction of the desk's
+        // half-height/half-width (0 = center, 1 = edge/barrier). y_fraction > 0 is
+        // the upper half of the desk, < 0 is the lower half.
+        lineup_enabled: true,
+        lineup_y_fraction: 0.72,
+        lineup_max_spacing_scale: 2.5, //cap spacing at N * vars.scale so few dice don't spread edge-to-edge
+        lineup_duration_ms: 500
     }
+    console.log(vars.lineup_enabled)
     //const loader=new FontLoader();
     const CONSTS = {
         known_types: ['d4', 'd6', 'd8', 'd9', 'd10', 'd12', 'd20', 'd100'],
@@ -124,16 +144,18 @@ export const DICE = (function() {
         this.renderer = window.WebGLRenderingContext ?
             new THREE.WebGLRenderer({ antialias: true, alpha: true }) :
             new THREE.CanvasRenderer({ antialias: true, alpha: true });
+        // Without this, HiDPI/retina screens render at CSS pixel size and get
+        // upscaled by the browser, which is a major source of overall blurriness.
+        this.renderer.setPixelRatio(window.devicePixelRatio || 1);
         container.appendChild(this.renderer.domElement);
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFShadowMap;
         this.renderer.setClearColor(0xffffff, 0); //color, alpha
-        
-        this.reinit(container);
-        $t.bind(container, 'resize', function() {
-            //todo: this doesn't work :(
-            this.reinit(elem.canvas);
-        });
+        // Used by the face-label texture generators (create_dice_materials /
+        // create_d4_materials) so numbers stay sharp when a die face is viewed
+        // at a steep angle. getMaxAnisotropy() is the r73-era API name.
+        that.renderer_max_anisotropy = this.renderer.getMaxAnisotropy ?
+            this.renderer.getMaxAnisotropy() : 1;
         
         this.world.gravity.set(0, 0, -9.8 * 800);
         this.world.broadphase = new CANNON.NaiveBroadphase();
@@ -143,47 +165,75 @@ export const DICE = (function() {
         this.scene.add(ambientLight);
         
         this.dice_body_material = new CANNON.Material();
-        var desk_body_material = new CANNON.Material();
-        var barrier_body_material = new CANNON.Material();
+        this.desk_body_material = new CANNON.Material();
+        this.barrier_body_material = new CANNON.Material();
         this.world.addContactMaterial(new CANNON.ContactMaterial(
-            desk_body_material, this.dice_body_material, 0.01, 0.5));
+            this.desk_body_material, this.dice_body_material, 0.01, 0.5));
         this.world.addContactMaterial(new CANNON.ContactMaterial(
-            barrier_body_material, this.dice_body_material, 0, 1.0));
+            this.barrier_body_material, this.dice_body_material, 0, 1.0));
         this.world.addContactMaterial(new CANNON.ContactMaterial(
             this.dice_body_material, this.dice_body_material, 0, 0.5));
         
-        this.world.add(new CANNON.RigidBody(0, new CANNON.Plane(), desk_body_material));
-        var barrier;
-        barrier = new CANNON.RigidBody(0, new CANNON.Plane(), barrier_body_material);
-        barrier.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), Math.PI / 2);
-        barrier.position.set(0, this.h * 0.93, 0);
-        this.world.add(barrier);
+        this.world.add(new CANNON.RigidBody(0, new CANNON.Plane(), this.desk_body_material));
         
-        barrier = new CANNON.RigidBody(0, new CANNON.Plane(), barrier_body_material);
-        barrier.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
-        barrier.position.set(0, -this.h * 0.93, 0);
-        this.world.add(barrier);
+        // NOTE: barriers used to be created here using this.w/this.h, but those are
+        // only known once reinit() has real container dimensions. They're now
+        // (re)created inside reinit() itself, alongside the camera/light/desk.
+        this.barriers = [];
         
-        barrier = new CANNON.RigidBody(0, new CANNON.Plane(), barrier_body_material);
-        barrier.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), -Math.PI / 2);
-        barrier.position.set(this.w * 0.93, 0, 0);
-        this.world.add(barrier);
+        this.reinit(container);
         
-        barrier = new CANNON.RigidBody(0, new CANNON.Plane(), barrier_body_material);
-        barrier.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI / 2);
-        barrier.position.set(-this.w * 0.93, 0, 0);
-        this.world.add(barrier);
+        // Replaces the old, non-functional:
+        //   $t.bind(container, 'resize', function() { this.reinit(elem.canvas); });
+        // Plain elements never fire a native 'resize' event, `this` inside that
+        // callback wasn't the dice_box instance, and `elem` was never defined.
+        // ResizeObserver correctly fires when a hidden (0x0) container becomes
+        // visible and gets real dimensions, which is exactly when we need to
+        // (re)build the camera/light/barriers/desk.
+        var box = this;
+        if (window.ResizeObserver) {
+            this._resizeObserver = new ResizeObserver(function(entries) {
+                var rect = entries[0].contentRect;
+                if (rect.width === 0 || rect.height === 0) return;
+                // Defer the actual reinit work to the next animation frame rather
+                // than running it synchronously inside the observer callback.
+                // Doing size-changing work (renderer.setSize, DOM/layout reads)
+                // directly inside a ResizeObserver callback is what commonly
+                // triggers "ResizeObserver loop completed with undelivered
+                // notifications" — the browser can't finish delivering this
+                // notification if handling it causes another resize in the same
+                // pass. The _reinitScheduled guard avoids stacking up redundant
+                // reinit calls if multiple resize notifications land before the
+                // next frame runs.
+                if (box._reinitScheduled) return;
+                box._reinitScheduled = true;
+                requestAnimationFrame(function() {
+                    box._reinitScheduled = false;
+                    box.reinit(container);
+                });
+            });
+            this._resizeObserver.observe(container);
+        }
         
         this.last_time = 0;
         this.running = false;
         
-        this.renderer.render(this.scene, this.camera);
+        // Only render here if reinit() already managed to set up a camera
+        // (i.e. the container had a real size at construction time). Otherwise
+        // this is a no-op until ResizeObserver triggers reinit().
+        if (this.camera) this.renderer.render(this.scene, this.camera);
     }
     
     // called on init and window resize
     that.dice_box.prototype.reinit = function(container) {
         this.cw = container.clientWidth / 2;
         this.ch = container.clientHeight / 2;
+        
+        // Container is still hidden/zero-sized (e.g. display:none). Bail out
+        // cleanly; ResizeObserver will call reinit() again once it has a real
+        // size, and nothing here should run against NaN/zero dimensions.
+        if (this.cw === 0 || this.ch === 0) return;
+        
         this.w = this.cw;
         this.h = this.ch;
         this.aspect = Math.min(this.cw / this.w, this.ch / this.h);
@@ -212,8 +262,30 @@ export const DICE = (function() {
         this.light.shadowMapWidth = 1024;
         this.light.shadowMapHeight = 1024;
         this.scene.add(this.light);
+        
+        // (Re)build barriers now that w/h are known/updated. These used to live
+        // in the constructor keyed off this.w/this.h before those existed.
         var box = this;
+        if (this.barriers && this.barriers.length) {
+            this.barriers.forEach(function(b) { box.world.remove(b); });
+        }
+        this.barriers = [];
+        var barrier_defs = [
+            { axis: new CANNON.Vec3(1, 0, 0), angle: Math.PI / 2, pos: [0, this.h * 0.93, 0] },
+            { axis: new CANNON.Vec3(1, 0, 0), angle: -Math.PI / 2, pos: [0, -this.h * 0.93, 0] },
+            { axis: new CANNON.Vec3(0, 1, 0), angle: -Math.PI / 2, pos: [this.w * 0.93, 0, 0] },
+            { axis: new CANNON.Vec3(0, 1, 0), angle: Math.PI / 2, pos: [-this.w * 0.93, 0, 0] }
+        ];
+        barrier_defs.forEach(function(def) {
+            var barrier = new CANNON.RigidBody(0, new CANNON.Plane(), box.barrier_body_material);
+            barrier.quaternion.setFromAxisAngle(def.axis, def.angle);
+            barrier.position.set(def.pos[0], def.pos[1], def.pos[2]);
+            box.world.add(barrier);
+            box.barriers.push(barrier);
+        });
+        
         if (this.desk) this.scene.remove(this.desk);
+        /*
         new THREE.TextureLoader().load('./public/assets/baseballfield.jpeg', function(deskTexture) {
             
             deskTexture.needsUpdate = true;
@@ -239,10 +311,10 @@ export const DICE = (function() {
             );
             box.desk.receiveShadow = vars.use_shadows;
             box.scene.add(box.desk);
-            box.renderer.render(box.scene, box.camera);
+            if (box.camera) box.renderer.render(box.scene, box.camera);
         });
-        
-        this.renderer.render(this.scene, this.camera);
+        */
+        if (this.camera) this.renderer.render(this.scene, this.camera);
     }
     
     // @param diceToRoll (string), ex: "1d100+1d10+1d4+1d6+1d8+1d12+1d20"
@@ -254,6 +326,7 @@ export const DICE = (function() {
     that.dice_box.prototype.start_throw = function(before_roll, after_roll) {
         var box = this;
         if (box.rolling) return;
+        if (!box.camera) return; // container still hidden/unsized; nothing to render into yet
         
         var vector = { x: (rnd() * 2 - 1) * box.w, y: -(rnd() * 2 - 1) * box.h };
         var dist = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
@@ -327,6 +400,12 @@ export const DICE = (function() {
                     res += ' = ' + notation.resultTotal;
                 }
                 notation.resultString = res;
+                
+                // Tuck the settled dice into a row (top of the desk by default)
+                // so the rest of the canvas is free for a result message / options
+                // UI to be layered on top without covering the dice themselves.
+               
+                if (vars.lineup_enabled) box.line_up_dice();
                 
                 if (after_roll) after_roll(notation);
                 
@@ -418,6 +497,9 @@ export const DICE = (function() {
     }
     
     that.dice_box.prototype.__animate = function(threadid) {
+        console.log("animating")
+
+        if (!this.camera) return; // guard: nothing valid to render into yet
         var time = (new Date()).getTime();
         var time_diff = (time - this.last_time) / 1000;
         if (time_diff > 3) time_diff = vars.frame_rate;
@@ -456,17 +538,78 @@ export const DICE = (function() {
         }
     }
     
+    // @brief slides the currently settled dice into a single row so the rest of
+    // the desk is free for a message/options UI to sit on top of the canvas.
+    // Only affects position (x/y/z), never quaternion, so the face that landed
+    // "up" stays up — the roll result shown to the player never changes.
+    // Runs its own short rAF loop independent of the physics world (which has
+    // already stopped by the time a roll finishes), so it won't fight gravity.
+    // @param opts (optional) { y_fraction, duration_ms } to override vars.lineup_*
+    // for a single call, e.g. box.line_up_dice({ y_fraction: -0.72 }) to line up
+    // along the bottom edge instead of the top.
+    that.dice_box.prototype.line_up_dice = function(opts) {
+        
+        
+        var box = this;
+        var n = this.dices.length;
+        if (!n || !this.camera) return;
+        opts = opts || {};
+        var y_fraction = opts.y_fraction != undefined ? opts.y_fraction : vars.lineup_y_fraction;
+        var duration_ms = opts.duration_ms != undefined ? opts.duration_ms : vars.lineup_duration_ms;
+        
+        var spacing = Math.min(this.w * 0.9 / Math.max(n, 1), vars.scale * vars.lineup_max_spacing_scale);
+        var totalWidth = spacing * (n - 1);
+        var startX = -totalWidth / 2;
+        var targetY = this.h * y_fraction;
+        var restZ = vars.scale * 0.6; //small hover above the desk plane
+        
+        var starts = this.dices.map(function(d) { return d.position.clone(); });
+        var targets = this.dices.map(function(d, i) {
+            return new THREE.Vector3(startX + i * spacing, targetY, restZ);
+        });
+        this.dices.forEach(function(d) {
+    if (d.body) {
+        d.body.velocity.set(0, 0, 0);
+        d.body.angularVelocity.set(0, 0, 0);
+        box.world.remove(d.body); // fully detach from physics, not just zero it out
+    }
+});
+        // Stop the dice reacting to the physics world while they glide into place.
+        this.dices.forEach(function(d) {
+            if (d.body) { d.body.velocity.set(0, 0, 0); d.body.angularVelocity.set(0, 0, 0); }
+        });
+        
+        var lineup_id = (this._lineup_id = (this._lineup_id || 0) + 1);
+        var startTime = null;
+        function ease(t) { return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; } //easeInOutQuad
+        
+       function step(ts) {
+    if (box._lineup_id !== lineup_id) return;
+    console.log('dices in step:', box.dices.length, 'starts:', starts.length);
+            
+            if (box._lineup_id !== lineup_id) return; // a newer roll/line-up superseded this one
+            if (!startTime) startTime = ts;
+            var t = Math.min(1, (ts - startTime) / duration_ms);
+            var e = ease(t);
+           
+            if (box.camera) box.renderer.render(box.scene, box.camera);
+            if (t < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+    }
+    
     that.dice_box.prototype.clear = function() {
         this.running = false;
+        this._lineup_id = (this._lineup_id || 0) + 1; // cancel any in-flight line-up animation
         var dice;
         while (dice = this.dices.pop()) {
             this.scene.remove(dice);
             if (dice.body) this.world.remove(dice.body);
         }
         if (this.pane) this.scene.remove(this.pane);
-        this.renderer.render(this.scene, this.camera);
+        if (this.camera) this.renderer.render(this.scene, this.camera);
         var box = this;
-        setTimeout(function() { box.renderer.render(box.scene, box.camera); }, 100);
+        setTimeout(function() { if (box.camera) box.renderer.render(box.scene, box.camera); }, 100);
     }
     
     that.dice_box.prototype.prepare_dices_for_roll = function(vectors) {
@@ -500,6 +643,15 @@ export const DICE = (function() {
                 1 - (m.y - this.ch) / this.aspect, this.w / 9))
             .sub(this.camera.position).normalize())).intersectObjects(this.dices);
         if (intersects.length) return intersects[0].object.userData;
+    }
+    
+    // @brief stop observing container resizes and release the observer. Call
+    // this if you ever destroy/remove a dice_box instance to avoid leaks.
+    that.dice_box.prototype.destroy = function() {
+        if (this._resizeObserver) {
+            this._resizeObserver.disconnect();
+            this._resizeObserver = undefined;
+        }
     }
     
     
@@ -655,7 +807,10 @@ export const DICE = (function() {
             if (text == undefined) return null;
             var canvas = document.createElement("canvas");
             var context = canvas.getContext("2d");
-            var ts = calc_texture_size(size + size * 2 * margin) * 2;
+            // Bumped from *2 to *4, and now decoupled from vars.scale via
+            // calc_label_resolution (see HELPERS section) so small dice scales
+            // don't produce fuzzy low-res label textures.
+            var ts = calc_label_resolution(size + size * 2 * margin, 4);
             canvas.width = canvas.height = ts;
             context.font = ts / (1 + 2 * margin) + "pt BaseballClubSolid";
             //context.fillStyle = back_color;
@@ -665,13 +820,14 @@ export const DICE = (function() {
             context.textBaseline = "middle";
             context.fillStyle = color;
             context.strokeStyle = vars.outline_color;
-            context.lineWidth = 2;
+            context.lineWidth = Math.max(8, ts / 34); // scales with the resolution above instead of a fixed value
             context.strokeText(text, canvas.width / 2, canvas.height / 2);
             context.fillText(text, canvas.width / 2, canvas.height / 2);
             if (text == '6' || text == '9') {
                 context.fillText('  .', canvas.width / 2, canvas.height / 2);
             }
             var texture = new THREE.Texture(canvas);
+            texture.anisotropy = that.renderer_max_anisotropy || 1;
             texture.needsUpdate = true;
             return texture;
         }
@@ -685,7 +841,9 @@ export const DICE = (function() {
         function create_d4_text(text, color, back_color) {
             var canvas = document.createElement("canvas");
             var context = canvas.getContext("2d");
-            var ts = calc_texture_size(size + margin) * 2;
+            // Bumped from *2 to *4, and decoupled from vars.scale via
+            // calc_label_resolution — same fix as create_text_texture.
+            var ts = calc_label_resolution(size + margin, 4);
             canvas.width = canvas.height = ts;
             context.font = (ts - margin) * 0.5 + "pt BaseballClubSolid";
             context.fillStyle = back_color;
@@ -701,6 +859,7 @@ export const DICE = (function() {
                 context.translate(-canvas.width / 2, -canvas.height / 2);
             }
             var texture = new THREE.Texture(canvas);
+            texture.anisotropy = that.renderer_max_anisotropy || 1;
             texture.needsUpdate = true;
             return texture;
         }
@@ -1020,6 +1179,24 @@ export const DICE = (function() {
     
     function calc_texture_size(approx) {
         return Math.pow(2, Math.floor(Math.log(approx) / Math.log(2)));
+    }
+    
+    // Face-label canvases were sized proportionally to vars.scale (the dice's
+    // world-space size), which has no reliable relationship to how many actual
+    // screen pixels a face occupies. On setups where vars.scale ends up small
+    // (e.g. ~20), that produced ~64-128px textures that looked fuzzy once
+    // magnified by a high devicePixelRatio. This floors the resolution and
+    // scales it up for HiDPI screens instead, independent of vars.scale.
+    function calc_label_resolution(approx, multiplier) {
+        var target = calc_texture_size(approx) * multiplier;
+        target = Math.max(target, 256); // floor: never go below a reasonably crisp size
+        target *= (window.devicePixelRatio || 1);
+        target = Math.min(target, 1024); // cap: avoid excessive texture memory per face
+        // Multiplying by a non-integer/odd devicePixelRatio (e.g. 3) can knock
+        // the result off power-of-two (256 * 3 = 768). This renderer's texture
+        // path requires POT and otherwise silently resizes + warns on every
+        // material build, so round up to the nearest POT ourselves instead.
+        return Math.pow(2, Math.ceil(Math.log(target) / Math.log(2)));
     }
     
     function make_random_vector(vector) {

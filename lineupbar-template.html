@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+</head>
+
+
+class lineup-bar-wrap needs color-grad for tier
+class num = number
+class bar-sep needs color-grad for tier
+class first-name = first name
+class last-name = last name
+class lineup-dice = hide if no dice
+class dice-count = obvious
+class lineup-reroll = hide if no reroll
+class lineup-mod = hide if no mod
+class btn-up = disable if at top, hide if on bench. unneeded for pitchers
+class btn-down = disable if at top, hide if on bench. unneeded for pitchers
+class btn-bench =hide if on bench
+class btn-play = hide if in order or sp
+
+tap anywhere on bar (not wrap) but buttons to open card
+
+
+
+
+<body>
+  <div class="lineup-bar-wrap bronze-grad" data-part="wrap">
+    <div class="lineup-row lineup-bar">
+      <div class="lineup-num"><span class="num" data-part="num"></span></div>
+      <div class="bar-sep bronze-grad" data-part="sep"></div>
+      <div class="lineup-name" data-part="name"><span class="first-name" data-part="firstName">Ricardo</span> <span class="last-name" data-part="lastName">Smith</span></div>
+      <div class="lineup-fatigue" data-part="fatigue">
+        <div class="fatigue-symbol">
+          <svg xmlns:xlink="http://www.w3.org/1999/xlink" width="32.5" height="100%" viewBox="0 0 100 100">
+            <path d="M50 10 Q53 10 55 13 L89 78 Q92 84 85 84 L15 84 Q8 84 11 78 L45 13 Q47 10 50 10 Z" stroke-width="5" stroke="white" fill="#d32f2f" stroke-dasharray="none"></path>
+            <rect x="46" y="28" width="8" height="34" rx="4" fill="white"></rect>
+            <circle cx="50" cy="70" r="4.5" fill="white"></circle>
+          </svg>
+        </div>
+        <div class="fatigue-count" data-part="fatigueCount">5/5</div>
+      </div>
+      <div class="lineup-resources" data-part="resources">
+        <div class="lineup-dice" data-part="dice">
+          <svg height="100%" width="100%" viewBox="0 0 27 27" xmlns="http://www.w3.org/2000/svg" data-part="svg">
+            <g>
+              <path d="M 0 0 v 21 l 6 6 v -21 z m 6 6 h 21 l -6 -6 h -21 z v 21 h 21 v -21 z" style="fill: white; stroke: black; stroke-width: 0.5; stroke-linejoin: round;"></path>
+              <text x="16" y="21.5" class="dice-count" data-part="diceCount" style="font-size: 18px; font-family: &quot;Proxima Nova&quot;, Arial; font-weight: 700; text-align: center; text-anchor: middle; fill: black;">2</text>
+            </g>
+          </svg>
+        </div>
+        <div class="lineup-reroll" data-part="reroll">
+          <svg width="100%" height="100%" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" data-part="svg">
+            <g viewBox="0 0 22 22">
+              <circle cx="11" cy="11" r="11" style="fill: rgb(0, 148, 0); stroke: black; stroke-width: 1;"></circle>
+              <path d="M 15.5 6.5 a 6.25 6.25 0 1 0 0 9" style="stroke: rgb(255, 255, 255); stroke-width: 2.5; fill: transparent;"></path>
+              <path d="M 15.5 6.5 l 1 -1 l 0.75 3.25 l -3.5 -0.5 z" style="stroke: white; stroke-width: 2.5; fill: transparent;"></path>
+            </g>
+          </svg>
+        </div>
+        <div class="lineup-mod" data-part="mod">
+          <svg width="100%" height="100%" viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg" data-part="svg">
+            <g viewBox="0 0 23 23">
+              <rect x="0" y="0" width="23" height="23" rx="2" ry="2" style="stroke: black; stroke-width: 1; fill: rgb(255, 239, 0);"></rect><text x="12.5" y="18" style="font-size: 18px; font-family: &quot;Helvetica Neue&quot;, Arial; font-weight: 700; text-align: center; text-anchor: middle; fill: black;">±1</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div class="lineup-buttons" data-part="buttons">
+        <button class="btn lineup-btn btn-up" data-part="up"><span class="material-symbols-outlined btn-symbol">arrow_upward</span></button>
+        <button class="btn lineup-btn btn-down" data-part="down"><span class="material-symbols-outlined btn-symbol">arrow_downward</span></button>
+        <button class="btn lineup-btn btn-bench" data-part="bench"><span class="material-symbols-outlined btn-symbol">chair_alt</span></button>
+        <button class="btn lineup-btn btn-start hidden" data-part="start"><span class="material-symbols-outlined btn-symbol">play_arrow</span></button>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-team="EUG">
+<html lang="en" data-team="MIL">
 
 <head>
   <meta charset="UTF-8">
@@ -16,35 +16,25 @@
 </head>
 
 <body>
-  <!--
-  <img src="https://www.mlbstatic.com/team-logos/team-cap-on-light/494.svg">
-  -->
-  <div id="main-screen">
-    
-    <div class="game-header-outer hidden">
+  <div id="page">
+    <div class="game-header-outer">
       <div class="game-header">
-        <div class="game-header-team">
+        <div class="game-header-team" id="header-team-name">
           Your Team
         </div>
       </div>
     </div>
-    <!--
-    
-    <div id="flexbox-outcomes">
-      <div class="outcome"></div>
-      <div class="outcome"></div>
-      <div class="outcome"></div>
-      <div class="outcome"></div>
-    </div>
-    -->
-    
+    <div id="main-screen">
+      
+      
+      <!--
     <div id="test-content" class="main-content">
       Test Content
       <div id="card-test"></div>
       <div id="insert"></div>
     </div>
-    
-    <div class='modal-backdrop hidden' id='modal-backdrop'>
+-->
+      <!--   <div class='modal-backdrop' id='modal-backdrop'>
       <div class="dialog medium">
         <div class='modal-header'>
           <div class="modal-title">Spring Training</div>
@@ -52,31 +42,241 @@
         <div class='modal-body lawn-stripes'></div>
       </div>
     </div>
+    -->
+      <!-- CALENDAR SCREEN -->
+      
+      <div id="cal-content" class="main-content">
+        
+        <div id="calendar-heading" class="section-heading">Calendar</div>
+        <div class="section-subheading">"Here's what on the schedule, coach."</div>
+        
+        <div id="calendar" class="section-ts">
+          <div id="calendar-body" class="section-body">
+          </div>
+        </div>
+      </div>
+      <!-- LINEUP SCREEN -->
+      
+      <div id="lineup-content" class="main-content hidden">
+        <div id="lineup-heading" class="section-heading">Lineup</div>
+        <div class="section-subheading hidden">"The team will be here after Spring Training"</div>
+        <div class="lineup-table" id="batter-order">
+          <div class="lineup-header">BATTING ORDER</div>
+        </div>
+        <div class="lineup-table" id="starting-pitcher">
+          <div class="lineup-header">STARTING PITCHER</div>
+        </div>
+        <div class="lineup-table" id="bench">
+          <div class="lineup-header">BENCH</div>
+        </div>
+        <div class="lineup-table" id="bullpen">
+          <div class="lineup-header">BULLPEN</div>
+        </div>
+        
+        
+      </div>
+      
+      <!-- TEAM SETUP SCREEN -->
+      
+      <div id="team-setup-content" class="main-content hidden">
+        
+        <div id="team-heading" class="section-heading hidden">Your Team</div>
+        <div class="section-subheading">"This is us, skipper."</div>
+        <select id='league-select'>
+          <option value="">--Choose One</option>
+        </select>
+        <select id='team-select'>
+          <option value="">--Choose One</option>
+        </select>
+        <select id='uni-select'>
+          <option value="">--Choose One</option>
+        </select>
+        <div class='die-box'>8</div>
+        <button id="roll">Roll</button>
+        <div id="diceRoller"></div>
+      </div>
+      <!-- absolutely positionned behind #diceRollerUI -->
+      <!-- dice_box gets created here 
+      <div id="diceRoller"></div>
+      <button id="roll">Roll</button>
+    </div>
     
-    <!-- CALENDAR SCREEN -->
-    
-    <div id="cal-content" class="main-content hidden">
-      <div id="calendar-heading" class="section-heading">Calendar</div>
-      <div class="section-subheading">"Here's what on the schedule, coach."</div>
-      <div id="calendar" class="section-ts">
-        <div id="calendar-body" class="section-body">
+    <!-- SPRING TRAINING/ROSTER BUILDING SCREEN -->
+      
+      <div id="spring-training-content" class="main-content lawn-stripes hidden">
+        <div class="accordion-sec" id="st-title-sec">
+          <div class="accordion-content">
+            <h3 class="text-white">Spring Training</h3>
+            <div id="roster-instructions">
+              <div class="instructions">
+                Welcome to camp, coach. We have some guys returning and some new callups. Let's see what we're working with.
+              </div>
+              <button class="btn btn-team" id="meet-team" style="margin:5%;">Meet the Team</button>
+            </div>
+          </div>
+        </div>
+        <div class="accordion-sec" id="st-ros-title">
+          <div class="accordion-content" data-part="content" style="max-height: 2rem;">
+            <h3 style="color: white;">Roster</h3>
+          </div>
+        </div>
+        <div class="trough-outer hidden" style="align-self: start; width: 100%;" id="st-tr-out">
+          <div class="trough-felt" id="st-tr-out">
+            <div class="lineup-scroll" id="st-lineup-scroll"></div>
+          </div>
+        </div>
+        <div class="accordion-sec" id="st-sign-inst">
+          <div class="accordion-content" data-part="content" style="display: flex; flex-direction: column; align-items: center; gap: 10%;">
+            <div class="instructions">There's more. The GM wants your input on which of these free agents to sign. Pick one, we'll see the other as an opponent.</div>
+            <button class="btn btn-team" id="st-choose-btn" style="margin: 5%;">What are my options?</button>
+          </div>
+        </div>
+        <div class="accordion-sec" id="st-sign-sec">
+          <div class="accordion-content" data-part="content" style="text-align: center;">
+            <h3 style="color: white;">Sign one, face the other. (1 of 3)</h3>
+            <div class="instructions" style="font-size: 0.8em;">Choose one player to sign to your team. The opponent on the back of the other player goes onto your schedule.</div>
+            <div class="card-stage" id="st-card-stage">
+              <div class="card-scene" style="order: 1;">
+                <div class="flip-card" data-part="card">
+                  <div class="card-face front card" data-part="front">
+                  </div>
+                  <div class="card-face back card" data-part="back">
+                  </div>
+                </div>
+              </div>
+              <div class="card-scene" style="order: 3;">
+                <div class="flip-card flipped" data-part="card">
+                  <div class="card-face front card" data-part="front">
+                  </div>
+                  <div class="card-face back card" data-part="back">
+                  </div>
+                </div>
+              </div><button class="btn btn-team" style="order: 2;" id="st-flip-btn">Flip</button>
+            </div><button class="btn btn-team" style="margin: 0.5em auto;" id="st-sign-btn"></button>
+          </div>
+        </div>
+        <div class="accordion-sec" id="st-close-sec">
+          <div class="accordion-content" data-part="content">
+            <h3 style="color: white;">Good camp, coach.</h3>
+            <div class="instructions">Close down camp when you're ready and we'll get to the season.</div><button class="btn btn-team" id="st-close-btn" style="margin-top: 1em;">Finish Camp</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- GAME SCREEN -->
+      <div id="gameday" class="main-content lawn-stripes hidden">
+        <div id="gameday-cover">
+          <div id="game-cover-title" class="section-heading-white section-heading"><span id="game-span">GAME X</span></div>
+          <div id="logos">
+            <img id="logo-away" class="cover-logo" />
+            <div class="section-heading-white section-heading" id="game-cover-heading" style="font-size:3rem;">@</div>
+            <img id="logo-home" class="cover-logo" />
+          </div>
+          <div class="instructions">
+            Set your lineup before the game, then come here to start.
+          </div>
+          <button class="btn btn-team" id="btn-play-ball">PLAY BALL</button>
+        </div>
+        <div id="gameplay-content" class="hidden">
+          <div id="scorebug-zone" class="board-zone">
+            <div id="scorebug-surface" class="game-surface">
+              <div id="game-back"></div>
+              <div id="game-away-logo" class="game-logo game-away"></div>
+              <div id="game-away-score" class="game-score game-away"></div>
+              <div id="game-home-score" class="game-score game-home"></div>
+              <div id="game-home-logo" class="game-logo game-home"></div>
+            </div>
+          </div>
+          <div id="scoreboard-zone" class="board-zone">
+            <div id="scoreboard-surface" class="game-surface">
+              <div id="scoreboard-title">RESOURCES</div>
+              <div id="scoreboard-dice" class="scoreboard-resource-symbol">
+                <svg class="icon" width="80%">
+                  <use href="#dice-svg"></use>
+                </svg>
+              </div>
+              <div id="scoreboard-dice-count" class="scoreboard-resource-count">0</div>
+              <div id="scoreboard-reroll" class="scoreboard-resource-symbol">
+                <svg width="80%" height="80%" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" data-part="svg">
+                  <g viewBox="0 0 22 22">
+                    <circle cx="11" cy="11" r="11" style="fill: rgb(0, 148, 0); stroke: black; stroke-width: 1;"></circle>
+                    <path d="M 15.5 6.5 a 6.25 6.25 0 1 0 0 9" style="stroke: rgb(255, 255, 255); stroke-width: 2.5; fill: transparent;"></path>
+                    <path d="M 15.5 6.5 l 1 -1 l 0.75 3.25 l -3.5 -0.5 z" style="stroke: white; stroke-width: 2.5; fill: transparent;"></path>
+                  </g>
+                </svg>
+              </div>
+              <div id="scoreboard-reroll-count" class="scoreboard-resource-count">0</div>
+              <div id="scoreboard-mod" class="scoreboard-resource-symbol">
+                <svg width="80%" height="80%" viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg" data-part="svg">
+                  <g viewBox="0 0 23 23">
+                    <rect x="0" y="0" width="23" height="23" rx="2" ry="2" style="stroke: black; stroke-width: 1; fill: rgb(255, 239, 0);"></rect><text x="12.5" y="18" style="font-size: 18px; font-family: &quot;Helvetica Neue&quot;, Arial; font-weight: 700; text-align: center; text-anchor: middle; fill: black;">±1</text>
+                  </g>
+                </svg>
+              </div>
+              <div id="scoreboard-mod-count" class="scoreboard-resource-count">0</div>
+              <div id="scoreboard-inning">
+                <div class="inning-arrow inning-off" id="inning-top">▲</div>
+                <div id="inning-num">7</div>
+                <div class="inning-arrow inning-on" id="inning-bottom">▼</div>
+              </div>
+              <div id="out-count">
+                <div id="out-label">OUTS</div>
+                <div id="out-pips">
+                  <div class="out-pip out-on"></div>
+                  <div class="out-pip out-off"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="field-zone" class="board-zone">
+            <div id="field-surface" class="game-surface">
+              
+              <div id="field-box">
+                <img id="infield" src="public/assets/Infield.png" />
+                <div id="runners">
+                  <svg viewBox="0 0 100 100" class="base-path-def">
+                    <path id="basePath" d="M 49.25 87.55 L 82.4 54.4 L 49.25 21.25 L 16.1 54.4 Z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="roll-zone" class="board-zone">
+            <div id="roll-surface" class="game-surface">
+              <div id="gameRoller"></div>
+            </div>
+            <div id="dice-input-border">
+              <div id="dice-input">
+                <div id="dice-input-symbol" class="die-box">1
+                </div>
+                <button id="dice-down" class="dice-adj">▼</button>
+                <div id="dice-input-count">3</div>
+                <button id="dice-up" class="dice-adj">▲</button>
+              </div>
+            </div>
+          </div>
+          <div id="action-zone" class="board-zone">
+            <div id="action-surface" class="game-surface">
+              <button id="roll-btn" class="btn btn-team btn-game">Roll</button>
+              <button id="out-btn" class="btn btn-team btn-game">Out</button>
+              <button id="steal-btn" class="btn btn-team btn-game">Steal</button>
+              <button id="pinch-btn" class="btn btn-team btn-game">Pinch</button>
+            </div>
+          </div>
+          <div id="batter-zone" class="board-zone">
+            <div id="batter-surface" class="game-surface"></div>
+          </div>
+          <div id="order-zone" class="board-zone">
+            <div id="order-surface" class="game-surface"></div>
+          </div>
         </div>
       </div>
     </div>
-    <!-- LINEUP SCREEN -->
     
-    <div id="lineup-content" class="main-content hidden">
-      <div id="lineup-heading" class="section-heading">Lineup</div>
-      <div class="section-subheading">"The talent."</div>
-    </div>
     
-    <!-- TEAM SETUP SCREEN -->
     
-    <div id="team-setup-content" class="main-content hidden">
-      
-      <div id="team-heading" class="section-heading">Your Team</div>
-      <div class="section-subheading">"This is us, skipper."</div>
-    </div>
+    
+    <!-- FOOTER -->
     
     <div id="game-footer">
       <nav id="game-nav">
@@ -89,62 +289,133 @@
         <div id="team-nav" class="nav-item" data-section="team-setup-content"><span class="material-symbols-outlined">
             apparel
           </span><span class="menu-label">TEAM</span></div>
+        <div id="event-nav" class="nav-item" data-section="content"><span class="material-symbols-outlined" id="event-symbol">
+            content_paste
+          </span><span class="menu-label" id="event-nav-label"> SPRING TRAINING</span></div>
       </nav>
     </div>
   </div>
   
-  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
-    <symbol id="warning" viewBox="0 0 100 100">
-      
-      <path d="M50 10
-               Q53 10 55 13
-               L89 78
-               Q92 84 85 84
-               L15 84
-               Q8 84 11 78
-               L45 13
-               Q47 10 50 10 Z" fill="#d32f2f" stroke="white" stroke-width="5" />
-      
-      <rect x="46" y="28" width="8" height="32" rx="4" fill="white" />
-      
-      <circle cx="50" cy="70" r="4.5" fill="white" />
-      
-    </symbol>
-  </svg>
   
+  <!--  SCRIPT CALLS -->
   
   <script src="dice/libs/three.min.js"></script>
   <script src="dice/libs/cannon.min.js"></script>
   <script src="dice/libs/teal.js"></script>
   <script src="dice/dice.js" type='module'></script>
   <script src='main.js' type='module'></script>
+  
+  <!-- HTML TEMPLATES -->
+  
+  <!-- CALENDAR EVENT -->
+  
+  <template id="calendar-event-template">
+    <div class="event">
+      <div class="event-top" data-part="top">
+      </div>
+      <div class="event-title" data-part="title">
+      </div>
+      <div class="event-body" data-part="body">
+      </div>
+    </div>
+  </template>
+  
+  <!-- ACCORDION SECTION -->
+  
+  <template id='accordion-template'>
+    <div class="accordion-sec">
+      <div class="accordion-content" data-part="content">
+        
+      </div>
+    </div>
+  </template>
+  
+  <!-- FLIP CARD -->
+  
+  <template id="flip-card-template">
+    <div class="card-scene">
+      <div class="flip-card" data-part="card">
+        <div class="card-face front card" data-part="front">
+        </div>
+        <div class="card-face back card" data-part="back">
+        </div>
+      </div>
+    </div>
+  </template>
+  
+  <!-- LINEUP -->
+  
+  <template id="lineup-bar-template">
+    <div class="lineup-bar-wrap bronze-grad" data-part="wrap">
+      <div class="lineup-row lineup-bar">
+        <div class="lineup-num"><span class="num" data-part="num"></span></div>
+        <div class="bar-sep bronze-grad" data-part="sep"></div>
+        <div class="lineup-name" data-part="name"><span class="first-name" data-part="firstName">Ricardo</span> <span class="last-name" data-part="lastName">Smith</span></div>
+        <div class="lineup-fatigue" data-part="fatigue">
+          <div class="fatigue-symbol">
+            <svg xmlns:xlink="http://www.w3.org/1999/xlink" width="32.5" height="100%" viewBox="0 0 100 100">
+              <path d="M50 10 Q53 10 55 13 L89 78 Q92 84 85 84 L15 84 Q8 84 11 78 L45 13 Q47 10 50 10 Z" stroke-width="5" stroke="white" fill="#d32f2f" stroke-dasharray="none"></path>
+              <rect x="46" y="28" width="8" height="34" rx="4" fill="white"></rect>
+              <circle cx="50" cy="70" r="4.5" fill="white"></circle>
+            </svg>
+          </div>
+          <div class="fatigue-count" data-part="fatigueCount">5/5</div>
+        </div>
+        <div class="lineup-resources" data-part="resources">
+          <div class="lineup-dice" data-part="dice">
+            <svg height="100%" width="100%" viewBox="0 0 27 27" xmlns="http://www.w3.org/2000/svg" data-part="svg">
+              <g>
+                <path d="M 0 0 v 21 l 6 6 v -21 z m 6 6 h 21 l -6 -6 h -21 z v 21 h 21 v -21 z" style="fill: white; stroke: black; stroke-width: 0.5; stroke-linejoin: round;"></path>
+                <text x="16" y="21.5" class="dice-count" data-part="diceCount" style="font-size: 18px; font-family: &quot;Proxima Nova&quot;, Arial; font-weight: 700; text-align: center; text-anchor: middle; fill: black;">2</text>
+              </g>
+            </svg>
+          </div>
+          <div class="lineup-reroll" data-part="reroll">
+            <svg width="100%" height="100%" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" data-part="svg">
+              <g viewBox="0 0 22 22">
+                <circle cx="11" cy="11" r="11" style="fill: rgb(0, 148, 0); stroke: black; stroke-width: 1;"></circle>
+                <path d="M 15.5 6.5 a 6.25 6.25 0 1 0 0 9" style="stroke: rgb(255, 255, 255); stroke-width: 2.5; fill: transparent;"></path>
+                <path d="M 15.5 6.5 l 1 -1 l 0.75 3.25 l -3.5 -0.5 z" style="stroke: white; stroke-width: 2.5; fill: transparent;"></path>
+              </g>
+            </svg>
+          </div>
+          <div class="lineup-mod" data-part="mod">
+            <svg width="100%" height="100%" viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg" data-part="svg">
+              <g viewBox="0 0 23 23">
+                <rect x="0" y="0" width="23" height="23" rx="2" ry="2" style="stroke: black; stroke-width: 1; fill: rgb(255, 239, 0);"></rect><text x="12.5" y="18" style="font-size: 18px; font-family: &quot;Helvetica Neue&quot;, Arial; font-weight: 700; text-align: center; text-anchor: middle; fill: black;">±1</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+        <div class="lineup-buttons" data-part="buttons">
+          <button class="btn lineup-btn btn-up" data-part="up"><span class="material-symbols-outlined btn-symbol">arrow_upward</span></button>
+          <button class="btn lineup-btn btn-down" data-part="down"><span class="material-symbols-outlined btn-symbol">arrow_downward</span></button>
+          <button class="btn lineup-btn btn-bench" data-part="bench"><span class="material-symbols-outlined btn-symbol">chair_alt</span></button>
+          <button class="btn lineup-btn btn-start" data-part="start"><span class="material-symbols-outlined btn-symbol">play_arrow</span></button>
+        </div>
+      </div>
+    </div>
+  </template>
+  </div>
+  
+  <!-- Master Hidden SVG Sprite Sheet -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  
+    <symbol id="dice-svg" viewBox="0 0 27 27">
+      <g>
+        <path d="M 0 0 v 21 l 6 6 v -21 z m 6 6 h 21 l -6 -6 h -21 z v 21 h 21 v -21 z" style="fill: white; stroke: black; stroke-width: 0.5; stroke-linejoin: round;"></path>
+        <text x="16" y="21.5" class="dice-count" data-part="diceCount" style="font-size: 18px; font-family: &quot;Proxima Nova&quot;, Arial; font-weight: 700; text-align: center; text-anchor: middle; fill: black;">1</text>
+      </g>
+    </symbol>
+    
+    <symbol id="icon-trash" viewBox="0 0 24 24">
+      <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+    </symbol>
+    
+  </svg>
+  
+  
+  
 </body>
 
 </html>
-
-<!--
-      <div id='name'></div>
-      <div id='result'></div>
-      
-      <select id='team-select'>
-        <option value="">--Pick One--</option>
-      </select>
-      <select id='color-1'>
-        <option value="">--Pick One</option>
-      </select>
-      <div class='die-box'>8</div>
-      <button id="roll">Roll</button>
-      <div id="diceRoller"> <!-- absolutely positionned behind #diceRollerUI -->
-<!-- dice_box gets created here -->
-<!--
-      </div>
-      <div id="target"></div>
-      <div id="reference"><img src="public/assets/reference/season.png"></div>
-      <div id="lineup"></div>
-      <div id="resources">
-        <div id="dicePool"></div>
-        <div id="rerolls"></div>
-        <div id="mods"></div>
-      </div>
-      <div id="batter"></div>
-      -->

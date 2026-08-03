@@ -1,19 +1,34 @@
-import {$n, $t, $c, on} from '../util.js'
+import { $n, $t, $c, on, $cl } from '../util.js'
 import { G } from '../model/game.js'
+import { renderSpringTraining } from './renderSpringTraining.js'
+import { store } from '../model/store.js'
 
-export function renderCalendarEvents() {
-  const calendar = document.getElementById("calendar-body");
-  console.log(calendar)
-  calendar.replaceChildren();
-  G.schedule.forEach((page) => {
-   
-    const event = $n("div",["event",page.status]);
-    const eventTop = $n("div","event-top",event);
-    const eventTitle = $n("div", "event-title",event);
-    eventTitle.textContent=page.title;
-    const eventBody = $n("div", "event-body",event);
-    eventBody.textContent = page.description;
-    calendar.append(event);
+const calendar = document.getElementById("calendar-body");
+const eNav = $t("event-nav");
+
+export function initCalendar() {
+  
+  on(calendar, "click", (e) => {
+    if (e.target.closest(".event").classList.contains("active")) {
+      eNav.click();
+    }
+  });
+  store.on("schedule:changed", () => {
+    renderCalendar();
   })
+  
+  renderCalendar();
 }
 
+export function renderCalendar() {
+  calendar.replaceChildren();
+  G.schedule.forEach((page) => {
+    
+    const newEv = $cl('calendar-event-template');
+    newEv.root.className="event";
+    newEv.root.classList.add(page.status);
+    newEv.title.textContent = page.title;
+    newEv.body.textContent = page.description;
+    calendar.append(newEv.root);
+  })
+}
