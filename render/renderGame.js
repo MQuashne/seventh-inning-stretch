@@ -126,9 +126,6 @@ ro.observe(runnerLayer);
   on(stealButton,"click", () => {
 console.log("clicky");
 gamebox.line_up_dice();
-)
-)
-
   })
   
   store.on("batter:out", (outplayer) => {
