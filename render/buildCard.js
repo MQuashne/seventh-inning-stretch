@@ -191,6 +191,7 @@ function getContrastColor(hexColor) {
   //  const ts = rootStyles.getPropertyValue('--ts').trim();
   
   const pTeam = teams.find((t) => t.code===player.team);
+  console.log(player.team)
   
   const tp = pTeam.tp;
   const ts = pTeam.ts;

@@ -22,6 +22,8 @@ import { endSpring } from './phase.js'
 import { brandColors } from '../render/brandColors.js'
 import { initGame } from '../render/renderGame.js'
 import { DICE } from '../dice/dice.js'
+import { setTest } from './testState.js'
+import { initModScreen } from '../render/modals/modScreen.js'
 
 export const allPlayers = [...players, ...pitchers];
 
@@ -60,53 +62,34 @@ export function gameSetup() {
   G.tier2Deck = t2Players;
   G.tier3Deck = t3Players;
   G.league = [...opponents];
-  /*
+  
   const diceRoller = $t('diceRoller');
   const box = new DICE.dice_box(diceRoller);
   box.setDice("4d6");
   const rollButton = $t('roll');
   on(rollButton, 'click', () => { box.start_throw() });
   colorSetup(box);
-  */
+  
   //Get initial Roster of T1 Players
   G.lineup.order = t1Players.splice(0, 9);
   G.lineup.startPitcher = t1Pitchers.splice(0, 1)[0];
   
-  
   G.lineup.order.forEach((player) => player.team = G.thisTeam.code);
   G.lineup.startPitcher.team = G.thisTeam.code;
+  G.fullRoster=[...G.lineup.order, G.lineup.startPitcher,...G.lineup.bench,...G.lineup.bullpen];
   
   
   
   
-  //TESTING ONLY
-  G.season = "season";
-  const signings = G.tier2Deck.splice(0, 3);
-  signings.forEach((fng) => {
-    if (fng.fatigue) {
-      G.lineup.bullpen.push(fng);
-    } else {
-      G.lineup.bench.push(fng);
-    }
-  });
+
+  //G.fullRoster=[...G.lineup.order, G.lineup.startPitcher,...G.lineup.bench,...G.lineup.bullpen];
   
-  const oppSignings = G.tier2Deck.splice(0, 3);
-  for (let i = 0; i < 3; i++) {
-    const opp = G.league.find(t => t.id === oppSignings[i].id);
-    G.opponents.push(opp);
-    const nextGame = G.schedule.find(event => event.id === `G${i+1}`);
-    nextGame.title = `${opp.city} ${opp.team}`;
-    if (i === 0) {
-      nextGame.status = "active";
-    }
-    G.schedule.find(event => event.id === `springTraining`).status = "past";
-    
-  }
-  
+  setTest();
   
   //Set up nav buttons
   initNav();
   initCalendar();
+  initSpringTraining();
   
   if (G.season === "spring") {
     initSpringTraining();
@@ -118,6 +101,7 @@ export function gameSetup() {
   renderCover();
   // $t("gameday-cover").classList.add("hidden")
   initGame();
+  initModScreen([1,4,6],G.game.order[0]);
   
   //GET REPLACEMENT OPTIONS
   

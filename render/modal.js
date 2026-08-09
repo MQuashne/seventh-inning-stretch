@@ -77,7 +77,7 @@ export default class Modal {
     
     this.header = $n("div", "modal-header");
     
-    this.body = $n("div", ["modal-body","lawn-stripes"]);
+    this.body = $n("div", "modal-body");
     
     this.actions = $n("div", "modal-actions");
     

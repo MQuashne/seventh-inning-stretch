@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-team="MIL">
+<html lang="en" data-team="WIL">
 
 <head>
   <meta charset="UTF-8">
@@ -78,19 +78,28 @@
       
       <!-- TEAM SETUP SCREEN -->
       
-      <div id="team-setup-content" class="main-content hidden">
+      <div id="team-setup-content" class="main-content lawn-stripes hidden">
         
         <div id="team-heading" class="section-heading hidden">Your Team</div>
         <div class="section-subheading">"This is us, skipper."</div>
-        <select id='league-select'>
-          <option value="">--Choose One</option>
-        </select>
-        <select id='team-select'>
-          <option value="">--Choose One</option>
-        </select>
-        <select id='uni-select'>
-          <option value="">--Choose One</option>
-        </select>
+        <div class="form-group">
+          <div class="form-label">League</div>
+          <select id='league-select' class="form-select">
+            <option value="">--Choose One</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Team</div>
+          <select id='team-select' class="form-select">
+            <option value="">--Choose One</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Uniform</div>
+          <select id='uni-select' class="form-select">
+            <option value="">--Choose One</option>
+          </select>
+        </div>
         <div class='die-box'>8</div>
         <button id="roll">Roll</button>
         <div id="diceRoller"></div>
@@ -180,7 +189,7 @@
         <div id="gameplay-content" class="hidden">
           <div id="scorebug-zone" class="board-zone">
             <div id="scorebug-surface" class="game-surface">
-              <div id="game-back"></div>
+              <div id="game-back" class="material-symbols-outlined">arrow_back_ios_new</div>
               <div id="game-away-logo" class="game-logo game-away"></div>
               <div id="game-away-score" class="game-score game-away"></div>
               <div id="game-home-score" class="game-score game-home"></div>
@@ -243,6 +252,24 @@
           </div>
           <div id="roll-zone" class="board-zone">
             <div id="roll-surface" class="game-surface">
+              <div id="roll-display" class="hidden">
+                <div id="roll-outcome" class="roll-play">x</div>
+                <div id="roll-options">
+                  <div id="offer-reroll" class="outcome-option">Reroll</div>
+                  <div id="offer-modifier" class="outcome-option">Modify</div>
+                </div>
+              </div>
+              <div id="mod-area">
+                <div id="mod-scroll"></div>
+                <div id="mod-action">
+                  <div id="mod-back" class="material-symbols-outlined">
+                    <div class="material-symbols-outlined">arrow_back_ios_new
+                    </div>
+                  </div>
+                  <div id="mod-play">X</div>
+                </div>
+              </div>
+              
               <div id="gameRoller"></div>
             </div>
             <div id="dice-input-border">
@@ -254,13 +281,18 @@
                 <button id="dice-up" class="dice-adj">▲</button>
               </div>
             </div>
+            
           </div>
           <div id="action-zone" class="board-zone">
             <div id="action-surface" class="game-surface">
               <button id="roll-btn" class="btn btn-team btn-game">Roll</button>
               <button id="out-btn" class="btn btn-team btn-game">Out</button>
-              <button id="steal-btn" class="btn btn-team btn-game">Steal</button>
-              <button id="pinch-btn" class="btn btn-team btn-game">Pinch</button>
+              <button id="bb-btn" class="btn btn-team btn-game">BB</button>
+              <button id="sac-btn" class="btn btn-team btn-game">SAC</button>
+              <button id="1b-btn" class="btn btn-team btn-game">1B</button>
+              <button id="2b-btn" class="btn btn-team btn-game">2B</button>
+              <button id="3b-btn" class="btn btn-team btn-game">3B</button>
+              <button id="hr-btn" class="btn btn-team btn-game">HR</button>
             </div>
           </div>
           <div id="batter-zone" class="board-zone">
@@ -396,7 +428,15 @@
       </div>
     </div>
   </template>
-  </div>
+  
+  <!-- REMOVED RANDOM CLOSING DIV TAG HERE -->
+  <template id="mod-select">
+    <div class="mod-selector">
+      <button class="mod-adj" data-part="up">▲</button>
+      <div class="die-box" data-part="value">0</div>
+      <button class="mod-adj" data-part="down">▼</button>
+    </div>
+  </template>
   
   <!-- Master Hidden SVG Sprite Sheet -->
   <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">

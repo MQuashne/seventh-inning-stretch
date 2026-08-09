@@ -23,6 +23,7 @@
     --shadow-wood: 0 6px 24px rgba(0, 0, 0, 0.55);
     --shadow-inset: inset 0 3px 10px rgba(0, 0, 0, 0.6);
     --td: #000000;
+    --tl: #ffffff;
     
 }
 
@@ -42,6 +43,7 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    touch-action: manipulation;
     /* the page itself never scrolls */
 }
 
@@ -207,14 +209,14 @@ h3 {
 
 .die-box {
     position: relative;
-    height: 50px;
-    width: 50px;
-    border-radius: 5px;
+    height: 20cqw;
+    width: 20cqw;
+    border-radius: 1cqw;
     display: flex;
     justify-content: center;
     align-items: center;
     background: var(--die-bg-color);
-    font-size: 35px;
+    font-size: 14cqw;
     font-family: "BaseballClubSolid";
     color: var(--die-font-color);
     -webkit-text-stroke: 0.7px var(--die-outline-color);
@@ -278,7 +280,51 @@ h3 {
     animation-delay: calc(var(--i, 0) * 100ms);
 }
 
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.36rem;
+}
 
+.form-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--parchment-dk);
+}
+
+.form-input,
+.form-select {
+    background: rgba(0, 0, 0, 0.32);
+    border: 1.5px solid rgba(245, 240, 224, 0.16);
+    border-radius: 3px;
+    padding: 0.5rem 0.72rem;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.9rem;
+    color: var(--cream);
+    outline: none;
+    transition: border-color 0.15s;
+    width: 100%;
+}
+
+.form-input:focus,
+.form-select:focus {
+    border-color: var(--ts);
+}
+
+.form-input::placeholder {
+    color: rgba(245, 240, 224, 0.28);
+}
+
+.form-select {
+    cursor: pointer;
+}
+
+.form-select option {
+    background: #1c2030;
+}
 
 
 .modal-backdrop {
@@ -308,6 +354,7 @@ h3 {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    box-shadow: 0px 2px 3px #00000060;
     
 }
 
@@ -318,7 +365,7 @@ h3 {
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: transparent;
-    background-color: var(--ts);
+    background-color: var(--tp);
     text-shadow: 0.05rem 0.05rem 0.0px rgba(255, 255, 255, 0.2);
     -webkit-background-clip: text;
     -moz-background-clip: text;
@@ -327,9 +374,16 @@ h3 {
 }
 
 .modal-body {
-    
     display: flex;
     height: 92%;
+    background: var(--td);
+}
+
+.modal-close {
+    background: transparent;
+    color: var(--td);
+    border: none;
+    font-size: 1.5rem;
 }
 
 .lawn-stripes {
@@ -1107,7 +1161,9 @@ GAME BOARD
 #game-back {
     grid-area: back-btn;
     width: 100%;
-    height: 100%;
+    text-align: center;
+    color: white;
+    
 }
 
 #game-home-logo {
@@ -1327,7 +1383,7 @@ GAME BOARD
     grid-area: control;
     position: relative;
     transform: scale(var(--runner-scale, 1));
-transform-origin: top left;
+    transform-origin: top left;
 }
 
 .base-path-def {
@@ -1335,8 +1391,8 @@ transform-origin: top left;
     inset: 0;
     width: 100%;
     height: 100%;
-    visibility:hidden;
-   
+    visibility: hidden;
+    
 }
 
 .runner {
@@ -1363,6 +1419,12 @@ transform-origin: top left;
 .runner.off {
     visibility: none;
 }
+
+.runner.departing {
+    scale: 0%;
+    transition: scale 100ms;
+}
+
 /*
 .run-0 {
     top: 83.2%;
@@ -1402,6 +1464,65 @@ transform-origin: top left;
     background-clip: padding-box;
     position: relative;
     display: flex;
+    justify-content: center;
+}
+
+#roll-display {
+    align-self: center;
+    justify-self: center;
+    text-align: center;
+    position: absolute;
+    margin: auto;
+    width: 80vw;
+    margin-top: 20%;
+    height: 50%;
+}
+
+#roll-outcome {
+    /* From https://css.glass */
+    
+}
+
+#roll-options {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.outcome-option {
+    background: rgba(0, 0, 0, 0.19);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8.1px);
+    -webkit-backdrop-filter: blur(8.1px);
+    border: 1px solid rgba(0, 0, 0, 0.41);
+    color: white;
+    font-family: oswald;
+    font-size: 1.25rem;
+    font-weight: 600;
+    width: 45%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1% 0;
+    margin: 1% 0;
+}
+
+#reroll-button {}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.98);
+    }
+    
+    50% {
+        transform: scale(1.02);
+    }
+    
+    100% {
+        transform: scale(0.98);
+    }
 }
 
 /* BUTTONS */
@@ -1525,4 +1646,165 @@ transform-origin: top left;
     color: white;
     font-size: 1.3em;
     font-family: "Oswald";
+}
+
+.mod-dialog {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.mod-count-box {
+    margin: 1em 0 0 0;
+    display: flex;
+    flex-direction: row;
+}
+
+.mod-trough-outer {
+    border-radius: 10px;
+    padding: 0.2rem 0.2rem 0.2rem;
+    position: relative;
+    width: calc(90cqw - 0.4rem);
+    min-width: 0;
+    display: flex;
+    /*margin-top:0.25rem;*/
+}
+
+.mod-trough-outer::before {
+    content: '';
+    position: absolute;
+    inset: 0.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    pointer-events: none;
+}
+
+.mod-trough {
+    /*background: linear-gradient(180deg, var(--tp-deep), var(--tp-dark));*/
+    box-shadow: 0.5cqw 0.5cqw 1.5cqw #00000080 inset;
+    border-radius: 6px;
+    padding: 2% 0.65rem 2%;
+    height: 90%;
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    justify-content: center;
+}
+
+#mod-area {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    z-index: 30;
+    background: var(--td);
+    align-items: center;
+}
+#mod-action{
+    width:100%;
+    position:relative;
+    display:flex;
+    justify-content:space-around;
+}
+
+#mod-play {
+    background: rgba(0, 0, 0, 0.19);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8.1px);
+    -webkit-backdrop-filter: blur(8.1px);
+    border: 1px solid rgba(0, 0, 0, 0.41);
+    width: 70%;
+    text-align: center;
+    color: white;
+    font-family: oswald;
+    font-size: 2rem;
+    font-weight: 600;
+   
+    animation: pulse 1s infinite;
+}
+
+#mod-back {
+    background: rgba(0, 0, 0, 0.19);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8.1px);
+    -webkit-backdrop-filter: blur(8.1px);
+    border: 1px solid rgba(0, 0, 0, 0.41);
+    width: 15%;
+    text-align: center;
+    color: white;
+    font-family: oswald;
+    font-size: 2rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+#mod-scroll {
+    /*position:absolute;*/
+    display: flex;
+    gap: 0.55rem;
+    overflow-x: auto;
+    padding: 0.3rem 0.05rem 0.65rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--ta-dark) rgba(0, 0, 0, 0.2);
+    
+    justify-content: space-around;
+    width: 100%;
+    
+    background: var(--td);
+}
+
+.mod-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+
+.mod-scroll::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+}
+
+.mod-scroll::-webkit-scrollbar-thumb {
+    background: var(--ta-dark);
+    border-radius: 2px;
+    transition: background 0.35s;
+}
+
+.mod-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    height: 100%;
+    position: relative;
+    
+}
+
+.mod-selector .die-box {
+    height: 10cqw;
+    width: 10cqw;
+    aspect-ratio: 1 / 1;
+    font-size: 10cqw;
+}
+
+.mod-control {}
+
+.mod-adj {
+    color: white;
+    font-size: 1em;
+    background: transparent;
+    border: none;
+    margin: 0.5em 0;
+}
+
+.mod-adj:disabled {
+    opacity: 0.35;
 }

@@ -174,7 +174,9 @@ export const players = [
   "reRoll": 0,
   "modifier": 1,
   "team":"DRM",
-  "condition": "sp-ec"
+  "condition": "sp-ec",
+  "outcomes": [{ "type": "pairs", "count": 2, "play": "HR" }]
+  
 },
 {
   "id": "010",

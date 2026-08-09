@@ -1,173 +1,65 @@
-export function maxValue(dice, op, target) {
-  const diceMax = Math.max(...dice);
-  switch (op) {
-    case 'eq':
-      return diceMax === target;
-      break;
-    case 'le':
-      return diceMax <= target;
-      break;
-    case 'ge':
-      return diceMax >= target;
-      break;
-    default:
-      return false;
-  }
-}
-
-export function sumValue(dice, op, target) {
-  const diceSum = dice.reduce((sum, item) => sum + item, 0);
-  switch (op) {
-    case 'eq':
-      return diceSum === target;
-      break;
-    case 'le':
-      return diceSum <= target;
-      break;
-    case 'ge':
-      return diceSum >= target;
-      break;
-    default:
-      return false;
-  }
-}
-
-export function countEvenOdd(dice, op, eo, target) {
-  
-  let count = { even: 0, odd: 0 };
-  
-  for (let i = 0; i < dice.length; i++) {
-    dice[i] % 2 === 0 ? count.even++ : count.odd++
-  }
-  
-  switch (op) {
-    case 'eq':
-      return count[eo] === target;
-      break;
-    case 'le':
-      return count[eo] <= target;
-      break;
-    case 'ge':
-      return count[eo] >= target;
-      break;
-    default:
-      return false;
-  }
-}
-
-export function checkStraight(dice, run) {
-  // Sort and remove duplicates in case of unsorted or messy inputs
-  const uniqueSorted = [...new Set(dice)].sort((a, b) => a - b);
-  
-  // A straight of 3 requires a span of at most 2 across 3 elements
-  for (let i = 0; i <= uniqueSorted.length - run; i++) {
-    if (uniqueSorted[i + run - 1] - uniqueSorted[i] === run - 1) {
-      return true;
+export const rollTests = {
+  unequal: (dice, count, target) => {
+    const unique = [...new Set(dice)].length;
+    return unique.length >= count
+  },
+  odd: (dice, count, target) => {
+    let countOdd = 0;
+    for (let i = 0; i < dice.length; i++) {
+      dice[i] % 2 != 0 ? countOdd++ : countOdd += 0;
     }
-  }
-  return false;
-}
-
-export function countValue(dice, op, val, target) {
-  const valCount = dice.filter(res => res === val).length
-  switch (op) {
-    case 'eq':
-      return valCount === target;
-      break;
-    case 'le':
-      return valCount <= target;
-      break;
-    case 'ge':
-      return valCount >= target;
-      break;
-    default:
-      return false;
-  }
-}
-
-export function countPairs(dice, op, target) {
-  const counts = {};
-  
-  for (const num of dice) {
-    counts[num] = (counts[num] || 0) + 1;
-  }
-  
-  const pairs = Object.values(counts).filter(count => count >= 2).length;
-  
-  switch (op) {
-    case 'eq':
-      return pairs === target;
-      break;
-    case 'le':
-      return pairs <= target;
-      break;
-    case 'ge':
-      return pairs >= target;
-      break;
-    default:
-      return false;
-  }
-}
-
-export function countSets(dice, op, num, target) {
-  const counts = {};
-  
-  for (const num of dice) {
-    counts[num] = (counts[num] || 0) + 1;
-  }
-  
-  const sets = Object.values(counts).filter(count => count >= num).length;
-  
-  switch (op) {
-    case 'eq':
-      return sets === target;
-      break;
-    case 'le':
-      return sets <= target;
-      break;
-    case 'ge':
-      return sets >= target;
-      break;
-    default:
-      return false;
-  }
-}
-
-export function testRange(dice, op, target) {
-  const diceMax = Math.max(...dice);
-  const diceMin = Math.min(...dice);
-  const diceRange = diceMax - diceMin;
-  
-  switch (op) {
-    case 'eq':
-      return diceRange === target;
-      break;
-    case 'le':
-      return diceRange <= target;
-      break;
-    case 'ge':
-      return diceRange >= target;
-      break;
-    default:
-      return false;
-  }
-}
-
-export function countUnique(dice, op, target) {
-  // Sort and remove duplicates in case of unsorted or messy inputs
-  const unique = [...new Set(dice)].length;
-  
-  switch (op) {
-    case 'eq':
-      return unique === target;
-      break;
-    case 'le':
-      return unique <= target;
-      break;
-    case 'ge':
-      return unique >= target;
-      break;
-    default:
-      return false;
+    return countOdd >= count
+  },
+  even: (dice, count, target) => {
+    let countEven = 0;
+    for (let i = 0; i < dice.length; i++) {
+      dice[i] % 2 === 0 ? countEven++ : countEven += 0;
+    }
+    return countEven >= count
+  },
+  sum: (dice, count, target) => {
+    const diceSum = dice.reduce((acc, item) => acc + item, 0);
+    return diceSum >= target
+  },
+  max: (dice, count, target) => {
+    const diceMax = Math.max(...dice);
+    return diceMax >= target
+  },
+  straight: (dice, count, target) => {
+    const uniqueSorted = [...new Set(dice)].sort((a, b) => a - b);
+    
+    // A straight of 3 requires a span of at most 2 across 3 elements
+    for (let i = 0; i <= uniqueSorted.length - target; i++) {
+      if (uniqueSorted[i + target - 1] - uniqueSorted[i] === target - 1) {
+        return true;
+      }
+    }
+    return false;
+  },
+  value: (dice, count, target) => {
+    const valCount = dice.filter(res => res >= target).length;
+    return valCount >= count
+  },
+  pairs: (dice, count, target) => {
+    const counts = {};
+    for (const num of dice) {
+      counts[num] = (counts[num] || 0) + 1;
+    }
+    const pairs = Object.values(counts).filter(vcount => vcount >= 2).length;
+    return pairs >= count
+  },
+  match: (dice, count, target) => {
+    const counts = {};
+    for (const num of dice) {
+      counts[num] = (counts[num] || 0) + 1;
+    }
+    const sets = Object.values(counts).filter(mcount => mcount >= count).length;
+    return sets > 0
+  },
+  range: (dice, count, target) => {
+    const diceMax = Math.max(...dice);
+    const diceMin = Math.min(...dice);
+    const diceRange = diceMax - diceMin;
+    return diceRange>=target
   }
 }

@@ -6,6 +6,7 @@ import { viewCard, viewOpp } from './modals/viewCard.js'
 import { brandColors } from './brandColors.js'
 import { teams } from '../model/teams.js'
 import { $n, $t, $c, $a, on, findKey, loadCard, randInt } from '../util.js'
+import { renderGame } from './renderGame.js'
 
 export function renderCover() {
   const awayLogo = $t("logo-away");
@@ -28,6 +29,7 @@ export function renderCover() {
 
 const playBall=$t("btn-play-ball");
 on(playBall,"click",() => {
+  renderGame();
   $t("gameday-cover").classList.add("hidden");
   $t("gameplay-content").classList.remove("hidden")
 })

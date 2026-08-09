@@ -70,7 +70,6 @@ export const DICE = (function() {
         lineup_max_spacing_scale: 2.5, //cap spacing at N * vars.scale so few dice don't spread edge-to-edge
         lineup_duration_ms: 500
     }
-    console.log(vars.lineup_enabled)
     //const loader=new FontLoader();
     const CONSTS = {
         known_types: ['d4', 'd6', 'd8', 'd9', 'd10', 'd12', 'd20', 'd100'],
@@ -390,21 +389,13 @@ export const DICE = (function() {
             box.clear();
             box.roll(vectors, request_results || notation.result, function(result) {
                 notation.result = result;
-                var res = result.join(' ');
-                if (notation.constant) {
-                    if (notation.constant > 0) res += ' +' + notation.constant;
-                    else res += ' -' + Math.abs(notation.constant);
-                }
-                notation.resultTotal = (result.reduce(function(s, a) { return s + a; }) + notation.constant);
-                if (result.length > 1 || notation.constant) {
-                    res += ' = ' + notation.resultTotal;
-                }
-                notation.resultString = res;
+                finalize_notation(notation);
                 
-                // Tuck the settled dice into a row (top of the desk by default)
-                // so the rest of the canvas is free for a result message / options
+                // Stash so reroll() can find this die set again later, and tuck
+                // the settled dice into a row (top of the desk by default) so
+                // the rest of the canvas is free for a result message / options
                 // UI to be layered on top without covering the dice themselves.
-               
+                box.last_notation = notation;
                 if (vars.lineup_enabled) box.line_up_dice();
                 
                 if (after_roll) after_roll(notation);
@@ -442,10 +433,17 @@ export const DICE = (function() {
         return vectors;
     }
     
-    that.dice_box.prototype.create_dice = function(type, pos, velocity, angle, axis) {
+    // @param notation_index (optional) stable position of this die within the
+    // overall notation (e.g. for "2d6", the first die is 0, the second is 1).
+    // Used by reroll() to know which die is which independent of array order,
+    // and by search_dice_by_mouse/set_dice_selected so a UI can let the player
+    // tap dice to pick which ones to reroll.
+    that.dice_box.prototype.create_dice = function(type, pos, velocity, angle, axis, notation_index) {
         var dice = threeD_dice['create_' + type]();
         dice.castShadow = true;
         dice.dice_type = type;
+        dice.notation_index = notation_index;
+        dice.userData = { notation_index: notation_index, dice_type: type };
         dice.body = new CANNON.RigidBody(CONSTS.dice_mass[type],
             dice.geometry.cannon_shape, this.dice_body_material);
         dice.body.position.set(pos.x, pos.y, pos.z);
@@ -497,8 +495,6 @@ export const DICE = (function() {
     }
     
     that.dice_box.prototype.__animate = function(threadid) {
-        console.log("animating")
-
         if (!this.camera) return; // guard: nothing valid to render into yet
         var time = (new Date()).getTime();
         var time_diff = (time - this.last_time) / 1000;
@@ -548,8 +544,6 @@ export const DICE = (function() {
     // for a single call, e.g. box.line_up_dice({ y_fraction: -0.72 }) to line up
     // along the bottom edge instead of the top.
     that.dice_box.prototype.line_up_dice = function(opts) {
-        
-        
         var box = this;
         var n = this.dices.length;
         if (!n || !this.camera) return;
@@ -567,13 +561,7 @@ export const DICE = (function() {
         var targets = this.dices.map(function(d, i) {
             return new THREE.Vector3(startX + i * spacing, targetY, restZ);
         });
-        this.dices.forEach(function(d) {
-    if (d.body) {
-        d.body.velocity.set(0, 0, 0);
-        d.body.angularVelocity.set(0, 0, 0);
-        box.world.remove(d.body); // fully detach from physics, not just zero it out
-    }
-});
+        
         // Stop the dice reacting to the physics world while they glide into place.
         this.dices.forEach(function(d) {
             if (d.body) { d.body.velocity.set(0, 0, 0); d.body.angularVelocity.set(0, 0, 0); }
@@ -583,15 +571,19 @@ export const DICE = (function() {
         var startTime = null;
         function ease(t) { return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; } //easeInOutQuad
         
-       function step(ts) {
-    if (box._lineup_id !== lineup_id) return;
-    console.log('dices in step:', box.dices.length, 'starts:', starts.length);
-            
+        function step(ts) {
             if (box._lineup_id !== lineup_id) return; // a newer roll/line-up superseded this one
             if (!startTime) startTime = ts;
             var t = Math.min(1, (ts - startTime) / duration_ms);
             var e = ease(t);
-           
+            for (var i = 0; i < box.dices.length; ++i) {
+                var dice = box.dices[i];
+                dice.position.lerpVectors(starts[i], targets[i], e);
+                // NOTE: intentionally NOT using dice.body.position.copy(dice.position) here.
+                // THREE.Vector3.copy(v) sets `this` to `v`'s values, but CANNON.Vec3.copy(target)
+                // does the opposite — it writes `this`'s values INTO `target` and returns it.
+                if (dice.body) dice.body.position.set(dice.position.x, dice.position.y, dice.position.z);
+            }
             if (box.camera) box.renderer.render(box.scene, box.camera);
             if (t < 1) requestAnimationFrame(step);
         }
@@ -616,9 +608,145 @@ export const DICE = (function() {
         this.clear();
         this.iteration = 0;
         for (var i in vectors) {
+            // vectors is built by generate_vectors() by iterating notation.set in
+            // order, so its index i IS that die's notation_index for a full roll.
             this.create_dice(vectors[i].set, vectors[i].pos, vectors[i].velocity,
-                vectors[i].angle, vectors[i].axis);
+                vectors[i].angle, vectors[i].axis, Number(i));
         }
+    }
+    
+    // @brief remove specific dice (identified by notation_index) from the scene
+    // and physics world, leaving every other die exactly where it is. Used by
+    // reroll() to clear out just the dice being re-thrown.
+    that.dice_box.prototype.remove_dice_by_index = function(notation_indices) {
+        var box = this;
+        var kept = [];
+        this.dices.forEach(function(d) {
+            if (notation_indices.indexOf(d.notation_index) !== -1) {
+                box.scene.remove(d);
+                if (d.body) box.world.remove(d.body);
+            }
+            else kept.push(d);
+        });
+        this.dices = kept;
+    }
+    
+    // @brief zero out velocity and detach every current die's body from the
+    // physics world (without touching its mesh/position or removing it from
+    // the scene). Call this before stepping the world for a reroll so the dice
+    // that are staying put don't also react to gravity/collisions during that
+    // step — world.step() only simulates bodies still added to the world.
+    that.dice_box.prototype.freeze_dice = function() {
+        var box = this;
+        this.dices.forEach(function(d) {
+            if (d.body) {
+                d.body.velocity.set(0, 0, 0);
+                d.body.angularVelocity.set(0, 0, 0);
+                box.world.remove(d.body);
+            }
+        });
+    }
+    
+    // @brief mark/unmark a die as selected (e.g. for reroll picking) by giving
+    // it a thin glowing outline that moves and rotates with it automatically
+    // (added as a child object). Purely visual — has no effect on physics or
+    // results.
+    that.dice_box.prototype.set_dice_selected = function(dice, selected) {
+        
+        if (!dice) return;
+        if (selected && !dice._selection_outline) {
+            var outline = new THREE.Mesh(dice.geometry,
+                new THREE.MeshBasicMaterial({ color: 0xffdd33, side: THREE.BackSide }));
+            outline.scale.multiplyScalar(1.15);
+            dice.add(outline);
+            dice._selection_outline = outline;
+        }
+        else if (!selected && dice._selection_outline) {
+            dice.remove(dice._selection_outline);
+            dice._selection_outline = undefined;
+        }
+        dice.selected = !!selected;
+        if (this.camera) this.renderer.render(this.scene, this.camera);
+    }
+    
+    // @brief re-roll a subset of the dice from the most recently completed
+    // roll, identified by notation_index (0-based position within the original
+    // notation string, e.g. "3d6" -> indices 0, 1, 2). Dice NOT included are
+    // left exactly where they are on the desk; only the selected ones are
+    // thrown again, and once everything has settled the FULL set (kept +
+    // rerolled) is lined up together again.
+    // @param notation_indices array of indices to reroll
+    // @param before_reroll (optional) fn(types) -> optionally return an array
+    //        of forced result values for the rerolled dice, same convention as
+    //        start_throw's before_roll
+    // @param after_reroll (optional) fn(notation) called once settled & lined
+    //        up; notation is the same object returned by earlier rolls, with
+    //        result/resultTotal/resultString updated in place
+    that.dice_box.prototype.reroll = function(notation_indices, before_reroll, after_reroll) {
+        var box = this;
+        if (box.rolling || !box.last_notation || !box.camera) return;
+        notation_indices = Array.from(new Set(notation_indices)).filter(function(i) {
+            return box.last_notation.set[i] !== undefined;
+        });
+        if (!notation_indices.length) return;
+        
+        box.rolling = true;
+        var uat = vars.use_adapvite_timestep;
+        
+        // Freeze everyone first (so the physics step below only ever affects the
+        // dice we're about to spawn), then pull just the selected ones out.
+        box.freeze_dice();
+        box.remove_dice_by_index(notation_indices);
+        
+        var reroll_set = notation_indices.map(function(i) { return box.last_notation.set[i]; });
+        var vector = { x: (rnd() * 2 - 1) * box.w, y: -(rnd() * 2 - 1) * box.h };
+        var dist = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
+        var boost = (rnd() + 3) * dist;
+        vector.x /= dist;
+        vector.y /= dist;
+        var vectors = box.generate_vectors({ set: reroll_set }, vector, boost);
+        
+        var request_results = before_reroll ? before_reroll(reroll_set.slice()) : null;
+        
+        function spawn() {
+            for (var k = 0; k < vectors.length; ++k) {
+                box.create_dice(vectors[k].set, vectors[k].pos, vectors[k].velocity,
+                    vectors[k].angle, vectors[k].axis, notation_indices[k]);
+            }
+        }
+        
+        box.iteration = 0;
+        spawn();
+        
+        if (request_results && request_results.length) {
+            // Same trick roll() uses for forced results: fast-forward physics to
+            // see how the dice would naturally land, throw that away, respawn at
+            // the original thrown state, then relabel faces so the *visible*
+            // animated roll lands on the requested values instead.
+            vars.use_adapvite_timestep = false;
+            var res = box.emulate_throw();
+            box.remove_dice_by_index(notation_indices);
+            spawn();
+            var new_dice = box.dices.slice(box.dices.length - vectors.length);
+            var natural = res.slice(res.length - vectors.length);
+            for (var k = 0; k < new_dice.length; ++k) {
+                shift_dice_faces(new_dice[k], request_results[k], natural[k]);
+            }
+        }
+        
+        box.callback = function() {
+            box.dices.sort(function(a, b) { return a.notation_index - b.notation_index; });
+            box.last_notation.result = get_dice_values(box.dices);
+            finalize_notation(box.last_notation);
+            
+            box.line_up_dice();
+            if (after_reroll) after_reroll(box.last_notation);
+            box.rolling = false;
+            vars.use_adapvite_timestep = uat;
+        };
+        box.running = (new Date()).getTime();
+        box.last_time = 0;
+        box.__animate(box.running);
     }
     
     that.dice_box.prototype.roll = function(vectors, values, callback) {
@@ -636,13 +764,18 @@ export const DICE = (function() {
         this.__animate(this.running);
     }
     
-    that.dice_box.prototype.search_dice_by_mouse = function(ev) {
+    that.dice_box.prototype.search_dice_by_mouse = function(ev, rect) {
+        var xoffset = rect.x;
         var m = $t.get_mouse_coords(ev);
         var intersects = (new THREE.Raycaster(this.camera.position,
-            (new THREE.Vector3((m.x - this.cw) / this.aspect,
-                1 - (m.y - this.ch) / this.aspect, this.w / 9))
+            (new THREE.Vector3((m.x - rect.x - this.cw) / this.aspect,
+                1 - (m.y - rect.y - this.ch) / this.aspect, this.w / 9))
             .sub(this.camera.position).normalize())).intersectObjects(this.dices);
-        if (intersects.length) return intersects[0].object.userData;
+        // Returns the actual die mesh (not just userData) so a UI layer can
+        // pass it straight into set_dice_selected()/reroll(). dice.notation_index
+        // and dice.dice_type are also readable directly off the returned object.
+        if (intersects.length) {
+            return intersects[0].object;}
     }
     
     // @brief stop observing container resizes and release the observer. Call
@@ -907,7 +1040,7 @@ export const DICE = (function() {
             [0, 4, 7, 3, 5],
             [4, 5, 6, 7, 6]
         ];
-        return create_geom(vertices, faces, radius, 0.1, Math.PI / 4, 0.96);
+        return create_geom(vertices, faces, radius, 0.1, Math.PI / 4, 0.9);
     }
     
     function create_d8_geometry(radius) {
@@ -1051,6 +1184,22 @@ export const DICE = (function() {
     }
     
     // HELPERS
+    
+    // Builds resultTotal/resultString from notation.result + notation.constant.
+    // Shared by both a full roll's finish callback and reroll()'s, so the two
+    // never drift out of sync with each other.
+    function finalize_notation(notation) {
+        var res = notation.result.join(' ');
+        if (notation.constant) {
+            if (notation.constant > 0) res += ' +' + notation.constant;
+            else res += ' -' + Math.abs(notation.constant);
+        }
+        notation.resultTotal = notation.result.reduce(function(s, a) { return s + a; }, 0) + notation.constant;
+        if (notation.result.length > 1 || notation.constant) {
+            res += ' = ' + notation.resultTotal;
+        }
+        notation.resultString = res;
+    }
     
     function rnd() {
         return Math.random();

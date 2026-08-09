@@ -1,5 +1,4 @@
 import { players } from './model/players.js'
-import { maxValue } from './control/rollTest.js'
 import {colorSetup} from './control/colorControl.js'
 import { DICE } from './dice/dice.js'
 import { gameSetup } from './control/setup.js'

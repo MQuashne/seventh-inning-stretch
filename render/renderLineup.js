@@ -15,18 +15,18 @@ const bullpen = $t("bullpen");
 export function initLineup() {
   
   G.lineup.order.forEach((player) => {
-    player.team=G.myTeam;
+    player.team = G.myTeam;
     table.append(buildBar(player));
   });
   G.lineup.bench.forEach((player) => {
-    player.team=G.myTeam;
+    player.team = G.myTeam;
     bench.append(buildBar(player));
   });
   G.lineup.bullpen.forEach((player) => {
-    player.team=G.myTeam;
+    player.team = G.myTeam;
     bullpen.append(buildBar(player));
   });
-  G.lineup.startPitcher.team=G.myTeam;
+  G.lineup.startPitcher.team = G.myTeam;
   startingPitcher.append(buildBar(G.lineup.startPitcher));
   
   
@@ -77,8 +77,8 @@ export function initLineup() {
     const upBtn = e.target.closest(".btn-up");
     const benchBtn = e.target.closest(".btn-bench");
     const startBtn = e.target.closest(".btn-start");
-    if (bar){
-    const player = G.lineup.order.find((spot) => spot.id === bar.dataset.pid);
+    if (bar) {
+      const player = G.lineup.order.find((spot) => spot.id === bar.dataset.pid);
       const index = G.lineup.order.indexOf(player)
       if (upBtn) {
         const swapWith = bar.previousElementSibling;
@@ -103,9 +103,9 @@ export function initLineup() {
   });
   on(bench, "click", (e) => {
     const bar = e.target.closest(".lineup-bar-wrap");
-    if (bar){
-    const startBtn = e.target.closest(".btn-start");
-    const player = G.lineup.bench.find((spot) => spot.id === bar.dataset.pid);
+    if (bar) {
+      const startBtn = e.target.closest(".btn-start");
+      const player = G.lineup.bench.find((spot) => spot.id === bar.dataset.pid);
       const index = G.lineup.bench.indexOf(player);
       if (startBtn) {
         activatePlayer(player);
@@ -133,8 +133,8 @@ export function initLineup() {
   on(bullpen, "click", (e) => {
     const bar = e.target.closest(".lineup-bar-wrap");
     const startBtn = e.target.closest(".btn-start");
-    if (bar){
-    const player = G.lineup.bullpen.find((spot) => spot.id === bar.dataset.pid);
+    if (bar) {
+      const player = G.lineup.bullpen.find((spot) => spot.id === bar.dataset.pid);
       const index = G.lineup.bullpen.indexOf(player);
       if (startBtn) {
         activatePitcher(player);
