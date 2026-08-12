@@ -82,13 +82,13 @@ export function initLineup() {
       const index = G.lineup.order.indexOf(player)
       if (upBtn) {
         const swapWith = bar.previousElementSibling;
-        const p2 = G.lineup.order.find(p => p.id === bar.dataset.pid)
+        const p2 = G.lineup.order.find(p => p.id === swapWith.dataset.pid)
         swapPlayers(player, p2);
         swapWithAnimation(swapWith, bar);
         return;
       } else if (downBtn) {
         const swapWith = bar.nextElementSibling;
-        const p2 = G.lineup.order.find(p => p.id === bar.dataset.pid)
+        const p2 = G.lineup.order.find(p => p.id === swapWith.dataset.pid)
         swapPlayers(player, p2);
         swapWithAnimation(swapWith, bar);
         return;

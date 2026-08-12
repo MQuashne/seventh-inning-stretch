@@ -96,12 +96,12 @@ export function gameSetup() {
   }
   
   initLineup();
-  G.game.order = G.lineup.order;
+  G.game.order = [...G.lineup.order];
   G.game.opponent = G.opponents[0];
   renderCover();
   // $t("gameday-cover").classList.add("hidden")
-  initGame();
-  initModScreen([1,4,6],G.game.order[0]);
+  //initGame();
+  //initModScreen([1,4,6],G.game.order[0]);
   
   //GET REPLACEMENT OPTIONS
   

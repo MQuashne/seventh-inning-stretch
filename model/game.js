@@ -35,7 +35,7 @@ export const G = {
     inning: 7,
     half: 2,
     outs: 0,
-    dice: 3,
+    dice: 0,
     rerolls: 0,
     mods: 2,
     score:[0,0],

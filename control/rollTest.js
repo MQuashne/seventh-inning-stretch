@@ -1,7 +1,7 @@
 export const rollTests = {
   unequal: (dice, count, target) => {
     const unique = [...new Set(dice)].length;
-    return unique.length >= count
+    return unique >= count
   },
   odd: (dice, count, target) => {
     let countOdd = 0;

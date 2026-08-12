@@ -1467,7 +1467,9 @@ GAME BOARD
     justify-content: center;
 }
 
-#roll-display {
+#roll-display {}
+
+.roll-display {
     align-self: center;
     justify-self: center;
     text-align: center;
@@ -1480,7 +1482,8 @@ GAME BOARD
 
 #roll-outcome {
     /* From https://css.glass */
-    
+    font-size: 2rem;
+    width: 100%;
 }
 
 #roll-options {
@@ -1490,17 +1493,10 @@ GAME BOARD
     align-items: center;
 }
 
+
+
 .outcome-option {
-    background: rgba(0, 0, 0, 0.19);
-    border-radius: 16px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(8.1px);
-    -webkit-backdrop-filter: blur(8.1px);
-    border: 1px solid rgba(0, 0, 0, 0.41);
-    color: white;
-    font-family: oswald;
     font-size: 1.25rem;
-    font-weight: 600;
     width: 45%;
     display: flex;
     justify-content: center;
@@ -1508,8 +1504,6 @@ GAME BOARD
     padding: 1% 0;
     margin: 1% 0;
 }
-
-#reroll-button {}
 
 @keyframes pulse {
     0% {
@@ -1695,6 +1689,9 @@ GAME BOARD
     justify-content: center;
 }
 
+
+
+
 #mod-area {
     width: 100%;
     height: 100%;
@@ -1705,37 +1702,32 @@ GAME BOARD
     background: var(--td);
     align-items: center;
 }
-#mod-action{
-    width:100%;
-    position:relative;
-    display:flex;
-    justify-content:space-around;
+
+#mod-action {
+    width: 100%;
+    position: relative;
+    display: flex;
+    justify-content: space-around;
 }
 
-#mod-play {
+.btn-glass {
     background: rgba(0, 0, 0, 0.19);
     border-radius: 16px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(8.1px);
     -webkit-backdrop-filter: blur(8.1px);
     border: 1px solid rgba(0, 0, 0, 0.41);
-    width: 70%;
     text-align: center;
     color: white;
     font-family: oswald;
-    font-size: 2rem;
     font-weight: 600;
-   
+}
+
+.btn-pulse {
     animation: pulse 1s infinite;
 }
 
-#mod-back {
-    background: rgba(0, 0, 0, 0.19);
-    border-radius: 16px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(8.1px);
-    -webkit-backdrop-filter: blur(8.1px);
-    border: 1px solid rgba(0, 0, 0, 0.41);
+.btn-back {
     width: 15%;
     text-align: center;
     color: white;
@@ -1743,9 +1735,28 @@ GAME BOARD
     font-size: 2rem;
     font-weight: 600;
     flex-shrink: 0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#mod-play {
+    width: 70%;
+    font-size: 2rem;
+    
+}
+
+#mod-back {
+    width: 15%;
+    text-align: center;
+    color: white;
+    font-family: oswald;
+    font-size: 2rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #mod-scroll {
@@ -1807,4 +1818,9 @@ GAME BOARD
 
 .mod-adj:disabled {
     opacity: 0.35;
+}
+
+#reroll-confirm {
+    font-size:2rem;
+    width:50%;
 }

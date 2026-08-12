@@ -9,6 +9,7 @@ import { playerOut, endOffHalf, newBatter, startOffHalf, testBatter, advanceRunn
 import { DICE } from '../dice/dice.js'
 import { teams } from '../model/teams.js'
 import { allPlayers } from '../control/setup.js'
+import { initModScreen } from './modals/modScreen.js'
 
 /*
 TODO: View card on player tap
@@ -58,8 +59,13 @@ export const plays = {
 }
 const scheduleNav = $t('schedule-nav');
 const gameBack = $t("game-back");
+const rerollConfirm=$t("reroll-confirm");
+const rerollBack=$t("reroll-back");
+const rerollArea=$t("reroll-area");
 let lastPlay = "";
 const selectedDice = [];
+let rollResult = [];
+let mode = "roll";
 
 export function initGame() {
   
@@ -75,7 +81,6 @@ export function initGame() {
   //------CURRENT BATTER  
   const batter = G.game.order[G.game.currentBatterIndex]
   
-  //TODO: put update logic in render
   
   //add batter card to table 
   const batterCard = $n("div", ["lineup-card", "card"], batterSurface);
@@ -101,17 +106,6 @@ export function initGame() {
   
   //-------- INITIALIZE DICE BOX
   const gamebox = new DICE.dice_box(gameRoller);
-  /*
-  
-  //Create runner divs - create instead of unhide so that we can animate later 
-  G.game.runners.forEach((runner) => {
-    const runDot = $n("div", ["runner"], runnerLayer);
-    runDot.dataset.pid = runner.player.id;
-    runDot.dataset.location = runner.location;
-    runDot.textContent = runner.player.number;
-    runDot.style.offsetDistance = `${runner.location/4}%`;
-  });
-  */
   
   //----WIRING BUTTONS 
   
@@ -133,18 +127,35 @@ export function initGame() {
   
   //-----ROLL STUFF
   on(rollButton, 'click', () => {
-    gamebox.setDice(`${Number(diceCount.textContent)}d6`);
-    gamebox.start_throw(
-      () => diceInput.classList.add("hidden"),
-      (notation) => {
-        console.log(notation);
-        //diceInput.classList.remove("hidden");
-        //Find batter and get outcomes.
-        //loop through each and test. stop when one hits or return out
-        const batter = G.game.order[G.game.currentBatterIndex];
-        if (batter.condition === "roll") testBatter(batter, notation.result)
-      }
-    )
+    const batter = G.game.order[G.game.currentBatterIndex];
+    if (mode != "reroll") {
+      gamebox.setDice(`${Number(diceCount.textContent)}d6`);
+      gamebox.start_throw(
+        () => diceInput.classList.add("hidden"),
+        (notation) => {
+          rollResult = notation.result;
+          console.log(notation);
+          //diceInput.classList.remove("hidden");
+          //Find batter and get outcomes.
+          //loop through each and test. stop when one hits or return out
+          console.log(mode)
+          if (batter.condition === "roll") testBatter(batter, notation.result,mode);
+        }
+      )
+    } else if (mode === "reroll") {
+      gamebox.reroll(selectedDice, "",
+        (notation) => {
+          rollResult = notation.result;
+          console.log(notation);
+          //diceInput.classList.remove("hidden");
+          //Find batter and get outcomes.
+          //loop through each and test. stop when one hits or return out
+          
+          if (batter.condition === "roll") testBatter(batter, notation.result,mode);
+          mode="roll";
+        }
+      );
+    }
   });
   
   //-----------ACCEPT OUTCOME  
@@ -183,6 +194,8 @@ export function initGame() {
     advanceRunners("2B");
   })
   
+  
+  
   on(hrButton, "click", () => {
     const onBoard = document.querySelectorAll(".card");
     onBoard.forEach((card) => {
@@ -201,6 +214,7 @@ export function initGame() {
     G.game.rerolls > 0 ? offerReroll.classList.remove("hidden") : offerReroll.classList.add("hidden");
     G.game.mods > 0 ? offerModifier.classList.remove("hidden") : offerModifier.classList.add("hidden");
     rollDisplay.classList.remove("hidden");
+    renderGame();
   })
   
   //=======================
@@ -268,6 +282,7 @@ export function initGame() {
   //--------------------
   
   on(gameRoller, "click", (ev) => {
+    if (mode != "reroll") return;
     const rect = gameRoller.getBoundingClientRect();
     const chosen = gamebox.search_dice_by_mouse(ev, rect);
     if (!chosen) return;
@@ -280,12 +295,23 @@ export function initGame() {
     }
   })
   
+  on(offerReroll, "click", () => {
+    mode = "reroll";
+    rollDisplay.classList.add("hidden");
+    rerollConfirm.disabled=true
+    rerollArea.classList.remove("hidden");
+    //gamebox.reroll(selectedDice)
+  })
+  
   //--------------------
   // MODIFY
   //--------------------
-  
+  on(offerModifier, "click", () => {
+    initModScreen(rollResult, batter)
+  })
   
   renderGame();
+  mode = "roll";
 }
 
 

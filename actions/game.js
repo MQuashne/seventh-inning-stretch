@@ -62,7 +62,7 @@ export function endOffHalf() {
         state.game.dice = 0;
         state.game.rerolls = 0;
         state.game.mods = 0;
-        state.game.runners=[];
+        state.game.runners = [];
       }, ["inning:changed"])
     }
   } else {
@@ -76,7 +76,7 @@ export function endOffHalf() {
         state.game.dice = 0;
         state.game.rerolls = 0;
         state.game.mods = 0;
-        state.game.runners=[];
+        state.game.runners = [];
       }, ["inning:changed"]);
     }
   }
@@ -156,7 +156,7 @@ export function advanceRunners(lastPlay) {
       })
     }
   }, [
-    ["runners:advanced", {lastPlay,movedRunners}]
+    ["runners:advanced", { lastPlay, movedRunners }]
   ])
   
   //Walk - only advance if forced
@@ -169,14 +169,15 @@ export function advanceRunners(lastPlay) {
 
 export function runScored(runner) {
   const runnerIndex = G.game.runners.findIndex(r => r === runner);
-  if (runnerIndex<0) return;
+  if (runnerIndex < 0) return;
   store.update(state => {
     state.game.runners.splice(runnerIndex, 1);
     state.game.home === true ? state.game.score[1]++ : state.game.score[0]++
   }, ["run:scored"]);
 }
 
-export function testBatter(batter, dice) {
+export function testBatter(batter, dice, type) {
+  console.log(type)
   const outcomes = batter.outcomes;
   let pass = false;
   let best = false;
@@ -191,6 +192,14 @@ export function testBatter(batter, dice) {
     }
   }
   if (pass === false) outcome = "out";
-  console.log("emit")
+  if (type==="reroll") {
+    console.log()
+    store.update(state => { state.game.rerolls--;},["batter:rerolled"]);
+  }
+  if (type==="roll"){
+    store.update(state => {
+      state.game.dice-=dice.length;
+    })
+  }
   store.emit("batter:rolled", { outcome, best });
 }

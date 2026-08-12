@@ -34,6 +34,8 @@ export function activatePitcher(pitcher){
 
 export function swapPlayers(p1,p2){
   store.update(state => {
+    console.log(p1);
+    console.log(p2);
     const i1 = state.lineup.order.indexOf(p1);
     const i2 = state.lineup.order.indexOf(p2);
     [state.lineup.order[i1],state.lineup.order[i2]] = [state.lineup.order[i2],state.lineup.order[i1]];

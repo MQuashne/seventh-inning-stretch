@@ -252,21 +252,28 @@
           </div>
           <div id="roll-zone" class="board-zone">
             <div id="roll-surface" class="game-surface">
-              <div id="roll-display" class="hidden">
-                <div id="roll-outcome" class="roll-play">x</div>
+              <div id="roll-display" class="roll-display hidden">
+                <button id="roll-outcome" class="roll-play btn-glass btn-pulse">x</button>
                 <div id="roll-options">
-                  <div id="offer-reroll" class="outcome-option">Reroll</div>
-                  <div id="offer-modifier" class="outcome-option">Modify</div>
+                  <button id="offer-reroll" class="outcome-option btn-glass">Reroll</button>
+                  <button id="offer-modifier" class="outcome-option btn-glass">Modify</button>
                 </div>
               </div>
-              <div id="mod-area">
+              <div id="reroll-area" class="roll-display hidden" style="display:flex;flex-direction:row;justify-content:center;align-items:center;gap:5%;">
+                <button id="reroll-back" class="btn-glass btn-back">
+                  <div class="material-symbols-outlined">arrow_back_ios_new
+                  </div>
+                </button>
+                <button id="reroll-confirm" class="btn-glass btn-pulse">Reroll</button>
+              </div>
+              <div id="mod-area" class="hidden">
                 <div id="mod-scroll"></div>
                 <div id="mod-action">
-                  <div id="mod-back" class="material-symbols-outlined">
+                  <button id="mod-back" class="material-symbols-outlined btn-glass">
                     <div class="material-symbols-outlined">arrow_back_ios_new
                     </div>
-                  </div>
-                  <div id="mod-play">X</div>
+                  </button>
+                  <button id="mod-play" class="btn-glass btn-pulse">X</button>
                 </div>
               </div>
               
