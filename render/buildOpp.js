@@ -188,7 +188,7 @@ $sao(tLogo, {
   y: 83,
   width: 125,
   height: 125,
-  href: `../public/assets/logos/${team.code}.svg`
+  href: `public/assets/logos/${team.code}.svg`
 })
 svg.append(tLogo);
 
