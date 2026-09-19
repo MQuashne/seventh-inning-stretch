@@ -2,12 +2,13 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="223.66806mm"
-   height="231.30629mm"
-   viewBox="0 0 223.66806 231.30629"
+   width="223.66805mm"
+   height="231.30627mm"
+   viewBox="0 0 223.66804 231.30627"
    version="1.1"
    id="svg5"
    xml:space="preserve"
+   sodipodi:docname="LEX.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -21,12 +22,13 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     showgrid="false" /><defs
+     showgrid="false"
+     inkscape:pageshadow="2" /><defs
      id="defs2" /><g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-232.45804,-39.457473)"><g
+     transform="translate(-232.45805,-39.457472)"><g
        id="g8788"
        transform="translate(227.4905,18.239772)"
        style="display:inline"

@@ -26,8 +26,8 @@ export function initLineup() {
     player.team = G.myTeam;
     bullpen.append(buildBar(player));
   });
-  G.lineup.startPitcher.team = G.myTeam;
-  startingPitcher.append(buildBar(G.lineup.startPitcher));
+  G.lineup.pitcher.team = G.myTeam;
+  startingPitcher.append(buildBar(G.lineup.pitcher));
   
   
   //Pure additions to the lineup - always in the bench or bullpen 
@@ -120,7 +120,7 @@ export function initLineup() {
   on(startingPitcher, "click", (e) => {
     const bar = e.target.closest(".lineup-bar-wrap");
     const benchBtn = e.target.closest(".btn-bench");
-    const player = G.lineup.startPitcher;
+    const player = G.lineup.pitcher;
     if (benchBtn) {
       benchPitcher(player);
       return;
@@ -182,7 +182,7 @@ function updateButtons() {
     btns.forEach((bt) => {
       bt.classList.add("hidden");
     });
-    if (!G.lineup.startPitcher.id) {
+    if (!G.lineup.pitcher.id) {
       sub.querySelector(".btn-start").classList.remove("hidden");
     }
   })

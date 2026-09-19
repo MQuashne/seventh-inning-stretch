@@ -7,36 +7,36 @@ import { brandColors } from './brandColors.js'
 import { teams } from '../model/teams.js'
 import { $n, $t, $c, $a, on, findKey, loadCard, randInt } from '../util.js'
 import { renderGame, initGame } from './renderGame.js'
+import { playBall } from '../actions/game.js'
 
-export function renderCover() {
-  const awayLogo = $t("logo-away");
-  const homeLogo = $t("logo-home");
-  
- const homeTeam = G.game.home===true ? G.thisTeam : teams.find(t => t.code === G.game.opponent.code);
- const awayTeam = G.game.home===false ? G.thisTeam : teams.find(t => t.code === G.game.opponent.code);
- 
-  awayLogo.src = `https://www.mlbstatic.com/team-logos/team-cap-on-dark/${awayTeam.tid}.svg`;
-  awayLogo.onerror = function() {
-    this.onerror = null; 
-    this.src=`https://www.mlbstatic.com/team-logos/${awayTeam.tid}.svg`;
-  }
-  homeLogo.src = `https://www.mlbstatic.com/team-logos/team-cap-on-dark/${homeTeam.tid}.svg`
- homeLogo.onerror = function() {
-    this.onerror = null;
-    this.src = `https://www.mlbstatic.com/team-logos/${homeTeam.tid}.svg`;
- }
- $t('game-span').textContent=`GAME ${G.gameNum}`
-
-const playBall=$t("btn-play-ball");
-on(playBall,"click",() => {
-  console.log(G.lineup.order);
-  console.log(G.game.order)
-  G.game.order = [...G.lineup.order]
-  //console.log(G.game.order)
-  
+export function initCover() {
+  on($t("btn-play-ball"), "click", () => {
+  playBall();
   initGame();
   $t("gameday-cover").classList.add("hidden");
   $t("gameplay-content").classList.remove("hidden")
 })
+}
+
+export function renderCover() {
+  const awayLogo = $t("logo-away");
+  const homeLogo = $t("logo-home");
+  const logos = $t("logos");
+  const uniSelectGD = $t("uni-select-gameday")
+  
+  const homeTeam = G.game.home === true ? G.thisTeam : teams.find(t => t.code === G.opponents[G.gameNum - 1].code);
+  const awayTeam = G.game.home === false ? G.thisTeam : teams.find(t => t.code === G.opponents[G.gameNum - 1].code);
+  
+  awayLogo.src = `../public/assets/logos/${awayTeam.tpLogo}.svg`;
+  
+  homeLogo.src = `../public/assets/logos/${homeTeam.tpLogo}.svg`;
+  
+  logos.style.backgroundImage = `linear-gradient(150.64deg,${awayTeam.tp} 0%, ${awayTeam.tp} 49.99%, ${homeTeam.tp} 50%, ${homeTeam.tp} 100%)`
+
+  G.game.home===true ? uniSelectGD.selectedIndex=0 : uniSelectGD.selectedIndex=1
+  uniSelectGD.dispatchEvent(new Event('input'));
+  
+  $t('game-span').textContent = `GAME ${G.gameNum}`
+  ;
   
 }

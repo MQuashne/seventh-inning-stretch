@@ -764,7 +764,7 @@
   --ts: #c8102e;
 }
 
-[data-team="LCR "] {
+[data-team="LCR"] {
   --tp: #333333;
   --ts: #c8102e;
 }
@@ -774,32 +774,32 @@
   --ts: #009f4d;
 }
 
-[data-team="LIS "] {
+[data-team="LIS"] {
   --tp: #333333;
   --ts: #046a38;
 }
 
-[data-team="SMD "] {
+[data-team="SMD"] {
   --tp: #0c2340;
   --ts: #7da1c4;
 }
 
-[data-team="SPC "] {
+[data-team="SPC"] {
   --tp: #333333;
   --ts: #00677f;
 }
 
-[data-team="STA "] {
+[data-team="STA"] {
   --tp: #333f48;
   --ts: #e57200;
 }
 
-[data-team="YRK "] {
+[data-team="YRK"] {
   --tp: #0c2340;
   --ts: #ffb81c;
 }
 
-[data-team="WVA "] {
+[data-team="WVA"] {
   --tp: #333333;
   --ts: #00A3E0;
 }

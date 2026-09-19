@@ -8,7 +8,7 @@ import { renderSpringTraining, initSpringTraining } from '../render/renderSpring
 
 import { initLineup } from '../render/renderLineup.js'
 
-import { renderCover } from '../render/renderGameday.js'
+import { renderCover,initCover } from '../render/renderGameday.js'
 
 import { initNav, renderNav } from '../render/renderNav.js'
 import { $n, $t, $c, $a, on, findKey, loadCard, randInt } from '../util.js'
@@ -23,7 +23,7 @@ import { brandColors } from '../render/brandColors.js'
 import { initGame } from '../render/renderGame.js'
 import { DICE } from '../dice/dice.js'
 import { setTest } from './testState.js'
-import { initModScreen } from '../render/modals/modScreen.js'
+//import { initModScreen } from '../render/modals/modScreen.js'
 
 export const allPlayers = [...players, ...pitchers];
 
@@ -65,78 +65,38 @@ export function gameSetup() {
   
   const diceRoller = $t('diceRoller');
   const box = new DICE.dice_box(diceRoller);
-  box.setDice("4d6");
+  box.setDice("6d6");
   const rollButton = $t('roll');
   on(rollButton, 'click', () => { box.start_throw() });
   colorSetup(box);
   
   //Get initial Roster of T1 Players
   G.lineup.order = t1Players.splice(0, 9);
-  G.lineup.startPitcher = t1Pitchers.splice(0, 1)[0];
+  G.lineup.pitcher = t1Pitchers.splice(0, 1)[0];
+  G.lineup.bench.push(players.find(p => p.id==="008"));
   
   G.lineup.order.forEach((player) => player.team = G.thisTeam.code);
-  G.lineup.startPitcher.team = G.thisTeam.code;
-  G.fullRoster=[...G.lineup.order, G.lineup.startPitcher,...G.lineup.bench,...G.lineup.bullpen];
+  G.lineup.pitcher.team = G.thisTeam.code;
+  G.fullRoster=[...G.lineup.order, G.lineup.pitcher,...G.lineup.bench,...G.lineup.bullpen];
   
   
   
   
 
-  //G.fullRoster=[...G.lineup.order, G.lineup.startPitcher,...G.lineup.bench,...G.lineup.bullpen];
+  //G.fullRoster=[...G.lineup.order, G.lineup.pitcher,...G.lineup.bench,...G.lineup.bullpen];
   
   setTest();
-  
   //Set up nav buttons
   initNav();
   initCalendar();
   initSpringTraining();
+  initCover();
   
   if (G.season === "spring") {
     initSpringTraining();
   }
   
   initLineup();
-  G.game.order = [...G.lineup.order];
-  G.game.opponent = G.opponents[0];
   renderCover();
-  // $t("gameday-cover").classList.add("hidden")
-  //initGame();
-  //initModScreen([1,4,6],G.game.order[0]);
-  
-  //GET REPLACEMENT OPTIONS
-  
-  /*
-  for (const[key,value] of Object.entries(brandColors)){
-   
-    const testPage=$t("color-logo-test");
-    const pSwatch=$n('div','color-logo-swatch',testPage);
-    const sSwatch=$n('div','color-logo-swatch',testPage);
-    const wSwatch=$n('div','color-logo-swatch',testPage);
-    //pSwatch.style.background=value.tp;
-   
-    
-    pSwatch.style.backgroundImage=`url("https://www.mlbstatic.com/team-logos/${value.tid}.svg"), linear-gradient(90deg,${value.tp},${value.tp})`;
-   sSwatch.style.backgroundImage=`url("https://www.mlbstatic.com/team-logos/${value.tid}.svg"), linear-gradient(90deg,${value.ts},${value.ts})`;
-   wSwatch.style.backgroundImage=`url("https://www.mlbstatic.com/team-logos/${value.tid}.svg"), linear-gradient(90deg,#FFFFFF,#FFFFFF)`;
-  }
-   */
-  
-  //cardTest.innerHTML = buildCard(players[0]);
-  
-  //https://prod-gameday.mlbstatic.com/responsive-gameday-assets/1.3.0/images/stadiums/[stadium_id].jpg
-  
-  
-  //Show roster
-  /*const lineupDiv = $t("lineup");
-  console.log(lineupDiv)
-  
-  G.batterRoster.forEach(batter => {
-    const batterCard=document.createElement("div");
-    batterCard.className="lineup-card";
-    const card = document.createElement("img");
-    card.src=`../public/assets/players/${batter.id}.png`;
-    batterCard.appendChild(card);
-    lineupDiv.appendChild(batterCard);
-  })
-  */
+
 }

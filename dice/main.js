@@ -7,7 +7,6 @@
  */
 
 window.onkeydown = function(e) {
-    //console.log(e.code);
     if(e.code === "Enter" || e.code === "Escape") {
         main.setInput(); //closes numPad
     }

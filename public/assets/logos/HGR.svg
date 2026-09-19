@@ -2,12 +2,13 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="405.66626mm"
+   width="405.66629mm"
    height="280.29504mm"
-   viewBox="0 0 405.66626 280.29504"
+   viewBox="0 0 405.66629 280.29504"
    version="1.1"
    id="svg5"
    xml:space="preserve"
+   sodipodi:docname="HGR.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -21,12 +22,13 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     showgrid="false" /><defs
+     showgrid="false"
+     inkscape:pageshadow="2" /><defs
      id="defs2" /><g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-242.85738,-420.43022)"><g
+     transform="translate(-242.85737,-420.43021)"><g
        id="g570"
        transform="translate(176.3178,396.46173)"
        style="stroke:#0b2240;stroke-width:0.1;stroke-dasharray:none;stroke-opacity:1"

@@ -37,7 +37,7 @@ export function initSpringTraining() {
   
   //populate roster trough
   linScroll.replaceChildren();
-  const fullRoster = [...G.lineup.order, G.lineup.startPitcher];
+  const fullRoster = [...G.lineup.order, G.lineup.pitcher];
   fullRoster.forEach((player, i) => {
     addToLineup(player, i, fullRoster);
   });

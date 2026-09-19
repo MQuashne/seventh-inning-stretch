@@ -32,6 +32,68 @@
  *   (line_up_dice) so the lower part of the canvas stays clear for a message/options
  *   UI. Configurable via vars.lineup_* and can be skipped by passing false to
  *   start_throw/roll's after_roll usage pattern (see line_up_dice).
+ * - added reroll(notation_indices, before_reroll, after_reroll): re-throws only
+ *   the selected dice (by stable notation_index) while every other die stays
+ *   exactly where it's lined up; results merge back into last_notation and
+ *   everyone is re-lined-up together once settled. Added set_dice_selected()
+ *   for a tap-to-pick highlight, and fixed search_dice_by_mouse() (previously
+ *   returned an always-empty userData object) so it now returns the tapped die
+ *   mesh directly.
+ * - increased the edge/corner chamfer on every die shape (d4/d6/d8/d10/d12/d20,
+ *   which d9/d100 also inherit) so edges read as rounded rather than sharp.
+ *   See the comment above create_d4_geometry for how the chamfer arg works;
+ *   each shape's value can be tuned independently to taste.
+ * - added stuck-roll recovery: constructor setup was split out into _build()
+ *   so it can be re-run cleanly, and hard_reset() tears down + rebuilds the
+ *   whole renderer/scene/world in place. A watchdog timer (_start_watchdog/
+ *   _clear_watchdog) starts on every roll()/reroll() and auto-triggers
+ *   hard_reset() if `rolling` is still true ~15s later — covers silent WebGL
+ *   context loss (renderer.domElement now also listens for
+ *   webglcontextlost/restored directly) and any other exception that could
+ *   otherwise leave `rolling` stuck true forever, silently no-oping every
+ *   future click. hard_reset() is a public method, so it also works as a
+ *   manual "stuck? tap to reset" button from your own UI. Optional
+ *   box.on_stuck callback fires after an automatic recovery so the UI can
+ *   surface a toast/notice if desired.
+ * - line_up_dice() now wraps into multiple rows instead of cramming every die
+ *   into one row with shrinking spacing — high dice counts (e.g. 10) were
+ *   ending up packed close enough to overlap. New vars.lineup_min_spacing_scale
+ *   is the knob for this: the floor on how close together dice are allowed to
+ *   get (as a multiple of vars.scale) before an extra row is added. Also added
+ *   vars.lineup_row_spacing_scale for the vertical gap between rows.
+ * - line_up_dice() now also spins each die around its up-face's own normal so
+ *   the printed label reads upright toward the camera, instead of whatever
+ *   yaw the physics tumble left it at. Derived exactly from the face's own
+ *   UV data (compute_face_bitangent, standard tangent/bitangent construction)
+ *   rather than guessed per-shape constants, so it should hold up for every
+ *   face shape including d10's irregular kite faces. Skipped for d4 (its
+ *   3-numbers-per-face / read-by-edge convention doesn't fit this model).
+ *   Toggle via vars.upright_labels_enabled. NOTE: unverified against an
+ *   actual render — if labels come out upside-down or mirrored, flip the
+ *   sign at the "angle = -angle" comment in compute_upright_correction.
+ * - added apply_mod(notation_index, delta, after_mod): nudges a single
+ *   settled die's shown value (e.g. a "mod token" +1/-1 mechanic) by
+ *   relabeling its already-up face via the same cyclic shift_dice_faces
+ *   trick reroll() uses for forced results — no movement, no re-throw, just
+ *   an instant relabel, kept in sync with last_notation. Clamps to the die's
+ *   face range by default (see the comment at the clamp for how to wrap
+ *   instead). vars.mod_pulse_enabled toggles a small cosmetic scale-pulse on
+ *   the modded die.
+ * - fixed the root cause behind occasional stuck/garbage rolls: cannon's
+ *   solver can rarely go numerically unstable (NaN position/quaternion),
+ *   which previously rode out check_if_throw_finished's own ~10s force-finish
+ *   safety cap and then silently surfaced as get_dice_value returning -1 for
+ *   every affected die — the _start_watchdog/hard_reset system never even
+ *   saw a problem, since the throw "completed" (with garbage). __animate now
+ *   checks for this every frame (dice_state_corrupted) and, on detection,
+ *   signals failure via a null result instead of computing values from
+ *   corrupted data. Both throw_dices and reroll() catch that null and
+ *   auto-retry with a fresh random throw (never replaying the failed one, up
+ *   to 2 retries) before a bad result can ever reach after_roll/after_reroll;
+ *   before_roll/before_reroll are only ever invoked once per user-initiated
+ *   call, not once per retry. Falls back to hard_reset() + box.on_stuck if
+ *   still failing after 3 total attempts. Also dropped some inert dead code
+ *   (the commented-out playSound loop's now-unused numDice calculation).
  */
 
 
@@ -68,7 +130,28 @@ export const DICE = (function() {
         lineup_enabled: true,
         lineup_y_fraction: 0.72,
         lineup_max_spacing_scale: 2.5, //cap spacing at N * vars.scale so few dice don't spread edge-to-edge
-        lineup_duration_ms: 500
+        // Floor on center-to-center spacing, as a multiple of vars.scale (the
+        // die's world-space size). This is the actual knob for "dice overlap
+        // with high counts": once a single row can't fit everyone at least
+        // this far apart, line_up_dice() wraps into additional rows instead of
+        // continuing to shrink the gap between them. Raise this for more
+        // breathing room per die (fewer per row, more rows); lower it to pack
+        // more dice into each row before wrapping.
+        lineup_min_spacing_scale: 1.35,
+        lineup_row_spacing_scale: 1.5, //vertical gap between rows, as a multiple of vars.scale
+        lineup_duration_ms: 500,
+        
+        // Spin each die's up-face around its own normal (during line_up_dice)
+        // so the printed label reads upright toward the camera, rather than
+        // whatever random yaw the physics tumble left it at. Doesn't apply to
+        // d4 (see compute_upright_correction). Set false to disable and leave
+        // the settled spin exactly as physics left it.
+        upright_labels_enabled: true,
+        
+        // Brief scale-pulse played on a die when apply_mod() changes its value,
+        // so a mod token spend reads as an event rather than an instant jump-cut.
+        // Purely cosmetic — set false to disable.
+        mod_pulse_enabled: true
     }
     //const loader=new FontLoader();
     const CONSTS = {
@@ -135,10 +218,18 @@ export const DICE = (function() {
     // @param container element to contain canvas; canvas will fill container
     that.dice_box = function(container) {
         this.dices = [];
-        this.scene = new THREE.Scene();
-        this.world = new CANNON.World();
         this.diceToRoll = ''; //user input
         this.container = container;
+        this._build(container);
+    }
+    
+    // @brief does the actual scene/renderer/world/camera/barrier setup. Split
+    // out from the constructor so hard_reset() can tear everything down and
+    // call this again to get a fully clean instance — same entry point,
+    // reused for both first-time init and recovery.
+    that.dice_box.prototype._build = function(container) {
+        this.scene = new THREE.Scene();
+        this.world = new CANNON.World();
         
         this.renderer = window.WebGLRenderingContext ?
             new THREE.WebGLRenderer({ antialias: true, alpha: true }) :
@@ -155,6 +246,23 @@ export const DICE = (function() {
         // at a steep angle. getMaxAnisotropy() is the r73-era API name.
         that.renderer_max_anisotropy = this.renderer.getMaxAnisotropy ?
             this.renderer.getMaxAnisotropy() : 1;
+        
+        // Mobile browsers (iOS Safari especially) can silently kill the WebGL
+        // context under memory pressure or after backgrounding — with no error,
+        // no exception, renderer.render() just becomes a no-op afterward, which
+        // looks exactly like "roll triggered, nothing happens, forever." Listen
+        // for both ends so we can recover automatically instead of staying dead.
+        var box = this;
+        this.renderer.domElement.addEventListener('webglcontextlost', function(ev) {
+            ev.preventDefault();
+            console.warn('[dice] WebGL context lost.');
+            box._context_lost = true;
+        }, false);
+        this.renderer.domElement.addEventListener('webglcontextrestored', function() {
+            console.warn('[dice] WebGL context restored — rebuilding dice box.');
+            box._context_lost = false;
+            box.hard_reset();
+        }, false);
         
         this.world.gravity.set(0, 0, -9.8 * 800);
         this.world.broadphase = new CANNON.NaiveBroadphase();
@@ -189,7 +297,6 @@ export const DICE = (function() {
         // ResizeObserver correctly fires when a hidden (0x0) container becomes
         // visible and gets real dimensions, which is exactly when we need to
         // (re)build the camera/light/barriers/desk.
-        var box = this;
         if (window.ResizeObserver) {
             this._resizeObserver = new ResizeObserver(function(entries) {
                 var rect = entries[0].contentRect;
@@ -216,12 +323,62 @@ export const DICE = (function() {
         
         this.last_time = 0;
         this.running = false;
+        this.rolling = false;
         
         // Only render here if reinit() already managed to set up a camera
         // (i.e. the container had a real size at construction time). Otherwise
         // this is a no-op until ResizeObserver triggers reinit().
         if (this.camera) this.renderer.render(this.scene, this.camera);
     }
+    
+    // @brief tears down the current renderer/scene/world/camera entirely and
+    // rebuilds a fresh one in the same container, discarding any in-flight
+    // roll/reroll/lineup state. This is the "reinitialize the box" recovery
+    // path: called automatically by the stuck-roll watchdog and by the
+    // webglcontextrestored handler above, and safe to call directly from a
+    // manual "dice stuck? tap to reset" button in your UI too.
+    that.dice_box.prototype.hard_reset = function() {
+        this._clear_watchdog();
+        this._lineup_id = (this._lineup_id || 0) + 1; // cancel any in-flight line-up tween
+        this.running = false;
+        this.rolling = false;
+        this.dices = [];
+        if (this._resizeObserver) {
+            this._resizeObserver.disconnect();
+            this._resizeObserver = undefined;
+        }
+        if (this.renderer && this.renderer.domElement && this.renderer.domElement.parentNode) {
+            this.renderer.domElement.parentNode.removeChild(this.renderer.domElement);
+        }
+        this.camera = undefined; // so nothing tries to render mid-rebuild
+        this._build(this.container);
+    }
+    
+    // @brief starts (or restarts) the stuck-roll watchdog. If `rolling` is
+    // still true after `timeout_ms`, something broke mid-roll (a thrown
+    // exception, a dropped WebGL context that didn't fire its event, a browser
+    // throttling rAF into oblivion, etc.) — auto-recover via hard_reset()
+    // rather than leaving the box permanently unresponsive to further clicks.
+    // 15s default gives headroom over check_if_throw_finished's own ~10s cap.
+    that.dice_box.prototype._start_watchdog = function(timeout_ms) {
+        var box = this;
+        this._clear_watchdog();
+        this._watchdog = setTimeout(function() {
+            if (box.rolling) {
+                console.warn('[dice] roll watchdog fired — dice appear stuck, recovering.');
+                box.hard_reset();
+                if (typeof box.on_stuck === 'function') box.on_stuck();
+            }
+        }, timeout_ms || 15000);
+    }
+    
+    that.dice_box.prototype._clear_watchdog = function() {
+        if (this._watchdog) {
+            clearTimeout(this._watchdog);
+            this._watchdog = undefined;
+        }
+    }
+
     
     // called on init and window resize
     that.dice_box.prototype.reinit = function(container) {
@@ -236,7 +393,7 @@ export const DICE = (function() {
         this.w = this.cw;
         this.h = this.ch;
         this.aspect = Math.min(this.cw / this.w, this.ch / this.h);
-        vars.scale = Math.sqrt(this.w * this.w + this.h * this.h) / 8;
+        vars.scale = Math.sqrt(this.w * this.w + this.h * this.h) / 9;
         //console.log('scale = ' + vars.scale);
         
         this.renderer.setSize(this.cw * 2, this.ch * 2);
@@ -357,37 +514,55 @@ export const DICE = (function() {
     }
     
     function throw_dices(box, vector, boost, dist, before_roll, after_roll) {
-        var uat = vars.use_adapvite_timestep;
-        
-        vector.x /= dist;
-        vector.y /= dist;
         var notation = that.parse_notation(box.diceToRoll);
         if (notation.set.length == 0) return;
-        //TODO: how do large numbers of vectors affect performance?
-        var vectors = box.generate_vectors(notation, vector, boost);
-        box.rolling = true;
-        let request_results = null;
         
-        let numDice = vectors.length;
-        numDice = numDice > 10 ? 10 : numDice;
-        /* for(let i = 0; i < numDice; i++) {
-            let volume = i/10;
-            if(volume <= 0) volume = 0.1;
-            if(volume > 1) volume = 1;
-            playSound(box.container, volume);
-            //todo: find a better way to do this
-        }
-*/
-        if (before_roll) {
-            request_results = before_roll(notation);
-        }
-        roll(request_results);
+        // Computed once, outside the retry loop below, so before_roll (which
+        // may have side effects like consuming a resource, or picking forced
+        // values) never runs more than once per user-initiated throw, even if
+        // an attempt has to be silently retried.
+        var request_results = before_roll ? before_roll(notation) : null;
+        
+        attempt(vector, boost, dist, 0);
         
         //@param request_results (optional) - pass in an array of desired roll results
         //todo: when this param is used, animation isn't as smooth (uat not used?)
-        function roll(request_results) {
+        function attempt(vector, boost, dist, retry_count) {
+            var uat = vars.use_adapvite_timestep;
+            vector.x /= dist;
+            vector.y /= dist;
+            //TODO: how do large numbers of vectors affect performance?
+            var vectors = box.generate_vectors(notation, vector, boost);
+            box.rolling = true;
+            box._start_watchdog();
+            
             box.clear();
             box.roll(vectors, request_results || notation.result, function(result) {
+                if (result === null) {
+                    // __animate detected the physics went numerically unstable
+                    // (NaN) mid-throw — see dice_state_corrupted. Retry with a
+                    // fresh random throw rather than replaying the failed one,
+                    // since replaying identical inputs risks reproducing the
+                    // exact same instability. Bounded so a persistently-broken
+                    // notation can't retry forever.
+                    box.rolling = false;
+                    box._clear_watchdog();
+                    vars.use_adapvite_timestep = uat;
+                    if (retry_count < 2) {
+                        console.warn('[dice] retrying roll after physics corruption (attempt', retry_count + 2, 'of 3)');
+                        var v2 = { x: (rnd() * 2 - 1) * box.w, y: -(rnd() * 2 - 1) * box.h };
+                        var d2 = Math.sqrt(v2.x * v2.x + v2.y * v2.y);
+                        var b2 = (rnd() + 3) * d2;
+                        attempt(v2, b2, d2, retry_count + 1);
+                    }
+                    else {
+                        console.error('[dice] roll kept failing after 3 attempts — giving up and hard-resetting.');
+                        box.hard_reset();
+                        if (typeof box.on_stuck === 'function') box.on_stuck();
+                    }
+                    return;
+                }
+                
                 notation.result = result;
                 finalize_notation(notation);
                 
@@ -401,6 +576,7 @@ export const DICE = (function() {
                 if (after_roll) after_roll(notation);
                 
                 box.rolling = false;
+                box._clear_watchdog();
                 vars.use_adapvite_timestep = uat;
             });
         }
@@ -510,6 +686,28 @@ export const DICE = (function() {
         else {
             this.world.step(vars.frame_rate);
         }
+        
+        // Cannon's solver can occasionally blow up numerically — extreme
+        // launch velocities, many simultaneous contacts (more likely with
+        // larger dice pools) — leaving a body's position/quaternion NaN. Left
+        // undetected, a corrupted die never satisfies check_if_throw_finished's
+        // per-frame velocity check (NaN comparisons are always false), so it
+        // rides out that function's own ~10s force-finish safety cap; THEN
+        // get_dice_value's face-angle search also silently fails (NaN angle
+        // comparisons are also always false) and returns -1 — for every die
+        // whose contacts touched the corrupted one, not just that one die.
+        // Checking here, every frame, catches it within a frame or two instead
+        // of 10 seconds later as a garbage -1 result. Signals failure to the
+        // roll/reroll callback via a null result so they can retry with a
+        // fresh throw (see throw_dices/reroll) rather than a real one ever
+        // reaching the caller's after_roll/after_reroll.
+        if (this.running == threadid && dice_state_corrupted(this.dices)) {
+            this.running = false;
+            console.error('[dice] physics went unstable (NaN) mid-roll — signaling failure for retry.');
+            if (this.callback) this.callback.call(this, null);
+            return;
+        }
+        
         for (var i in this.scene.children) {
             var interact = this.scene.children[i];
             if (interact.body != undefined) {
@@ -521,7 +719,21 @@ export const DICE = (function() {
         this.last_time = this.last_time ? time : (new Date()).getTime();
         if (this.running == threadid && this.check_if_throw_finished()) {
             this.running = false;
-            if (this.callback) this.callback.call(this, get_dice_values(this.dices));
+            // get_dice_values / the user callback are the riskiest code on this
+            // path (see the closest_face guard in get_dice_value for one known
+            // failure mode). If anything in here throws, `rolling` would
+            // otherwise stay stuck true forever with no further recovery —
+            // every future click silently no-ops at the `if (box.rolling) return`
+            // guard. Catch and hard-reset instead of letting that happen.
+            try {
+                if (this.callback) this.callback.call(this, get_dice_values(this.dices));
+            }
+            catch (err) {
+                console.error('[dice] error finishing roll, recovering:', err);
+                this.rolling = false;
+                this.hard_reset();
+                return;
+            }
         }
         if (this.running == threadid) {
             (function(t, tid, uat) {
@@ -534,12 +746,19 @@ export const DICE = (function() {
         }
     }
     
-    // @brief slides the currently settled dice into a single row so the rest of
-    // the desk is free for a message/options UI to sit on top of the canvas.
-    // Only affects position (x/y/z), never quaternion, so the face that landed
-    // "up" stays up — the roll result shown to the player never changes.
+    // @brief slides the currently settled dice into row(s) so the rest of the
+    // desk is free for a message/options UI to sit on top of the canvas, and
+    // also spins each die around its up-face's own normal so that face's
+    // label reads upright to the camera (see compute_upright_correction).
+    // Never changes WHICH face is up — only x/y/z position and the in-plane
+    // spin around the up-face normal — so the roll result never changes, only
+    // its legibility. (Skipped for d4, whose result-reading convention
+    // doesn't fit this model — see compute_upright_correction.)
     // Runs its own short rAF loop independent of the physics world (which has
     // already stopped by the time a roll finishes), so it won't fight gravity.
+    // Wraps into additional rows once a single row can't fit every die at
+    // least vars.lineup_min_spacing_scale * vars.scale apart — that's the knob
+    // to adjust if dice with high counts are packed too close together.
     // @param opts (optional) { y_fraction, duration_ms } to override vars.lineup_*
     // for a single call, e.g. box.line_up_dice({ y_fraction: -0.72 }) to line up
     // along the bottom edge instead of the top.
@@ -551,15 +770,51 @@ export const DICE = (function() {
         var y_fraction = opts.y_fraction != undefined ? opts.y_fraction : vars.lineup_y_fraction;
         var duration_ms = opts.duration_ms != undefined ? opts.duration_ms : vars.lineup_duration_ms;
         
-        var spacing = Math.min(this.w * 0.9 / Math.max(n, 1), vars.scale * vars.lineup_max_spacing_scale);
-        var totalWidth = spacing * (n - 1);
-        var startX = -totalWidth / 2;
-        var targetY = this.h * y_fraction;
-        var restZ = vars.scale * 0.6; //small hover above the desk plane
+        // this.w is the desk's HALF-width (barriers sit at ~0.93 * this.w on
+        // either side of center — see reinit()'s barrier_defs), so the actual
+        // usable span across the whole desk is close to 2 * this.w, not this.w.
+        // 1.8 mirrors that (with a little margin short of the barriers).
+        var available_w = this.w * 1.8;
+        var min_spacing = vars.scale * vars.lineup_min_spacing_scale;
+        var max_spacing = vars.scale * vars.lineup_max_spacing_scale;
         
+        // How many dice fit in one row before they'd be packed closer than
+        // min_spacing? At least 1, so a lone huge die never divides-by-zero.
+        var per_row = Math.max(1, Math.floor(available_w / min_spacing) + 1);
+        var rows = Math.ceil(n / per_row);
+        // Spread dice as evenly as possible across however many rows that took,
+        // rather than stuffing every row but the last completely full.
+        per_row = Math.ceil(n / rows);
+        
+        var row_spacing = vars.scale * vars.lineup_row_spacing_scale;
+        var restZ = vars.scale * 0.6; //small hover above the desk plane
         var starts = this.dices.map(function(d) { return d.position.clone(); });
-        var targets = this.dices.map(function(d, i) {
-            return new THREE.Vector3(startX + i * spacing, targetY, restZ);
+        var targets = [];
+        for (var i = 0; i < n; ++i) {
+            var row = Math.floor(i / per_row);
+            var col = i % per_row;
+            var items_in_row = Math.min(per_row, n - row * per_row);
+            var spacing = Math.min(available_w / Math.max(items_in_row, 1), max_spacing);
+            var rowWidth = spacing * (items_in_row - 1);
+            var x = -rowWidth / 2 + col * spacing;
+            // Center the whole block of rows on y_fraction rather than always
+            // starting the first row there, so it doesn't creep further off
+            // the desk as more rows get added.
+            var y = this.h * y_fraction - (row - (rows - 1) / 2) * row_spacing;
+            targets.push(new THREE.Vector3(x, y, restZ));
+        }
+        
+        // Capture each die's current spin and compute where it should end up
+        // (upright label toward camera) up front, WITHOUT mutating anything
+        // yet — the tween below slerps from one to the other each frame, same
+        // as it lerps position. compute_upright_correction returns null for
+        // d4 or anything it can't sanely correct, in which case the die's
+        // rotation is simply left alone (quat_targets[i] === quat_starts[i]).
+        var quat_starts = this.dices.map(function(d) { return d.quaternion.clone(); });
+        var quat_targets = this.dices.map(function(d, i) {
+            if (!vars.upright_labels_enabled) return quat_starts[i].clone();
+            var correction = compute_upright_correction(d);
+            return correction ? correction.multiply(quat_starts[i].clone()) : quat_starts[i].clone();
         });
         
         // Stop the dice reacting to the physics world while they glide into place.
@@ -579,16 +834,24 @@ export const DICE = (function() {
             for (var i = 0; i < box.dices.length; ++i) {
                 var dice = box.dices[i];
                 dice.position.lerpVectors(starts[i], targets[i], e);
+                // slerpQuaternions(qa, qb, t) is a newer three.js API (~r109+);
+                // this build is old enough that only the two-arg instance form
+                // (copy qa, then slerp toward qb by t) is available.
+                dice.quaternion.copy(quat_starts[i]).slerp(quat_targets[i], e);
                 // NOTE: intentionally NOT using dice.body.position.copy(dice.position) here.
                 // THREE.Vector3.copy(v) sets `this` to `v`'s values, but CANNON.Vec3.copy(target)
                 // does the opposite — it writes `this`'s values INTO `target` and returns it.
-                if (dice.body) dice.body.position.set(dice.position.x, dice.position.y, dice.position.z);
+                if (dice.body) {
+                    dice.body.position.set(dice.position.x, dice.position.y, dice.position.z);
+                    dice.body.quaternion.set(dice.quaternion.x, dice.quaternion.y, dice.quaternion.z, dice.quaternion.w);
+                }
             }
             if (box.camera) box.renderer.render(box.scene, box.camera);
             if (t < 1) requestAnimationFrame(step);
         }
         requestAnimationFrame(step);
     }
+
     
     that.dice_box.prototype.clear = function() {
         this.running = false;
@@ -652,12 +915,11 @@ export const DICE = (function() {
     // (added as a child object). Purely visual — has no effect on physics or
     // results.
     that.dice_box.prototype.set_dice_selected = function(dice, selected) {
-        
         if (!dice) return;
         if (selected && !dice._selection_outline) {
             var outline = new THREE.Mesh(dice.geometry,
-                new THREE.MeshBasicMaterial({ color: 0xffdd33, side: THREE.BackSide }));
-            outline.scale.multiplyScalar(1.15);
+                new THREE.MeshBasicMaterial({ color: 0xffd000, side: THREE.BackSide }));
+            outline.scale.multiplyScalar(1.2);
             dice.add(outline);
             dice._selection_outline = outline;
         }
@@ -667,6 +929,55 @@ export const DICE = (function() {
         }
         dice.selected = !!selected;
         if (this.camera) this.renderer.render(this.scene, this.camera);
+    }
+    
+    // @brief nudge a single settled die's shown value by `delta` (e.g. +1/-1
+    // for a "mod token" spend), updating the on-screen die AND last_notation
+    // together so the canvas stays the single source of truth — no separate
+    // reroll/relabel is needed and no other die is touched.
+    //
+    // Reuses shift_dice_faces (the same cyclic materialIndex-relabel trick
+    // used to force reroll results): since it just changes which numeral the
+    // ALREADY-up face shows, the die doesn't move or re-animate at all — a
+    // mod token spend is instant, not another physics throw.
+    //
+    // @param notation_index which die (same stable index reroll() uses)
+    // @param delta how much to add, e.g. +1 or -1
+    // @param after_mod (optional) fn(notation) called after last_notation and
+    //        the on-screen die are both updated
+    // @returns the die's new value, or null if notation_index wasn't found,
+    //          a roll/reroll is currently in flight, or delta was falsy
+    that.dice_box.prototype.apply_mod = function(notation_index, delta, after_mod) {
+        if (this.rolling || !delta) return null;
+        var dice = this.dices.filter(function(d) { return d.notation_index === notation_index; })[0];
+        if (!dice) return null;
+        
+        var range = CONSTS.dice_face_range[dice.dice_type];
+        var current = get_dice_value(dice);
+        var target = current + delta;
+        // Clamp rather than wrap by default — most mod-token mechanics don't
+        // let a d6 push past 6 back around to 1. For wrap-instead behavior,
+        // replace this clamp with a modulo into [range[0], range[1]].
+        target = Math.max(range[0], Math.min(range[1], target));
+        if (target === current) return current; // already at the limit; nothing to change
+        
+        var raw_current = current, raw_target = target;
+        // shift_dice_faces expects the raw 0-9 "tens digit" for d100, not the
+        // x10 display value get_dice_value returns (e.g. 40, not 4) — convert
+        // so d100 mods land on the right face. d10's "10 displays as 0" quirk
+        // is already handled inside shift_dice_faces itself.
+        if (dice.dice_type === 'd100') { raw_current = current / 10; raw_target = target / 10; }
+        shift_dice_faces(dice, raw_target, raw_current);
+        
+        if (this.last_notation) {
+            this.last_notation.result[notation_index] = target;
+            finalize_notation(this.last_notation);
+        }
+        
+        if (vars.mod_pulse_enabled) pulse_dice(this, dice);
+        if (this.camera) this.renderer.render(this.scene, this.camera);
+        if (after_mod) after_mod(this.last_notation);
+        return target;
     }
     
     // @brief re-roll a subset of the dice from the most recently completed
@@ -690,63 +1001,94 @@ export const DICE = (function() {
         });
         if (!notation_indices.length) return;
         
-        box.rolling = true;
-        var uat = vars.use_adapvite_timestep;
-        
-        // Freeze everyone first (so the physics step below only ever affects the
-        // dice we're about to spawn), then pull just the selected ones out.
-        box.freeze_dice();
-        box.remove_dice_by_index(notation_indices);
-        
         var reroll_set = notation_indices.map(function(i) { return box.last_notation.set[i]; });
-        var vector = { x: (rnd() * 2 - 1) * box.w, y: -(rnd() * 2 - 1) * box.h };
-        var dist = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
-        var boost = (rnd() + 3) * dist;
-        vector.x /= dist;
-        vector.y /= dist;
-        var vectors = box.generate_vectors({ set: reroll_set }, vector, boost);
-        
+        // Computed once, outside the retry loop below, so before_reroll never
+        // runs more than once per user-initiated reroll even if an attempt
+        // has to be silently retried.
         var request_results = before_reroll ? before_reroll(reroll_set.slice()) : null;
         
-        function spawn() {
-            for (var k = 0; k < vectors.length; ++k) {
-                box.create_dice(vectors[k].set, vectors[k].pos, vectors[k].velocity,
-                    vectors[k].angle, vectors[k].axis, notation_indices[k]);
-            }
-        }
+        attempt(0);
         
-        box.iteration = 0;
-        spawn();
-        
-        if (request_results && request_results.length) {
-            // Same trick roll() uses for forced results: fast-forward physics to
-            // see how the dice would naturally land, throw that away, respawn at
-            // the original thrown state, then relabel faces so the *visible*
-            // animated roll lands on the requested values instead.
-            vars.use_adapvite_timestep = false;
-            var res = box.emulate_throw();
-            box.remove_dice_by_index(notation_indices);
-            spawn();
-            var new_dice = box.dices.slice(box.dices.length - vectors.length);
-            var natural = res.slice(res.length - vectors.length);
-            for (var k = 0; k < new_dice.length; ++k) {
-                shift_dice_faces(new_dice[k], request_results[k], natural[k]);
-            }
-        }
-        
-        box.callback = function() {
-            box.dices.sort(function(a, b) { return a.notation_index - b.notation_index; });
-            box.last_notation.result = get_dice_values(box.dices);
-            finalize_notation(box.last_notation);
+        function attempt(retry_count) {
+            box.rolling = true;
+            box._start_watchdog();
+            var uat = vars.use_adapvite_timestep;
             
-            box.line_up_dice();
-            if (after_reroll) after_reroll(box.last_notation);
-            box.rolling = false;
-            vars.use_adapvite_timestep = uat;
-        };
-        box.running = (new Date()).getTime();
-        box.last_time = 0;
-        box.__animate(box.running);
+            // Freeze everyone first (so the physics step below only ever
+            // affects the dice we're about to spawn), then pull just the
+            // selected ones out. On a retry this also cleans up the previous
+            // (failed) attempt's dice, since they carry the same notation_index.
+            box.freeze_dice();
+            box.remove_dice_by_index(notation_indices);
+            
+            var vector = { x: (rnd() * 2 - 1) * box.w, y: -(rnd() * 2 - 1) * box.h };
+            var dist = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
+            var boost = (rnd() + 3) * dist;
+            vector.x /= dist;
+            vector.y /= dist;
+            var vectors = box.generate_vectors({ set: reroll_set }, vector, boost);
+            
+            function spawn() {
+                for (var k = 0; k < vectors.length; ++k) {
+                    box.create_dice(vectors[k].set, vectors[k].pos, vectors[k].velocity,
+                        vectors[k].angle, vectors[k].axis, notation_indices[k]);
+                }
+            }
+            
+            box.iteration = 0;
+            spawn();
+            
+            if (request_results && request_results.length) {
+                // Same trick roll() uses for forced results: fast-forward physics
+                // to see how the dice would naturally land, throw that away,
+                // respawn at the original thrown state, then relabel faces so
+                // the *visible* animated roll lands on the requested values.
+                vars.use_adapvite_timestep = false;
+                var res = box.emulate_throw();
+                box.remove_dice_by_index(notation_indices);
+                spawn();
+                var new_dice = box.dices.slice(box.dices.length - vectors.length);
+                var natural = res.slice(res.length - vectors.length);
+                for (var k = 0; k < new_dice.length; ++k) {
+                    shift_dice_faces(new_dice[k], request_results[k], natural[k]);
+                }
+            }
+            
+            box.callback = function(result) {
+                if (result === null) {
+                    // __animate detected physics corruption (NaN) mid-reroll —
+                    // same failure mode as a full roll, see dice_state_corrupted.
+                    // Retry with a fresh random throw rather than replaying the
+                    // failed one.
+                    box.rolling = false;
+                    box._clear_watchdog();
+                    vars.use_adapvite_timestep = uat;
+                    if (retry_count < 2) {
+                        console.warn('[dice] retrying reroll after physics corruption (attempt', retry_count + 2, 'of 3)');
+                        attempt(retry_count + 1);
+                    }
+                    else {
+                        console.error('[dice] reroll kept failing after 3 attempts — giving up and hard-resetting.');
+                        box.hard_reset();
+                        if (typeof box.on_stuck === 'function') box.on_stuck();
+                    }
+                    return;
+                }
+                
+                box.dices.sort(function(a, b) { return a.notation_index - b.notation_index; });
+                box.last_notation.result = get_dice_values(box.dices);
+                finalize_notation(box.last_notation);
+                
+                box.line_up_dice();
+                if (after_reroll) after_reroll(box.last_notation);
+                box.rolling = false;
+                box._clear_watchdog();
+                vars.use_adapvite_timestep = uat;
+            };
+            box.running = (new Date()).getTime();
+            box.last_time = 0;
+            box.__animate(box.running);
+        }
     }
     
     that.dice_box.prototype.roll = function(vectors, values, callback) {
@@ -764,18 +1106,17 @@ export const DICE = (function() {
         this.__animate(this.running);
     }
     
-    that.dice_box.prototype.search_dice_by_mouse = function(ev, rect) {
-        var xoffset = rect.x;
+    that.dice_box.prototype.search_dice_by_mouse = function(ev,rect) {
         var m = $t.get_mouse_coords(ev);
         var intersects = (new THREE.Raycaster(this.camera.position,
-            (new THREE.Vector3((m.x - rect.x - this.cw) / this.aspect,
-                1 - (m.y - rect.y - this.ch) / this.aspect, this.w / 9))
+            (new THREE.Vector3((m.x - this.cw-rect.x) / this.aspect,
+                1 - (m.y - this.ch-rect.y) / this.aspect, this.w / 9))
             .sub(this.camera.position).normalize())).intersectObjects(this.dices);
         // Returns the actual die mesh (not just userData) so a UI layer can
         // pass it straight into set_dice_selected()/reroll(). dice.notation_index
         // and dice.dice_type are also readable directly off the returned object.
-        if (intersects.length) {
-            return intersects[0].object;}
+       
+        if (intersects.length) return intersects[0].object;
     }
     
     // @brief stop observing container resizes and release the observer. Call
@@ -1018,7 +1359,11 @@ export const DICE = (function() {
             [0, 3, 2, 3],
             [1, 2, 3, 4]
         ];
-        return create_geom(vertices, faces, radius, -0.1, Math.PI * 7 / 6, 0.96);
+        // Last arg is the chamfer factor: how far each edge/corner is cut into
+        // its own small flat face before the geometry is built. 1 = pure sharp
+        // cube/prism edges; lower = bigger bevel faces = more rounded-looking
+        // edges. Tune per-shape to taste.
+        return create_geom(vertices, faces, radius, -0.1, Math.PI * 7 / 6, 0.90);
     }
     
     function create_d6_geometry(radius) {
@@ -1040,7 +1385,7 @@ export const DICE = (function() {
             [0, 4, 7, 3, 5],
             [4, 5, 6, 7, 6]
         ];
-        return create_geom(vertices, faces, radius, 0.1, Math.PI / 4, 0.9);
+        return create_geom(vertices, faces, radius, 0.1, Math.PI / 4, 0.88);
     }
     
     function create_d8_geometry(radius) {
@@ -1062,7 +1407,7 @@ export const DICE = (function() {
             [1, 2, 5, 7],
             [1, 5, 3, 8]
         ];
-        return create_geom(vertices, faces, radius, 0, -Math.PI / 4 / 2, 0.965);
+        return create_geom(vertices, faces, radius, 0, -Math.PI / 4 / 2, 0.92);
     }
     
     function create_d10_geometry(radius) {
@@ -1097,7 +1442,7 @@ export const DICE = (function() {
             [9, 8, 0, v],
             [9, 0, 1, v]
         ];
-        return create_geom(vertices, faces, radius, 0, Math.PI * 6 / 5, 0.945);
+        return create_geom(vertices, faces, radius, 0, Math.PI * 6 / 5, 0.90);
     }
     
     function create_d12_geometry(radius) {
@@ -1139,7 +1484,7 @@ export const DICE = (function() {
             [0, 12, 8, 10, 16, 11],
             [3, 19, 7, 17, 1, 12]
         ];
-        return create_geom(vertices, faces, radius, 0.2, -Math.PI / 4 / 2, 0.968);
+        return create_geom(vertices, faces, radius, 0.2, -Math.PI / 4 / 2, 0.93);
     }
     
     function create_d20_geometry(radius) {
@@ -1180,10 +1525,26 @@ export const DICE = (function() {
             [8, 6, 7, 19],
             [9, 8, 1, 20]
         ];
-        return create_geom(vertices, faces, radius, -0.2, -Math.PI / 4 / 2, 0.955);
+        return create_geom(vertices, faces, radius, -0.2, -Math.PI / 4 / 2, 0.92);
     }
     
     // HELPERS
+    
+    // @brief true if any die's physics body has gone numerically unstable
+    // (NaN position or quaternion). See the usage site in __animate for why
+    // this matters and what it looks like left undetected.
+    function dice_state_corrupted(dices) {
+        for (var i = 0; i < dices.length; ++i) {
+            var body = dices[i].body;
+            if (!body) continue;
+            var p = body.position, q = body.quaternion;
+            if (!isFinite(p.x) || !isFinite(p.y) || !isFinite(p.z) ||
+                !isFinite(q.x) || !isFinite(q.y) || !isFinite(q.z) || !isFinite(q.w)) {
+                return true;
+            }
+        }
+        return false;
+    }
     
     // Builds resultTotal/resultString from notation.result + notation.constant.
     // Shared by both a full roll's finish callback and reroll()'s, so the two
@@ -1201,9 +1562,34 @@ export const DICE = (function() {
         notation.resultString = res;
     }
     
+    // @brief brief scale up-then-back-down pulse on a single die, purely to
+    // give a mod-token spend some visual weight instead of an instant
+    // jump-cut. Runs its own short rAF loop (independent of any line_up_dice
+    // tween that might also be touching this die) and always ends by
+    // explicitly resetting scale to 1, so it can't leave a die stuck enlarged
+    // even if interrupted.
+    function pulse_dice(box, dice, duration_ms) {
+        duration_ms = duration_ms || 220;
+        var startTime = null;
+        function step(ts) {
+            if (!startTime) startTime = ts;
+            var t = Math.min(1, (ts - startTime) / duration_ms);
+            var s = 1 + 0.15 * Math.sin(t * Math.PI); // up then back down to 1
+            // setScalar is a newer three.js convenience method; this build only
+            // has the three-arg .set(x, y, z) form, same story as the quaternion
+            // slerp fix earlier.
+            dice.scale.set(s, s, s);
+            if (box.camera) box.renderer.render(box.scene, box.camera);
+            if (t < 1) requestAnimationFrame(step);
+            else dice.scale.set(1, 1, 1);
+        }
+        requestAnimationFrame(step);
+    }
+    
     function rnd() {
         return Math.random();
     }
+
     
     function create_shape(vertices, faces, radius) {
         var cv = new Array(vertices.length),
@@ -1360,9 +1746,12 @@ export const DICE = (function() {
     }
     
     //determines which face is up after roll animation
-    function get_dice_value(dice) {
+    // @brief finds the face (of a settled die) closest to facing "up" — the
+    // read/result face. Shared by get_dice_value (which face) and
+    // compute_upright_correction (which way that face's label should turn).
+    function find_up_face(dice) {
         var vector = new THREE.Vector3(0, 0, dice.dice_type == 'd4' ? -1 : 1);
-        var closest_face, closest_angle = Math.PI * 2;
+        var closest_face, closest_index = -1, closest_angle = Math.PI * 2;
         for (var i = 0, l = dice.geometry.faces.length; i < l; ++i) {
             var face = dice.geometry.faces[i];
             if (face.materialIndex == 0) continue;
@@ -1370,9 +1759,16 @@ export const DICE = (function() {
             if (angle < closest_angle) {
                 closest_angle = angle;
                 closest_face = face;
+                closest_index = i;
             }
         }
-        var matindex = closest_face ? closest_face.materialIndex - 1 : -1; //todo: bug thrown here, sometimes closest_face = undefined
+        return { face: closest_face, index: closest_index };
+    }
+    
+    function get_dice_value(dice) {
+        var found = find_up_face(dice);
+        var matindex = found.face ? found.face.materialIndex - 1 : -1;
+        if (!found.face) console.warn('[dice] no face found facing up for a', dice.dice_type, '— returning -1');
         if (dice.dice_type == 'd100') matindex *= 10;
         if (dice.dice_type == 'd10' && matindex == 0) matindex = 10;
         return matindex;
@@ -1384,6 +1780,73 @@ export const DICE = (function() {
             values.push(get_dice_value(dices[i]));
         }
         return values;
+    }
+    
+    // @brief the in-plane 3D direction (local/object space) along which a
+    // face's texture V-coordinate increases — i.e. which way is "up" for
+    // whatever's painted on that face, derived from the SAME UV data
+    // create_geom() already computed (geom.faceVertexUvs), via the standard
+    // tangent/bitangent construction (identical technique used for normal-map
+    // tangent bases). Works for irregular faces (e.g. d10's kite shape) as
+    // well as regular ones, since it reads the actual stored UVs rather than
+    // assuming even angular spacing.
+    function compute_face_bitangent(geometry, faceIndex) {
+        var face = geometry.faces[faceIndex];
+        var uvs = geometry.faceVertexUvs[0] && geometry.faceVertexUvs[0][faceIndex];
+        if (!face || !uvs) return null;
+        var pa = geometry.vertices[face.a], pb = geometry.vertices[face.b], pc = geometry.vertices[face.c];
+        var e1 = new THREE.Vector3().subVectors(pb, pa);
+        var e2 = new THREE.Vector3().subVectors(pc, pa);
+        var du1 = uvs[1].x - uvs[0].x, dv1 = uvs[1].y - uvs[0].y;
+        var du2 = uvs[2].x - uvs[0].x, dv2 = uvs[2].y - uvs[0].y;
+        var denom = du1 * dv2 - du2 * dv1;
+        if (Math.abs(denom) < 1e-8) return null; //degenerate UV triangle, nothing sane to derive
+        var r = 1 / denom;
+        // Bitangent = the in-plane direction along which V increases. Canvas
+        // textures here use three.js's default flipY=true, under which
+        // increasing V corresponds to visual "up" in the source canvas —
+        // i.e. the top of the printed numeral. If labels come out upside-down
+        // after testing, that assumption is the thing to flip (see the sign
+        // note in compute_upright_correction below) rather than this formula.
+        return new THREE.Vector3(
+            (du1 * e2.x - du2 * e1.x) * r,
+            (du1 * e2.y - du2 * e1.y) * r,
+            (du1 * e2.z - du2 * e1.z) * r
+        ).normalize();
+    }
+    
+    // @brief computes the extra world-space rotation (around the settled die's
+    // up-face normal) needed to spin its label upright toward the camera.
+    // Returns a THREE.Quaternion to be combined with the die's current
+    // orientation — does NOT mutate the die itself, so callers can blend it
+    // into a tween (see line_up_dice). Returns null if there's nothing sane
+    // to correct (d4's per-edge label scheme doesn't fit this model at all;
+    // no up face found; or a degenerate/edge-on face).
+    function compute_upright_correction(dice) {
+        if (dice.dice_type === 'd4') return null; // d4 reads via 3 per-face numbers keyed to which edge points at the viewer, not a single upright "top" label — this model doesn't apply
+        var found = find_up_face(dice);
+        if (!found.face || found.index < 0) return null;
+        var local_up = compute_face_bitangent(dice.geometry, found.index);
+        if (!local_up) return null;
+        
+        var world_normal = found.face.normal.clone().applyQuaternion(dice.quaternion).normalize();
+        var world_up = local_up.applyQuaternion(dice.quaternion).normalize();
+        
+        var screen_up = new THREE.Vector3(0, 1, 0);
+        screen_up.sub(world_normal.clone().multiplyScalar(screen_up.dot(world_normal)));
+        if (screen_up.lengthSq() < 1e-6) return null; // face is edge-on to the camera's up axis, nothing sane to align
+        screen_up.normalize();
+        
+        world_up.sub(world_normal.clone().multiplyScalar(world_up.dot(world_normal))).normalize();
+        
+        var angle = Math.atan2(
+            world_normal.dot(new THREE.Vector3().crossVectors(world_up, screen_up)),
+            world_up.dot(screen_up)
+        );
+        // If testing shows labels landing upside-down or mirrored, uncomment:
+        //   angle = -angle;
+        // — that's the one sign this can't be verified without rendering it.
+        return new THREE.Quaternion().setFromAxisAngle(world_normal, angle);
     }
     
     function shift_dice_faces(dice, value, res) {

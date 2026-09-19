@@ -10,6 +10,7 @@ export const pitchers = [
    fatigue: 99,
    used:0,
    ability:"rerollOne",
+   type:"reroll",
    desc:"Reroll one die. Limit once per inning."
 },
 {
@@ -23,6 +24,7 @@ export const pitchers = [
    fatigue: 99,
    used:0,
    ability: "rerollOne",
+   type:"reroll",
    desc: "Reroll one die. Limit once per inning."
 },
 {
@@ -36,6 +38,7 @@ export const pitchers = [
    fatigue: 3,
    used:0,
    ability: "rerollSet",
+   type:"reroll",
    desc:"Reroll any subset of dice."
 },
 {
@@ -49,6 +52,7 @@ export const pitchers = [
    fatigue: 2,
    used:0,
    ability:"adjustOne",
+   type:"mod",
    desc:"Adjust one die up or down by one." 
 },
 {
@@ -62,6 +66,7 @@ export const pitchers = [
    fatigue: 4,
    used:2,
    ability:"addD6",
+   type:"temp",
    desc:"Add one die to the opponent's pool, then remove one die before resolving the inning."
 },
 {
@@ -75,6 +80,7 @@ export const pitchers = [
    fatigue: 2,
    used:0,
    ability: "cancelOne",
+   type:"subtract",
    desc: "Cancel one run scored this inning."
 },
 {
@@ -88,6 +94,7 @@ export const pitchers = [
    fatigue: 1,
    used:0,
    ability:"setOne",
+   type:"set",
    desc:"Set one die to any value."
 },
 {
@@ -101,6 +108,7 @@ export const pitchers = [
    fatigue: 6,
    used:0,
    ability: "addD6",
+   type:"temp",
    desc: "Add one die to the opponent's pool, then remove one die before resolving the inning."
 },
 {
@@ -114,6 +122,7 @@ export const pitchers = [
    fatigue: 2,
    used:0,
    ability: "setOne",
+   type:"set",
    desc: "Set one die to any value."
 },
 {
@@ -127,6 +136,7 @@ export const pitchers = [
    fatigue: 4,
    used:0,
    ability: "adjustOne",
+   type:"mod",
    desc: "Adjust one die up or down by one."
 },
 {
@@ -140,6 +150,7 @@ export const pitchers = [
    fatigue: 5,
    used:0,
    ability: "rerollSet",
+   type:"reroll",
    desc: "Reroll any subset of dice."
 },
 {
@@ -153,6 +164,7 @@ export const pitchers = [
    fatigue: 3,
    used:0,
    ability: "cancelOne",
+   type:"subtract",
    desc: "Cancel one run scored this inning."
 },
 {
@@ -166,6 +178,7 @@ export const pitchers = [
    fatigue: 1,
    used:0,
    ability: "cancelAll",
+   type:"subtract",
    desc: `Cancel all runs scored this inning. Fatigue tokens may not be removed during a game.`
 },
 {
@@ -179,5 +192,6 @@ export const pitchers = [
    fatigue: 5,
    used:0,
    ability:"addD10",
+   type:"temp",
    desc: "Add the d10 to the opponent's pool, then remove one die before resolving the inning."
 }]

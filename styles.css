@@ -4,7 +4,10 @@
     --die-bg-color: linear-gradient(90deg, white 0%, white 5%, #E81828a0 6%, white 7%, white 35%, #E81828a0 36%, white 37%, white 65%, #E81828a0 66%, white 67%, white 95%, #E81828a0 96%, white 97%, white 100%);
     --die-font-color: #E81828;
     --die-outline-color: #ffffff;
-    --team-back: #FFFFFF;
+    --opp-die-bg-color: #000000,
+        --opp-die-font-color:#000000,
+        --opp-die-outline-color:#000000,
+        --team-back: #FFFFFF;
     --grass: #618240;
     --grass-lt: oklch(from var(--grass) calc(l + 0.035) c h);
     --cream: #f5f0e0;
@@ -15,15 +18,24 @@
     --wood-dark: #2e1a0a;
     --wood-mid: #6b3f1e;
     --wood-light: #9b6032;
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --green: #2D5A3D;
+    --green-light: #3d7a52;
+    --red: #8b2020;
+    --red-light: #a82525;
+    --blue: #2a3d62;
+    --blue-light: #3a5585;
+    
     --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.35);
     --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
     --shadow-wood: 0 6px 24px rgba(0, 0, 0, 0.55);
     --shadow-inset: inset 0 3px 10px rgba(0, 0, 0, 0.6);
     --td: #000000;
     --tl: #ffffff;
+    --tl-text: #000000;
+    --tl-dark: oklch(from var(--tl) calc(l - 0.12) c h);
+    box-sizing: border-box;
     
 }
 
@@ -37,6 +49,10 @@
     src: url("https://www.mlbstatic.com/mlb.com/fonts/proxima-nova-regular.woff2")
 }
 
+* {
+    box-sizing: border-box;
+}
+
 html,
 body {
     height: 100%;
@@ -44,6 +60,7 @@ body {
     padding: 0;
     overflow: hidden;
     touch-action: manipulation;
+    box-sizing: border-box;
     /* the page itself never scrolls */
 }
 
@@ -76,6 +93,11 @@ h3 {
     grid-template-rows: auto 1fr auto;
     height: 100%;
     overflow: hidden;
+    box-sizing: border-box;
+}
+
+#page>* {
+    box-sizing: border-box;
 }
 
 #main-screen {
@@ -83,15 +105,36 @@ h3 {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    
     overflow-y: auto;
     grid-row: 2;
-    /* Takes full window height */
+    background-image:
+        /*radial-gradient(circle, var(--tp) 0%, var(--tp-dark) 100%),*/
+        url('public/assets/stadiumBG.jpeg');
+    background-blend-mode: color-dodge;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    position: relative;
 }
 
+
 .main-content {
-    padding: 0 5%;
+    padding: 0;
     flex: 1 0 auto;
+}
+
+#cal-content {
+    /*background-color: var(--td);*/
+    width: 100%;
+    min-height: 100%;
+    /*min-height: calc(100% - 3.3rem);*/
+    
+    padding: 0 0 2rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    
 }
 
 #game-footer {
@@ -154,39 +197,73 @@ h3 {
 }
 
 .game-header {
-    padding: 0.6rem 1.5rem;
+    padding: 1.5rem;
     display: flex;
     align-items: center;
     gap: 1.25rem;
-    /*border-bottom: 2px solid rgba(0, 0, 0, 0.3);*/
-    /*box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);*/
-    background-image: linear-gradient(115deg, var(--tp) 10%, var(--ts) calc(10% + 1px), var(--ts) 15%, #caa472 calc(15% + 1px), #caa472 100%),
-        url("public/assets/wood-pattern.png");
-    background-size: cover;
+    background-image: linear-gradient(75deg, var(--tp) 0%, var(--tp) 90%, transparent calc(90% + 0.5px), transparent 100%), url("public/assets/planks2.jpeg");
+    background-size: contain;
     background-position: center;
-    background-repeat: no-repeat;
-    background-blend-mode: multiply;
+    /* background-repeat: no-repeat;*/
+    background-blend-mode: hard-light;
     padding-left: 16%;
     padding-right: 1%;
     margin-bottom: 0;
-    
+    position: relative;
+}
+
+.header-layer-2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(0deg, #FFFFFF40 0%, transparent 20%, transparent 80%, #FFFFFF80), linear-gradient(75deg, transparent 0%, transparent 15%, white calc(15% + 0.5px), white calc(15% + 1px), var(--tp) calc(15% + 1.5px), var(--tp) 90%, white calc(90% + 0.5px), white calc(90% + 1px), transparent calc(90% + 1.5px)), linear-gradient(115deg, #000000f0 0%, transparent 8%, transparent 12%, #FFFFFF20 22%, transparent calc(22% + 0.5px));
+    display: flex;
+    align-items: center;
 }
 
 .game-header-team {
     font-family: 'Oswald', sans-serif;
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 800;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: transparent;
-    background-color: var(--tp);
-    text-shadow: 0.05rem 0.05rem 0.0px rgba(255, 255, 255, 0.2);
-    -webkit-background-clip: text;
-    -moz-background-clip: text;
-    background-clip: text;
-    
+    color: var(--tp-text);
+    padding-right: 10%;
+    display: flex;
+    align-content: center;
+    position: relative;
+    object-fit: contain;
+    height: 100%;
+    width: 100%;
     /*margin-top: 0.75rem;*/
 }
+
+#header-team-name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 0.65em;
+}
+
+#game-header-logo-ctr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: 100%;
+    width: 15%;
+}
+
+.block-logo,
+#game-header-logo {
+    object-fit: contain;
+    height: 90%;
+    width: 90%;
+    filter: drop-shadow(1px 0px 0px #FFFFFF60) drop-shadow(-1px 0px 0px #FFFFFF60) drop-shadow(0px 1px 0px #FFFFFF60) drop-shadow(0px -1px 0px #FFFFFF60);
+}
+
 
 .game-footer {
     position: static;
@@ -197,7 +274,7 @@ h3 {
     height: 150px;
     width: 50%;
     margin-top: 1.5rem;
-    z-index: 20;
+    z-index: 9;
     overflow: hidden;
     /*display: none;*/
 }
@@ -233,12 +310,11 @@ h3 {
     background: radial-gradient(at 5% 5%, #ffffff80 0%, #ffffff00 80%);
 }
 
-/*.color-option{
-    box-sizing:border-box;
-    padding:2% 10% 2% 5%;
-    width:30px;
-    background-color:#FF0000;
-}*/
+.die-box.opp-die {
+    background: var(--opp-die-bg-color);
+    color: var(--opp-die-font-color);
+    -webkit-text-stroke: 0.7px var(--opp-die-outline-color);
+}
 
 #reference img {
     width: 150px;
@@ -268,6 +344,17 @@ h3 {
     aspect-ratio: 5 / 7;
 }
 
+.lineup-card-placeholder {
+    height: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+    aspect-ratio: 5 / 7;
+    color: #FFFFFF80;
+    border: 3px dashed #FFFFFFD0;
+}
+
 .lineup-card svg {
     height: 100%;
 }
@@ -287,26 +374,25 @@ h3 {
 }
 
 .form-label {
-    font-family: 'Oswald', sans-serif;
-    font-size: 0.65rem;
+    font-family: 'Proxima Nova', sans-serif;
+    font-size: 0.85rem;
     font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--parchment-dk);
+    color: white;
 }
 
 .form-input,
 .form-select {
-    background: rgba(0, 0, 0, 0.32);
+    background: rgba(0, 0, 0, 0.75);
     border: 1.5px solid rgba(245, 240, 224, 0.16);
     border-radius: 3px;
-    padding: 0.5rem 0.72rem;
-    font-family: 'Source Serif 4', serif;
+    padding: 0.5rem 0.5rem;
+    font-family: "Proxima Nova";
     font-size: 0.9rem;
-    color: var(--cream);
+    color: white;
     outline: none;
     transition: border-color 0.15s;
     width: 100%;
+    text-align: center;
 }
 
 .form-input:focus,
@@ -341,36 +427,52 @@ h3 {
 }
 
 .modal-header {
-    background-image: linear-gradient(115deg, var(--tp) 10%, var(--ts) calc(10% + 1px), var(--ts) 15%, #caa472 calc(15% + 1px), #caa472 100%);
-    filter: url(#wood-grain);
-    background-size: cover;
+    background-image: linear-gradient(75deg, var(--tp) 0%, var(--tp) 85%, transparent calc(85% + 0.5px), transparent 100%), url('public/assets/planks.jpeg');
+    background-blend-mode: hard-light;
+    background-size: contain;
     background-position: center;
-    background-repeat: no-repeat;
+    /*background-repeat: no-repeat;*/
     width: calc(100%-1.5rem);
     height: 10%;
     display: flex;
     padding-left: 20%;
-    padding-right: 5%;
+    padding-right: 2%;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     box-shadow: 0px 2px 3px #00000060;
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-header::before {
+    top: -10%;
+    left: -10%;
+    width: 120%;
+    height: 120%;
+    content: "";
+    font-family: Oswald;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.3em;
+    position: absolute;
+    background-image: linear-gradient(75deg, transparent 0, transparent 18%, white calc(18% + 0.5px), var(--tp) calc(18% + 1px), var(--tp) 82%, white calc(82% + 0.5px), transparent calc(82% + 1px), transparent 100%);
+    background-size: cover;
+    background-position: center;
+    /*z-index:30;*/
     
 }
 
 .modal-title {
     font-family: 'Oswald', sans-serif;
-    font-size: 1rem;
-    font-weight: 800;
-    letter-spacing: 0.18em;
+    font-size: 1.3rem;
     text-transform: uppercase;
-    color: transparent;
-    background-color: var(--tp);
-    text-shadow: 0.05rem 0.05rem 0.0px rgba(255, 255, 255, 0.2);
-    -webkit-background-clip: text;
-    -moz-background-clip: text;
-    background-clip: text;
+    color: var(--tp-text);
     flex-grow: 0;
+    z-index: 10;
 }
 
 .modal-body {
@@ -384,6 +486,8 @@ h3 {
     color: var(--td);
     border: none;
     font-size: 1.5rem;
+    z-index: 20;
+    font-weight: 600;
 }
 
 .lawn-stripes {
@@ -469,14 +573,6 @@ h3 {
     gap: 5px;
 }
 
-.section-ts {
-    display: flex;
-    flex-direction: column;
-    background: var(--ts);
-    position: relative;
-    padding: 2%;
-}
-
 .section-heading {
     font-family: 'Oswald', serif;
     font-size: 1.3rem;
@@ -507,7 +603,28 @@ h3 {
     interpolate-size: allow-keywords;
 }
 
-#calendar {}
+.section-hero {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 30%;
+    width: 100%;
+    align-items: center;
+    padding: 2.5rem 0 0.5rem 0;
+    gap: 0.3em;
+}
+
+.hero-img {
+    width: 30%;
+    object-fit: contain;
+}
+
+.hero-info {
+    color: white;
+    font-family: "Proxima Nova";
+    font-weight: 600;
+    font-size: 0.8em;
+}
 
 #calendar-body {
     width: 100%;
@@ -516,57 +633,100 @@ h3 {
     flex-direction: column;
     align-items: center;
     height: 80%;
-    gap: 1rem;
+    gap: 0.5rem;
+}
+
+.cal-body-separator {
+    width: 95%;
+    color: #EEEEEE;
+    border-bottom: 0.1em solid #EEEEEE;
+    font-family: "Proxima Nova";
+    font-size: 0.8em;
+    font-weight: 800;
+    background: linear-gradient(0deg, #000000a0 50%, transparent);
+    margin-top: 2em;
+    
+}
+
+.cal-sect {
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5em;
 }
 
 .event {
     display: flex;
-    flex-direction: column;
-    width: 50%;
-    aspect-ratio: 1/1;
-    background: var(--cream);
-    box-shadow: 2px 5px 2px #00000080;
-    font-family: 'Kalam';
+    width: 100%;
+    height: 12cqh;
+    box-shadow: 2px 2px 2px #00000080;
+    font-family: "Oswald";
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 3cqw;
+    padding: 0 1em;
+    position: relative;
 }
 
 .event.active {
-    border: 4px solid var(--tp);
+    box-shadow: 4px 4px 4px #00000080;
+    
 }
 
-.event.future,
 .event.past {
     opacity: 65%;
+    height: 6cqh;
 }
 
-
-.event-top {
-    width: 100%;
-    aspect-ratio: 8/1;
+.event.home {
     background: var(--tp);
-    box-shadow: 0 2px 2px #00000020;
+    color: var(--tp-text);
+}
+
+.event.away {
+    background: var(--ts);
+    color: var(--ts-text);
+}
+
+.event-details {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: 100%;
+    position: relative;
+}
+
+.event.past .event-date,
+.event.past .event-spot {
+    display: none;
 }
 
 .event-title {
-    font-size: 1.5rem;
-    color: var(--ink);
+    font-size: 1.4rem;
     text-wrap: wrap;
-    text-align: center;
+    text-align: left;
     flex: 4;
     display: flex;
     align-items: center;
     font-weight: 700;
-    margin: auto;
+    height: 70%;
+    min-height: 0;
 }
 
-.event-body {
-    font-size: 1rem;
-    color: var(--ink);
-    text-wrap: wrap;
-    text-align: center;
-    width: 100%;
-    flex: 1;
-    font-weight: 400;
+.event-date {
+    height: 30%;
+    font-size: 0.7em;
+    font-weight: 600;
+    font-family: "Proxima Nova";
+    opacity: 70%;
 }
+
+.event-spot {
+    height: 70%;
+    object-fit: contain;
+}
+
 
 #insert {
     width: 30vw;
@@ -735,6 +895,7 @@ h3 {
     cursor: pointer;
     transition: transform 0.12s, box-shadow 0.12s, background-color 0.35s, border-color 0.35s, color 0.3s;
     white-space: nowrap;
+    pointer-events: auto;
 }
 
 .btn-wood {
@@ -755,6 +916,8 @@ h3 {
     background: linear-gradient(170deg, var(--tp-light), var(--tp));
     color: var(--tp-text);
     box-shadow: 0 3px 0 var(--tp-dark), var(--shadow-sm);
+    pointer-events: auto;
+    border:none;
 }
 
 .btn-team:hover {
@@ -837,43 +1000,48 @@ h3 {
 
 #gameday-cover {
     width: 100%;
-    height: calc(100% - 3.3rem);
-    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-        url('public/assets/stadiums/PHI.JPG');
+    height: 100%;
+    /*background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+        url('public/assets/stadiums/PHI.JPG');*/
     background-size: cover;
     position: absolute;
     left: 0;
-    top: 3rem;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    padding-top: 3em;
+    
 }
 
 .cover-logo {
-    width: 45%;
+    height: 40%;
     aspect-ratio: 1 / 1;
     position: relative;
+    object-fit: contain;
 }
 
 #logos {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    width: 80%;
-    padding: 5%;
-    margin: 0 auto;
-    /*height:45vh;*/
-    margin-top: -10%;
-    
+    justify-content: center;
+    aspect-ratio: 16/9;
+    height: 35%;
+    min-height: 4px;
+    position: relative;
 }
 
 #logo-away {
-    align-self: start;
-    margin: 1rem -5% -10% -5%;
+    position: relative;
+    top: 5%;
+    left: -30%;
 }
 
 #logo-home {
-    align-self: end;
-    margin: 1rem -5% 0 -5%;
-    
+    position: relative;
+    top: -5%;
+    left: 30%;
 }
 
 #game-cover-heading {
@@ -881,6 +1049,23 @@ h3 {
     text-align: center;
     margin-top: -1%;
     margin-bottom: -25%;
+}
+
+#btn-play-ball {
+    margin-top: 2em;
+}
+
+#cover-die-box {
+    scale: 0.75;
+}
+
+#choose-uniform {
+    height: 25%;
+    width: 75%;
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: space-around;
 }
 
 #game-span {
@@ -893,7 +1078,7 @@ h3 {
     width: 100%;
     min-height: 100%;
     /*min-height: calc(100% - 3.3rem);*/
-    background: linear-gradient(var(--wood-dark), var(--wood-dark));
+    
     padding: 0 0 2rem 0;
     display: flex;
     flex-direction: column;
@@ -1080,6 +1265,12 @@ h3 {
     transform: none !important;
 }
 
+.btn-glass:disabled {
+    opacity: 0.6;
+    color: #AAAAAA cursor: not-allowed;
+    transform: none !important;
+}
+
 .bronze-grad {
     background: linear-gradient(45deg, #C4a588, #895b40 33%, #edcdb4 67%, #8b5d3b);
 }
@@ -1111,11 +1302,12 @@ GAME BOARD
     width: 100vw;
     height: 100dvh;
     max-width: 100vw;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     z-index: 100;
-    background: repeating-linear-gradient(25deg, #B0864C, #995D27, #754414, #B0864C, #A37236);
+    background-image: repeating-linear-gradient(25deg, #B0864Ca0, #995D27a0, #754414a0, #B0864Ca0, #A37236a0), url("public/assets/planks.jpeg");
+    background-size: contain;
 }
 
 .game-surface {
@@ -1146,6 +1338,7 @@ GAME BOARD
     grid-area: scorebug;
     width: 100%;
     height: 100%;
+    position: relative;
 }
 
 #scorebug-surface {
@@ -1155,7 +1348,8 @@ GAME BOARD
     align-items: center;
     justify-content: center;
     grid-template-areas:
-        "back-btn away-logo away-score home-score home-logo ."
+        "back-btn away-logo away-score home-score home-logo .";
+    position: relative;
 }
 
 #game-back {
@@ -1168,29 +1362,26 @@ GAME BOARD
 
 #game-home-logo {
     grid-area: home-logo;
-    aspect-ratio: 1 / 1;
-    height: 90%;
+    height: 100%;
+    width: 100%;
     align-self: center;
     justify-self: center;
 }
 
 #game-away-logo {
     grid-area: away-logo;
-    aspect-ratio: 1 / 1;
-    height: 90%;
-    align-self: center;
-    justify-self: center;
+    height: 100%;
+    width: 100%;
 }
 
 #game-home-score {
     grid-area: home-score;
-    width: 95%;
+    width: 100%;
     height: 100%;
-    justify-self: center;
 }
 
 #game-away-score {
-    width: 95%;
+    width: 100%;
     height: 100%;
     justify-self: center;
 }
@@ -1209,12 +1400,17 @@ GAME BOARD
 }
 
 .game-logo {
-    background-size: 100% auto;
-    background-position: center;
-    background-repeat: no-repeat;
-    box-shadow: inset 0 0.1rem 0.2rem rgba(255, 255, 255, 0.4);
-    border-radius: 50%;
+    padding: 10% 15% 20% 15%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     
+}
+
+.game-logo img {
+    object-fit: contain;
+    aspect-ratio: 1/1;
+    width: 100%;
 }
 
 
@@ -1399,22 +1595,22 @@ GAME BOARD
     width: 6%;
     height: 6%;
     border-radius: 50%;
-    background-image: linear-gradient(135deg, #FFFFFF60 0%, #FFFFFF10 40%, #FFFFFF00 41%, #FFFFFF00 100%),
-        linear-gradient(0deg, var(--tp), var(--tp));
+    background: var(--die-bg-color);
     position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--tp-text);
-    font-family: "Oswald";
-    font-size: 0.48rem;
+    color: var(--die-font-color);
+    -webkit-text-stroke: 0.7px var(--die-outline-color);
+    paint-order: stroke fill;
+    font-family: "BaseballClubSolid";
+    font-size: 0.55rem;
     text-align: center;
     offset-path: url(#basePath);
     offset-distance: 0%;
     offset-rotate: 0deg;
     transition: offset-distance 500ms ease;
 }
-
 
 .runner.off {
     visibility: none;
@@ -1465,37 +1661,50 @@ GAME BOARD
     position: relative;
     display: flex;
     justify-content: center;
+    align-items: center;
 }
-
-#roll-display {}
 
 .roll-display {
-    align-self: center;
-    justify-self: center;
     text-align: center;
     position: absolute;
-    margin: auto;
     width: 80vw;
-    margin-top: 20%;
+    flex-direction: column;
+    justify-content: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     height: 50%;
+    z-index: 8;
+    display: flex;
+    pointer-events: none;
 }
 
-#roll-outcome {
-    /* From https://css.glass */
-    font-size: 2rem;
-    width: 100%;
+.display-shift {
+    margin-top: 20%;
 }
 
-#roll-options {
+#display-row-1 {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+    gap: 1em;
+}
+
+.roll-options {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
 }
 
+.roll-play {
+    /* From https://css.glass */
+    font-size: 2rem;
+    width: 100%;
+}
 
-
-.outcome-option {
+.roll-option {
     font-size: 1.25rem;
     width: 45%;
     display: flex;
@@ -1503,6 +1712,10 @@ GAME BOARD
     align-items: center;
     padding: 1% 0;
     margin: 1% 0;
+}
+
+#offer-pitcher {
+    width: 100%;
 }
 
 @keyframes pulse {
@@ -1516,6 +1729,20 @@ GAME BOARD
     
     100% {
         transform: scale(0.98);
+    }
+}
+
+@keyframes pulseSmall {
+    0% {
+        transform: scale(0.99);
+    }
+    
+    50% {
+        transform: scale(1.01);
+    }
+    
+    100% {
+        transform: scale(0.99);
     }
 }
 
@@ -1578,10 +1805,14 @@ GAME BOARD
     min-width: 0;
     width: 100%;
     overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
 }
 
 #order-surface .lineup-card {
     height: 90%;
+    scroll-snap-align: start;
+    scroll-margin: 0.25em;
 }
 
 #gameRoller {
@@ -1642,6 +1873,57 @@ GAME BOARD
     font-family: "Oswald";
 }
 
+#sub-cover {
+    grid-column: 1 / -1;
+    grid-row: 1 / 5;
+    z-index: 20;
+    background: #000000e0;
+    display:flex;
+    flex-direction:column;
+    justify-content: center;
+    align-items: center;
+    font-family:"Oswald";
+    font-size:1.2rem;
+    text-align: center;
+    text-transform: uppercase;
+    color: white;
+    gap: 2rem;
+    padding-top:50%;
+}
+
+.sub-modal-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.sub-modal-body {
+    width: 100%;
+    height: 85%;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sub-modal-action {
+    width: 100%;
+    height: 15%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sub-modal-action button{
+    font-size:1.2rem;
+    font-family:"Oswald";
+}
+
 .mod-dialog {
     width: 100%;
     height: 100%;
@@ -1698,17 +1980,39 @@ GAME BOARD
     position: absolute;
     display: flex;
     flex-direction: column;
-    z-index: 30;
-    background: var(--td);
     align-items: center;
 }
 
 #mod-action {
     width: 100%;
-    position: relative;
+    position: absolute;
     display: flex;
     justify-content: space-around;
+    bottom: 2%;
+    height: 20%;
 }
+
+#mod-overlay {
+    width: 95%;
+    height: 50%;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -15%;
+    z-index: 10;
+}
+
+.mod-overlay-select {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 8.33%;
+    flex-grow: 1;
+    max-width: 16.5%;
+}
+
 
 .btn-glass {
     background: rgba(0, 0, 0, 0.19);
@@ -1721,6 +2025,7 @@ GAME BOARD
     color: white;
     font-family: oswald;
     font-weight: 600;
+    pointer-events: auto;
 }
 
 .btn-pulse {
@@ -1729,34 +2034,26 @@ GAME BOARD
 
 .btn-back {
     width: 15%;
+    /*height: 100%;*/
     text-align: center;
     color: white;
     font-family: oswald;
     font-size: 2rem;
     font-weight: 600;
-    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 #mod-play {
-    width: 70%;
+    width: 50%;
     font-size: 2rem;
+    margin-top: 35%;
     
 }
 
-#mod-back {
-    width: 15%;
-    text-align: center;
-    color: white;
-    font-family: oswald;
-    font-size: 2rem;
-    font-weight: 600;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.mod-shift {
+    margin-top: 5%;
 }
 
 #mod-scroll {
@@ -1813,7 +2110,6 @@ GAME BOARD
     font-size: 1em;
     background: transparent;
     border: none;
-    margin: 0.5em 0;
 }
 
 .mod-adj:disabled {
@@ -1821,6 +2117,164 @@ GAME BOARD
 }
 
 #reroll-confirm {
-    font-size:2rem;
-    width:50%;
+    font-size: 2rem;
+    width: 50%;
+}
+
+#pitcher-card {
+    position: absolute;
+    background: var(--td);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index:21;
+}
+
+#opp-card {
+    position: absolute;
+    background: var(--td);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 12;
+}
+
+#roll-fix {
+    position: absolute;
+    font-size: 1.5rem;
+    color: white;
+    top: 0.5rem;
+    right: 0.5rem;
+}
+
+#main-roll {
+    position: absolute;
+    width: 100%;
+    /*height: 100%;*/
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#opp-roll {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.roll-btn {
+    width: 60%;
+    text-align: center;
+    font-size: 1.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#runner-choice-overlay {
+    width: 95%;
+    height: 50%;
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: -15%;
+    z-index: 8;
+    gap: 1.5em;
+}
+
+.runner-choice {
+    width: 2em;
+    height: 2em;
+    border-radius: 50%;
+    background: var(--die-bg-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--die-font-color);
+    -webkit-text-stroke: 0.7px var(--die-outline-color);
+    paint-order: stroke fill;
+    font-family: "Oswald";
+    font-size: 1.75rem;
+    text-align: center;
+    position: relative;
+}
+
+.runner-choice.chosen {
+    opacity: 50%;
+}
+
+.notification {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-left: 1em solid var(--tl-dark);
+    background-color: var(--tl);
+    color: var(--tl-text);
+    font-family: oswald;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    padding-left: 1em;
+    transition: transform 0.25s;
+}
+
+.notification.showing {
+    transform: translateY(-100%);
+}
+
+#process-mode {
+    color: white;
+    font-size: 0.25em;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.sub-gallery {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: scroll;
+    flex-direction: column;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    position: relative;
+}
+
+.sub-gallery .lineup-card {
+    scroll-snap-align: center;
+    position: relative;
+}
+
+.lineup-card::before {
+    content: "\200B";
+    /* Inserts a zero-width space character */
+}
+
+.modal-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5em;
+}
+
+.sub-card {
+    width: 40cqw;
 }

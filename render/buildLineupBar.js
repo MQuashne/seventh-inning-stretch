@@ -30,7 +30,7 @@ export function buildBar(player) {
     } else {
       bar.diceCount.textContent = player.dice;
     }
-    if (player.reRoll === 0) bar.reroll.classList.add("hidden");
+    if (player.reroll === 0) bar.reroll.classList.add("hidden");
     if (player.modifier === 0) bar.mod.classList.add("hidden");
     const order = G.lineup.order.indexOf(player);
     if (!(order>0)) {
@@ -56,11 +56,11 @@ export function buildBar(player) {
     } else {
       bar.fatigueCount.textContent = `${player.used}/${player.fatigue}`;
     }
-    if (G.lineup.startPitcher){
+    if (G.lineup.pitcher){
       bar.start.classList.add("hidden");
       bar.bench.classList.add("hidden")
     }
-    if (player===G.lineup.startPitcher){
+    if (player===G.lineup.pitcher){
       bar.bench.classList.remove("hidden")
     }
     bar.up.classList.add("hidden");

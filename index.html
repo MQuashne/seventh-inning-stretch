@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-team="WIL">
+<html lang="en" data-team="PHI">
 
 <head>
   <meta charset="UTF-8">
@@ -19,40 +19,43 @@
   <div id="page">
     <div class="game-header-outer">
       <div class="game-header">
-        <div class="game-header-team" id="header-team-name">
-          Your Team
+        <div class="header-layer-2">
+          <div class="game-header-team">
+            <div id="game-header-logo-ctr">
+              <img id="game-header-logo"></img>
+            </div>
+            <div id="header-team-name">YOUR TEAM </div>
+          </div>
         </div>
       </div>
     </div>
     <div id="main-screen">
       
       
-      <!--
-    <div id="test-content" class="main-content">
-      Test Content
-      <div id="card-test"></div>
-      <div id="insert"></div>
-    </div>
--->
-      <!--   <div class='modal-backdrop' id='modal-backdrop'>
-      <div class="dialog medium">
-        <div class='modal-header'>
-          <div class="modal-title">Spring Training</div>
-        </div>
-        <div class='modal-body lawn-stripes'></div>
-      </div>
-    </div>
-    -->
+      
       <!-- CALENDAR SCREEN -->
       
       <div id="cal-content" class="main-content">
+        <div id="calendar-hero" class="section-hero">
+          <img id="hero-spot" class="hero-img">
+          <div id="hero-record" class="hero-info">W-L</div>
+          <div id="hero-season-points" class="hero-info">X SP</div>
+          <div id="hero-week" class="hero-info">WEEK X</div>
+        </div>
         
-        <div id="calendar-heading" class="section-heading">Calendar</div>
-        <div class="section-subheading">"Here's what on the schedule, coach."</div>
-        
-        <div id="calendar" class="section-ts">
-          <div id="calendar-body" class="section-body">
+        <div id="calendar-body" class="section-body">
+          <div class="cal-body-separator">
+            Past Events
           </div>
+          <div class="cal-sect" id="past-events"></div>
+          <div class="cal-body-separator">
+            Next Event
+          </div>
+          <div class="cal-sect" id="next-event"></div>
+          <div class="cal-body-separator">
+            Upcoming Events
+          </div>
+          <div class="cal-sect" id="upcoming-events"></div>
         </div>
       </div>
       <!-- LINEUP SCREEN -->
@@ -173,31 +176,48 @@
       </div>
       
       <!-- GAME SCREEN -->
-      <div id="gameday" class="main-content lawn-stripes hidden">
+      <div id="gameday" class="main-content hidden">
         <div id="gameday-cover">
-          <div id="game-cover-title" class="section-heading-white section-heading"><span id="game-span">GAME X</span></div>
           <div id="logos">
             <img id="logo-away" class="cover-logo" />
-            <div class="section-heading-white section-heading" id="game-cover-heading" style="font-size:3rem;">@</div>
             <img id="logo-home" class="cover-logo" />
           </div>
-          <div class="instructions">
-            Set your lineup before the game, then come here to start.
+          <div id="game-cover-title" class="section-heading-white section-heading"><span id="game-span">GAME X</span></div>
+          <div class="hero-info" id="matchup-teams">A at B</div>
+          <div id="choose-uniform">
+            <div class="form-group">
+              <div class="form-label">Game Jerseys</div>
+              <select id='uni-select-gameday' class="form-select">
+                <option value="">--Choose One</option>
+              </select>
+            </div>
+            
+            <div class='die-box' id="cover-die-box">8</div>
           </div>
-          <button class="btn btn-team" id="btn-play-ball">PLAY BALL</button>
+          <button class="btn btn-team" id="btn-play-ball">SUBMIT LINEUP & PLAY BALL</button>
         </div>
         <div id="gameplay-content" class="hidden">
+          <div id="sub-cover" class="hidden"> Select a player to substitute
+          <button id="sub-cancel" class="btn btn-team">Cancel</button>
+          </div>
           <div id="scorebug-zone" class="board-zone">
             <div id="scorebug-surface" class="game-surface">
               <div id="game-back" class="material-symbols-outlined">arrow_back_ios_new</div>
-              <div id="game-away-logo" class="game-logo game-away"></div>
-              <div id="game-away-score" class="game-score game-away"></div>
+              <div id="game-away-logo" class="game-logo game-away">
+                <img id="away-score-logo">
+              </div>
+              <div id="game-away-score" class="game-score game-away">
+              </div>
               <div id="game-home-score" class="game-score game-home"></div>
-              <div id="game-home-logo" class="game-logo game-home"></div>
+              <div id="game-home-logo" class="game-logo game-home">
+                <img id="home-score-logo">
+              </div>
+              <div id="process-mode"></div>
             </div>
           </div>
           <div id="scoreboard-zone" class="board-zone">
             <div id="scoreboard-surface" class="game-surface">
+              <div id="pitcher-card" class="hidden"></div>
               <div id="scoreboard-title">RESOURCES</div>
               <div id="scoreboard-dice" class="scoreboard-resource-symbol">
                 <svg class="icon" width="80%">
@@ -239,12 +259,12 @@
           </div>
           <div id="field-zone" class="board-zone">
             <div id="field-surface" class="game-surface">
-              
+              <div id="opp-card"></div>
               <div id="field-box">
                 <img id="infield" src="public/assets/Infield.png" />
                 <div id="runners">
                   <svg viewBox="0 0 100 100" class="base-path-def">
-                    <path id="basePath" d="M 49.25 87.55 L 82.4 54.4 L 49.25 21.25 L 16.1 54.4 Z" />
+                    <path id="basePath" d="M 49.45 88 L 82.4 54.4 L 49.45 21.25 L 16.1 54.4 Z" />
                   </svg>
                 </div>
               </div>
@@ -252,34 +272,53 @@
           </div>
           <div id="roll-zone" class="board-zone">
             <div id="roll-surface" class="game-surface">
-              <div id="roll-display" class="roll-display hidden">
-                <button id="roll-outcome" class="roll-play btn-glass btn-pulse">x</button>
-                <div id="roll-options">
-                  <button id="offer-reroll" class="outcome-option btn-glass">Reroll</button>
-                  <button id="offer-modifier" class="outcome-option btn-glass">Modify</button>
-                </div>
+              <div id="main-roll" class="hidden">
+                
               </div>
-              <div id="reroll-area" class="roll-display hidden" style="display:flex;flex-direction:row;justify-content:center;align-items:center;gap:5%;">
-                <button id="reroll-back" class="btn-glass btn-back">
-                  <div class="material-symbols-outlined">arrow_back_ios_new
-                  </div>
-                </button>
-                <button id="reroll-confirm" class="btn-glass btn-pulse">Reroll</button>
+              <div id="opp-roll" class="hidden">
+                
               </div>
-              <div id="mod-area" class="hidden">
-                <div id="mod-scroll"></div>
-                <div id="mod-action">
-                  <button id="mod-back" class="material-symbols-outlined btn-glass">
+              <div id="roll-fix" class="material-symbols-outlined">reset_wrench</div>
+              <div id="runner-choice-overlay">
+              </div>
+              <div id="roll-display" class="roll-display">
+                <div id="display-row-1">
+                  
+                  <button id="roll-back" class="btn-glass btn-back roll-el display-shift hidden reroll-roll main-roll">
                     <div class="material-symbols-outlined">arrow_back_ios_new
                     </div>
                   </button>
-                  <button id="mod-play" class="btn-glass btn-pulse">X</button>
+                  
+                  <button id="roll-outcome" class="roll-play btn-glass btn-pulse off-outcome display-shift roll-el hidden">x</button>
+                  <button id="main-roll-btn" class="btn btn-glass roll-btn btn-pulse main-roll roll-el hidden">ROLL</button>
+                  
+                  <button id="main-out-btn" class="btn btn-glass roll-btn main-roll roll-el hidden">OUT</button>
+                  
+                  <button id="opp-roll-btn" class="btn btn-glass roll-btn btn-pulse opp-roll roll-el hidden">ROLL</button>
+                  
+                  
+                  <button id="offer-bases" class="btn btn-glass roll-btn btn-pulse main-roll roll-el hidden">EXTRA BASES</button>
+                  
+                  <button id="continue-btn" class="btn btn-glass roll-btn roll-el hidden">NEXT BATTER</button>
+                  
+                  <!--               <button id="reroll-confirm" class="btn-glass btn-pulse roll-el hidden reroll-roll">Reroll</button>
+                  <button id="mod-play" class="btn-glass btn-pulse mod-roll roll-el hidden">X</button>
+                  -->
+                  <button id="defense-outcome" class="roll-play btn-glass btn-pulse def-outcome roll-el hidden">Roll</button>
                 </div>
+                
+                <div id="roll-options" class="roll-options">
+                  <button id="offer-reroll" class="roll-option btn-glass off-outcome roll-el hidden">Reroll</button>
+                  <button id="offer-modifier" class="roll-option btn-glass off-outcome roll-el hidden">Modify</button>
+                  <button id="offer-pitcher" class="roll-option btn-glass def-outcome roll-el hidden">Pitcher Ability</button>
+                </div>
+              </div>
+              <div id="mod-overlay" class="roll-el hidden">
               </div>
               
               <div id="gameRoller"></div>
             </div>
-            <div id="dice-input-border">
+            <div id="dice-input-border" class="roll-el">
               <div id="dice-input">
                 <div id="dice-input-symbol" class="die-box">1
                 </div>
@@ -292,14 +331,14 @@
           </div>
           <div id="action-zone" class="board-zone">
             <div id="action-surface" class="game-surface">
-              <button id="roll-btn" class="btn btn-team btn-game">Roll</button>
-              <button id="out-btn" class="btn btn-team btn-game">Out</button>
               <button id="bb-btn" class="btn btn-team btn-game">BB</button>
               <button id="sac-btn" class="btn btn-team btn-game">SAC</button>
               <button id="1b-btn" class="btn btn-team btn-game">1B</button>
               <button id="2b-btn" class="btn btn-team btn-game">2B</button>
               <button id="3b-btn" class="btn btn-team btn-game">3B</button>
+              <button id="sub-btn" class="btn btn-team btn-game">Sub</button>
               <button id="hr-btn" class="btn btn-team btn-game">HR</button>
+              <div id="notification" class="notification collapsed">Notify</div>
             </div>
           </div>
           <div id="batter-zone" class="board-zone">
@@ -355,6 +394,38 @@
       <div class="event-title" data-part="title">
       </div>
       <div class="event-body" data-part="body">
+      </div>
+    </div>
+  </template>
+  
+  <template id="calendar-event-template2">
+    <div class="event2">
+      <div class="event-num" data-part="num">
+      </div>
+      <div class="event-title2" data-part="title">
+      </div>
+      <div class="event-body2" data-part="body">
+      </div>
+    </div>
+  </template>
+  
+  <template id="calendar-ev-template">
+    <div class="ev">
+      <div class="event-details">
+        <div class="event-title" data-part="title">
+        </div>
+        <div class="event-date" data-part="date">
+        </div>
+      </div>
+      <img class="event-spot" data-part="spot">
+    </div>
+  </template>
+  
+  <template id="calendar-ev-past-template">
+    <div class="ev-past-outer">
+      <div class="ev-past-title" data-part="title">
+      </div>
+      <div class="ev-past-result">
       </div>
     </div>
   </template>
@@ -442,6 +513,13 @@
       <button class="mod-adj" data-part="up">▲</button>
       <div class="die-box" data-part="value">0</div>
       <button class="mod-adj" data-part="down">▼</button>
+    </div>
+  </template>
+  
+  <template id="overlay-select">
+    <div class="mod-overlay-select">
+      <button class="mod-adj btn-glass" data-part="up">▲</button>
+      <button class="mod-adj btn-glass" data-part="down">▼</button>
     </div>
   </template>
   

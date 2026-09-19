@@ -191,7 +191,6 @@ function getContrastColor(hexColor) {
   //  const ts = rootStyles.getPropertyValue('--ts').trim();
   
   const pTeam = teams.find((t) => t.code===player.team);
-  console.log(player.team)
   
   const tp = pTeam.tp;
   const ts = pTeam.ts;
@@ -368,7 +367,6 @@ function getContrastColor(hexColor) {
     height: 250,
     'clip-path': `url(#bgClip${player.id})`
   })
-  if (player.id === "029") { console.log(bgImage.href) }
   svg.append(bgImage);
   
   // --------------------------------------------------------------------------
@@ -536,10 +534,9 @@ function getContrastColor(hexColor) {
     y: 45,
     width: 50,
     height: 50,
-    href: `https://www.mlbstatic.com/team-logos/team-cap-on-dark/${pTeam.tid}.svg`,
-    onerror: `this.onerror=null; this.setAttribute('href', 'https://www.mlbstatic.com/team-logos/${pTeam.tid}.svg')`
+    href: `../public/assets/logos/${pTeam.tpLogo}.svg`
+    
   })
-  
   template.append(tLogo);
   svg.append(template);
   
@@ -600,14 +597,13 @@ function getContrastColor(hexColor) {
   }
   
   //reRoll
-  if (player.reRoll > 0) {
+  if (player.reroll > 0) {
     svg.append(buildReRoll(63.5, 259.5));
   }
   
   //Modifier
   if (player.modifier > 0) {
     svg.append(buildMod(84, 254));
-    console.log("found one")
   }
   
   //PITCHER FATIGUE

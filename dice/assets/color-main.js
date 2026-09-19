@@ -14,8 +14,7 @@ Object.entries(leagues).forEach(([league, data]) => {
     leaTitle.className = "team-name";
     leaTitle.textContent = leagueNames[league] + " (" + league + ")";
     leaSection.appendChild(leaTitle);
-    console.log(league)
-    console.log(teams[league])
+   
     Object.entries(teams[league]).forEach(([team, data]) => {
         const section = document.createElement("div");
         section.className = "team";
@@ -26,8 +25,6 @@ Object.entries(leagues).forEach(([league, data]) => {
         
         const tray = document.createElement("div");
         tray.className = "palette";
-        console.log(league + " " + team)
-        console.log(evergreenJerseys[league][team])
         Object.entries(evergreenJerseys[league][team]).forEach(([uni, data]) => {
             const die = document.createElement('div');
             die.className = 'die-box';

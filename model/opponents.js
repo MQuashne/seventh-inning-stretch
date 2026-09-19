@@ -5,7 +5,10 @@ export const opponents = [
   team: "Mariners",
   code: "SEA",
   roll: "Roll 3",
-  action: " Score runs equal to the difference between the two lowest dice."
+  dice:"3d6",
+  action: "Score runs equal to the difference between the two lowest dice.",
+  result:{test:"lowDiff",unit:1},
+  avg:1.458
 },
 {
   id: "020",
@@ -13,7 +16,9 @@ export const opponents = [
   team: "Padres",
   code: "SD",
   roll: "Roll 5",
-  action: " Score one run per unique pair of dice whose values sum to 7."
+  dice:"5d6",
+  action: "Score one run per unique pair of dice whose values sum to 7.",
+  result:{test:"sumSeven",unit:1}
 },
 {
   id: "021",
@@ -21,7 +26,9 @@ export const opponents = [
   team: "Rockies",
   code: "COL",
   roll: "Roll 2",
-  action: " Score runs equal to the lowest value minus one."
+  dice:"2d6",
+  action: "Score runs equal to the lowest value minus one.",
+  result:{test:"lowMinus",unit:1}
 },
 {
   id: "022",
@@ -29,7 +36,9 @@ export const opponents = [
   team: "Rangers",
   code: "TEX",
   roll: "Roll 10",
-  action: "Score one run per value that appears on exactly one die."
+  dice:"10d6",
+  action: "Score one run per value that appears on exactly one die.",
+  result:{test:"once",unit:1}
 },
 {
   id: "023",
@@ -37,7 +46,9 @@ export const opponents = [
   team: "Angels",
   code: "LAA",
   roll: "Roll 8",
-  action: "Score one run per value that is not visible on any die."
+  dice:"8d6",
+  action: "Score one run per value that is not visible on any die.",
+  result:{test:"missing",unit:1}
 },
 {
   id: "024",
@@ -45,7 +56,9 @@ export const opponents = [
   team: "Giants",
   code: "SF",
   roll: "Roll 6",
-  action: "Score runs equal to the size of the largest set minus 1."
+  dice:"6d6",
+  action: "Score runs equal to the size of the largest set minus 1.",
+  result:{test:"setMinus",unit:1}
 },
 {
   id: "025",
@@ -53,7 +66,9 @@ export const opponents = [
   team: "Guardians",
   code: "CLE",
   roll: "Roll 2",
-  action: "Score runs equal to the sum divided by four."
+  dice:"2d6",
+  action: "Score runs equal to the sum divided by four.",
+  result:{test:"divideFour",unit:1}
 },
 {
   id: "026",
@@ -61,7 +76,9 @@ export const opponents = [
   team: "Twins",
   code: "MIN",
   roll: "Roll 1",
-  action: "Score runs equal to the distance of the value from 4."
+  dice:"1d6",
+  action: "Score runs equal to the distance of the value from 4.",
+  result:{test:"fourDistance",unit:1}
 },
 {
   id: "027",
@@ -69,7 +86,9 @@ export const opponents = [
   team: "Brewers",
   code: "MIL",
   roll: "Roll 6",
-  action: "Score runs equal to the length of the longest run minus one."
+  dice:"6d6",
+  action: "Score runs equal to the length of the longest run minus one.",
+  result:{test:"runMinus",unit:1}
 },
 {
   id: "028",
@@ -77,7 +96,9 @@ export const opponents = [
   team: "Pirates",
   code: "PIT",
   roll: "Roll 5",
-  action: "Score one run per die showing a 5 or 6."
+  dice:"5d6",
+  action: "Score one run per die showing a 5 or 6.",
+  result:{test:"fiveSix",unit:1}
 },
 {
   id: "029",
@@ -85,7 +106,9 @@ export const opponents = [
   team: "Royals",
   code: "KC",
   roll: "Roll 5",
-  action: "Score one run per unique pair of dice with matching values."
+  dice:"5d6",
+  action: "Score one run per unique pair of dice with matching values.",
+  result:{test:"matches",unit:1}
 },
 {
   id: "030",
@@ -93,7 +116,9 @@ export const opponents = [
   team: "Phillies",
   code: "PHI",
   roll: "Roll 3",
-  action: "Score one run per die showing an odd value."
+  dice:"3d6",
+  action: "Score one run per die showing an odd value.",
+  result:{test:"odd",unit:1}
 },
 {
   id: "031",
@@ -101,7 +126,9 @@ export const opponents = [
   team: "Marlins",
   code: "MIA",
   roll: "Roll 3",
-  action: "Score 0 runs if the total is less than 9, otherwise score 2 runs."
+  dice:"3d6",
+  action: "Score 0 runs if the total is less than 9, otherwise score 2 runs.",
+  result:{test:"sumNine",unit:1}
 },
 {
   id: "032",
@@ -109,6 +136,7 @@ export const opponents = [
   team: "Red Sox",
   code: "BOS",
   roll: "Roll 6",
+  dice:"6d6",
   action: "Score 1 run for each unique pair of dice whose values sum to 7."
 },
 {
@@ -117,6 +145,7 @@ export const opponents = [
   team: "Reds",
   code: "CIN",
   roll: "Roll 6",
+  dice:"6d6",
   action: "Score 1 run for each value that is not visible on any die."
 },
 {
@@ -125,6 +154,7 @@ export const opponents = [
   team: "Orioles",
   code: "BAL",
   roll: "Roll 3",
+  dice:"3d6",
   action: "Score 0 runs if the sum is less than 9, otherwise score 4 runs."
 },
 {
@@ -133,6 +163,7 @@ export const opponents = [
   team: "Yankees",
   code: "NYY",
   roll: "Roll 3",
+  dice:"3d6",
   action: "Score runs equal to the sum divided by four."
 },
 {
@@ -141,6 +172,7 @@ export const opponents = [
   team: "Dodgers",
   code: "LAD",
   roll: "Roll 5",
+  dice:"5d6",
   action: "Score one run per die showing an odd value."
 },
 {
@@ -149,6 +181,7 @@ export const opponents = [
   team: "Athletics",
   code: "ATH",
   roll: "Roll 8",
+  dice:"8d6",
   action: "Score runs equal to the length of the longest run minus one."
 },
 {
@@ -157,6 +190,7 @@ export const opponents = [
   team: "Astros",
   code: "HOU",
   roll: "Roll 2",
+  dice:"2d6",
   action: "Score runs equal to distance of the sum from 9."
 },
 {
@@ -165,6 +199,7 @@ export const opponents = [
   team: "Blue Jays",
   code: "TOR",
   roll: "Roll 6",
+  dice:"6d6",
   action: "Score one run per unique pair of dice with matching values."
 },
 {
@@ -173,6 +208,7 @@ export const opponents = [
   team: "Tigers",
   code: "DET",
   roll: "Roll 2",
+  dice:"2d6",
   action: "Score runs equal to the difference between the two dice."
 },
 {
@@ -181,6 +217,7 @@ export const opponents = [
   team: "Cubs",
   code: "CHC",
   roll: "Roll 7",
+  dice:"7d6",
   action: "Score one run per die showing a 5 or 6."
 },
 {
@@ -189,6 +226,7 @@ export const opponents = [
   team: "Nationals",
   code: "WSH",
   roll: "Roll 1",
+  dice:"1d6",
   action: "Score runs equal to the result."
 },
 {
@@ -197,6 +235,7 @@ export const opponents = [
   team: "Cardinals",
   code: "STL",
   roll: "Roll 8",
+  dice:"8d6",
   action: "Score runs equal to the size of the biggest set minus 1."
 },
 {
@@ -205,6 +244,7 @@ export const opponents = [
   team: "Braves",
   code: "ATL",
   roll: "Roll 5",
+  dice:"5d6",
   action: "Score one run per value that appears on exactly one die."
 },
 {
@@ -213,6 +253,7 @@ export const opponents = [
   team: "Diamondbacks",
   code: "ARI",
   roll: "Roll 5",
+  dice:"5d6",
   action: "You must achieve a three-of-a-kind. Use modifiers to change values. Score one run per modifier used."
 },
 {
@@ -221,6 +262,7 @@ export const opponents = [
   team: "Rays",
   code: "TB",
   roll: "Roll 6",
+  dice:"6d6",
   action: "You must achieve a four-of-a-kind. Use modifiers to change values. Score one run per modifier used."
 },
 {
@@ -229,7 +271,9 @@ export const opponents = [
   team: "White Sox",
   code: "CWS",
   roll: "Place 3, Roll X",
-  action: "Score 4 runs if the result includes a pair of matching values, otherwise score 1 run per unrolled die."
+  dice:"3d6",
+  action: "Score 4 runs if the result includes a pair of matching values, otherwise score 1 run per unrolled die.",
+  result:{test:"placeRoll",unit:4}
 },
 {
   id: "048",
@@ -237,6 +281,7 @@ export const opponents = [
   team: "Knights",
   code: "CHR",
   roll: "Roll 2 plus D10",
+  dice:"2d6+1d10",
   action: "Score D10 minus the max of D6 values. Treat a negative value as zero."
 },
 {
@@ -245,6 +290,7 @@ export const opponents = [
   team: "Sounds",
   code: "NAS",
   roll: "Roll 0",
+  dice:"0d6",
   action: "Score 1 run (may be cancelled)."
 },
 {
@@ -253,6 +299,7 @@ export const opponents = [
   team: "Bees",
   code: "SLC",
   roll: "Roll 1 plus D10",
+  dice:"1d6+1d10",
   action: "Score D10 minus the D6 value. Treat a negative value as zero."
 },
 {
@@ -269,6 +316,7 @@ export const opponents = [
   team: "Cyclones",
   code: "BRO",
   roll: "Place 4, Roll X",
+  dice:"4d6",
   action: "Score 5 runs if the result includes a pair of matching values, otherwise score 1 run per unrolled die."
 },
 {
@@ -277,6 +325,7 @@ export const opponents = [
   team: "Bison",
   code: "BUF",
   roll: "Roll D10",
+  dice:"1d10",
   action: "Odd innings: Score runs equal to the result. Even innings: Score 0 runs."
 }
 ]

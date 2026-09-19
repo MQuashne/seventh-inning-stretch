@@ -12,7 +12,7 @@ export function benchPlayer(player){
 export function benchPitcher(pitcher){
   store.update(state => {
     state.lineup.bullpen.push(pitcher);
-    state.lineup.startPitcher={};
+    state.lineup.pitcher={};
   },[["pitcher:benched",pitcher],"lineup:changed"]);
 }
 
@@ -26,7 +26,7 @@ export function activatePlayer(player){
 
 export function activatePitcher(pitcher){
   store.update(state => {
-    state.lineup.startPitcher = pitcher;
+    state.lineup.pitcher = pitcher;
     const index=state.lineup.bullpen.indexOf(pitcher);
     state.lineup.bullpen.splice(index,1);
   },[["pitcher:activated",pitcher],"lineup:changed"]);
@@ -34,8 +34,6 @@ export function activatePitcher(pitcher){
 
 export function swapPlayers(p1,p2){
   store.update(state => {
-    console.log(p1);
-    console.log(p2);
     const i1 = state.lineup.order.indexOf(p1);
     const i2 = state.lineup.order.indexOf(p2);
     [state.lineup.order[i1],state.lineup.order[i2]] = [state.lineup.order[i2],state.lineup.order[i1]];
