@@ -148,7 +148,10 @@ export function buildMod(x, y) {
   return mod
 }
 
+let cardInstance=0
+
 export function buildCard(player) {
+  const uid=`${player.id}-${++cardInstance}`
   /*---------
   BUILD THE FULL CARD SVG FROM PLAYER DATA
   ----------*/
@@ -226,7 +229,7 @@ function getContrastColor(hexColor) {
   
   //FoilGradient
   const linGrad = $ne('linearGradient');
-  linGrad.id = `foil-gradient${player.id}`;
+  linGrad.id = `foil-gradient${uid}`;
   $sao(linGrad, {
     x1: "100%",
     x2: "0",
@@ -266,7 +269,7 @@ function getContrastColor(hexColor) {
   
   //Metalic Black Gradient
   const tierGrad = $ne('linearGradient');
-  tierGrad.id = `tier-gradient${player.id}`;
+  tierGrad.id = `tier-gradient${uid}`;
   $sa(tierGrad, 'x1', gradDir === 0 ? '0%' : '100%');
   $sa(tierGrad, 'x2', gradDir === 0 ? '100%' : '0%');
   $sa(tierGrad, 'y1', "0");
@@ -328,7 +331,7 @@ function getContrastColor(hexColor) {
   // CLIP BACKGROUND
   // --------------------------------------------------------------------------
   const clip = $ne('clipPath');
-  clip.id = `bgClip${player.id}`;
+  clip.id = `bgClip${uid}`;
   const clRect = $ne('rect');
   $sao(clRect, {
     x: 19,
@@ -342,7 +345,7 @@ function getContrastColor(hexColor) {
   
   //Clip whole card
   const clipCard = $ne('clipPath');
-  clipCard.id = `cardClip${player.id}`;
+  clipCard.id = `cardClip${uid}`;
   const cdRect = $ne('rect');
   $sao(cdRect, {
     x: 0,
@@ -365,7 +368,7 @@ function getContrastColor(hexColor) {
     y: 42,
     width: 250,
     height: 250,
-    'clip-path': `url(#bgClip${player.id})`
+    'clip-path': `url(#bgClip${uid})`
   })
   svg.append(bgImage);
   
@@ -374,7 +377,7 @@ function getContrastColor(hexColor) {
   // --------------------------------------------------------------------------
   const template = $ne('g');
   template.id = `template${player.id}`
-  $sa(template, 'clip-path', `url(#cardClip${player.id})`);
+  $sa(template, 'clip-path', `url(#cardClip${uid})`);
   
   //Left bar primary
   const leftBar = $ne('rect');
@@ -409,7 +412,7 @@ function getContrastColor(hexColor) {
     y: 0,
     width: 100,
     height: 42,
-    fill: `url(#${`tier-gradient${player.id})`}`
+    fill: `url(#${`tier-gradient${uid})`}`
   });
   
   template.append(topBarT);
@@ -441,7 +444,7 @@ function getContrastColor(hexColor) {
     y: 290,
     width: 150,
     height: 60,
-    fill: `url(#${`tier-gradient${player.id})`}`
+    fill: `url(#${`tier-gradient${uid})`}`
   });
   
   template.append(botBarT);
@@ -510,7 +513,7 @@ function getContrastColor(hexColor) {
   accBar.id = `accent-bar-${player.id}`;
   $sao(accBar, {
     d: 'M 0 36 v 4 h 134 l 4 -4 z',
-    fill: `url(#${`tier-gradient${player.id})`}`
+    fill: `url(#${`tier-gradient${uid})`}`
   })
   template.append(accBar);
   
@@ -521,7 +524,7 @@ function getContrastColor(hexColor) {
     let xs = 232
     $sao(star, {
       points: '8,0 10,6 16,6 12,10 14,16 8,13 2,16 4,10 0,6 6,6',
-      fill: `url(#${`tier-gradient${player.id})`}`,
+      fill: `url(#${`tier-gradient${uid})`}`,
       transform: `translate(232,${55 + 26*i})`
     })
     template.append(star);
@@ -1152,7 +1155,7 @@ function getContrastColor(hexColor) {
     style: {
       opacity: 0.20,
       "mix-blend-mode": "color-dodge",
-      fill: `url(#foil-gradient${player.id})`
+      fill: `url(#foil-gradient${uid})`
     }
   })
   svg.append(foil);

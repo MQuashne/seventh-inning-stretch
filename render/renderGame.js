@@ -264,7 +264,7 @@ export function initGame() {
   //-------- INITIALIZE DICE BOX
   
   
-  $t("roll-surface").style.backgroundImage = `url("../public/assets/logos/${homeTeam.code}.svg"), linear-gradient(90deg,oklch(from ${homeTeam.ts} calc(l - 0.12) c h),oklch(from ${homeTeam.ts} calc(l - 0.12) c h)) `;
+  $t("roll-surface").style.backgroundImage = `url("public/assets/logos/${homeTeam.code}.svg"), linear-gradient(90deg,oklch(from ${homeTeam.ts} calc(l - 0.12) c h),oklch(from ${homeTeam.ts} calc(l - 0.12) c h)) `;
   
   
   //----WIRING BUTTONS 
@@ -483,7 +483,7 @@ export function initGame() {
     DICE.set_color('stripe', uni.stripe ||= uni.jersey);
     DICE.set_color('outline', uni.outline ||= uni.jersey);
     diceInput.querySelector(".die-box").classList.remove("opp-die");
-    $t("roll-surface").style.backgroundImage = `url("../public/assets/logos/${G.thisTeam.code}.svg"), linear-gradient(90deg,oklch(from ${G.thisTeam.ts} calc(l - 0.12) c h),oklch(from ${G.thisTeam.ts} calc(l - 0.12) c h)) `;
+    $t("roll-surface").style.backgroundImage = `url("public/assets/logos/${G.thisTeam.code}.svg"), linear-gradient(90deg,oklch(from ${G.thisTeam.ts} calc(l - 0.12) c h),oklch(from ${G.thisTeam.ts} calc(l - 0.12) c h)) `;
     hide([pitcherCard, oppCard, ...$a("def-outcome")]);
     show(diceInput);
     gamebox.clear();
