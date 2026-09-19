@@ -56,6 +56,8 @@ export function buildPlay(play, hasCount, isRoll=true) {
     runPath = `M 70 98 l 48 -48 l -48 -48 l -48 48`
   } else if (play === "HR") {
     runPath = `M 70 98 l 48 -48 l -48 -48 l -48 48 l 48 48 l 48 -48`
+  } else {
+    runPath="";
   }
   
   $sa(runP, 'd', runPath);
