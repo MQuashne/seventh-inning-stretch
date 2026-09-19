@@ -27,9 +27,9 @@ export function renderCover() {
   const homeTeam = G.game.home === true ? G.thisTeam : teams.find(t => t.code === G.opponents[G.gameNum - 1].code);
   const awayTeam = G.game.home === false ? G.thisTeam : teams.find(t => t.code === G.opponents[G.gameNum - 1].code);
   
-  awayLogo.src = `../public/assets/logos/${awayTeam.tpLogo}.svg`;
+  awayLogo.src = `public/assets/logos/${awayTeam.tpLogo}.svg`;
   
-  homeLogo.src = `../public/assets/logos/${homeTeam.tpLogo}.svg`;
+  homeLogo.src = `public/assets/logos/${homeTeam.tpLogo}.svg`;
   
   logos.style.backgroundImage = `linear-gradient(150.64deg,${awayTeam.tp} 0%, ${awayTeam.tp} 49.99%, ${homeTeam.tp} 50%, ${homeTeam.tp} 100%)`
 

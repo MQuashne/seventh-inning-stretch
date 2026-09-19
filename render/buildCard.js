@@ -361,7 +361,7 @@ function getContrastColor(hexColor) {
   const bgImage = $ne('image');
   bgImage.id = `bg-image-${player.id}`;
   $sao(bgImage, {
-    'href': `../public/assets/players/${player.id}.png`,
+    'href': `public/assets/players/${player.id}.png`,
     y: 42,
     width: 250,
     height: 250,
@@ -534,7 +534,7 @@ function getContrastColor(hexColor) {
     y: 45,
     width: 50,
     height: 50,
-    href: `../public/assets/logos/${pTeam.tpLogo}.svg`
+    href: `public/assets/logos/${pTeam.tpLogo}.svg`
     
   })
   template.append(tLogo);
