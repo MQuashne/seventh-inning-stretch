@@ -176,7 +176,7 @@ $sao(tBg,{
   width:250,
   x:0,
   y:0,
-  fill: `url(#${`tier-gradient${team.id}`}`
+  fill: `url(#${`tier-gradient${team.id})`}`
 });
 svg.append(tBg);
 

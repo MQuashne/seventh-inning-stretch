@@ -409,7 +409,7 @@ function getContrastColor(hexColor) {
     y: 0,
     width: 100,
     height: 42,
-    fill: `url(#${`tier-gradient${player.id}`}`
+    fill: `url(#${`tier-gradient${player.id})`}`
   });
   
   template.append(topBarT);
@@ -441,7 +441,7 @@ function getContrastColor(hexColor) {
     y: 290,
     width: 150,
     height: 60,
-    fill: `url(#${`tier-gradient${player.id}`}`
+    fill: `url(#${`tier-gradient${player.id})`}`
   });
   
   template.append(botBarT);
@@ -510,7 +510,7 @@ function getContrastColor(hexColor) {
   accBar.id = `accent-bar-${player.id}`;
   $sao(accBar, {
     d: 'M 0 36 v 4 h 134 l 4 -4 z',
-    fill: `url(#${`tier-gradient${player.id}`}`
+    fill: `url(#${`tier-gradient${player.id})`}`
   })
   template.append(accBar);
   
@@ -521,7 +521,7 @@ function getContrastColor(hexColor) {
     let xs = 232
     $sao(star, {
       points: '8,0 10,6 16,6 12,10 14,16 8,13 2,16 4,10 0,6 6,6',
-      fill: `url(#${`tier-gradient${player.id}`}`,
+      fill: `url(#${`tier-gradient${player.id})`}`,
       transform: `translate(232,${55 + 26*i})`
     })
     template.append(star);
