@@ -1,4 +1,4 @@
-import { $n, $t, $c, $a, on, randInt } from '../../util.js'
+import { $n, $t, $c, $a, on, randInt } from '../util.js'
 import { G } from '../model/game.js'
 import Modal from './modal.js'
 import { buildCard } from './buildCard.js'
