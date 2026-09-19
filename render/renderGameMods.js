@@ -1,7 +1,7 @@
-import { $n, $t, $c, $a, $ac, $cl, on, randInt, show, hide } from '../../util.js'
-import { G } from '../../model/game.js'
-import { store } from '../../model/store.js'
-import { getBatterOutcome, changeMode, getRunnerOutcome } from '../../actions/game.js'
+import { $n, $t, $c, $a, $ac, $cl, on, randInt, show, hide } from '../util.js'
+import { G } from '../model/game.js'
+import { store } from '../model/store.js'
+import { getBatterOutcome, changeMode, getRunnerOutcome } from '../actions/game.js'
 import { plays, gamebox, renderGame } from './renderGame.js'
 const modAction = $t('mod-action');
 const modOverlay = $t("mod-overlay");
