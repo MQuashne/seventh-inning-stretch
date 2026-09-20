@@ -200,6 +200,7 @@ svg.append(tLogo);
 const template = $ne('g');
 $sa(template, 'clip-path', `url(#cardClip${uid})`);
 
+
 //Left bar primary
 const leftBar = $ne('rect');
 $sao(leftBar, {
