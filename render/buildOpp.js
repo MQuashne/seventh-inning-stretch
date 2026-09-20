@@ -21,8 +21,10 @@ function randBt(min, max) {
   return Math.random() * (max - min) + min;
 }
 
-
+let oppCardInstance=0
 export function buildOpp(team) {
+  const uid=`${team.id}-${++oppCardInstance}`
+
   /*---------
   BUILD THE FULL CARD SVG FROM PLAYER DATA
   ----------*/
@@ -83,7 +85,7 @@ const defs = $ne('defs');
 
 //FoilGradient
 const linGrad = $ne('linearGradient');
-linGrad.id = `foil-gradient${team.id}`;
+linGrad.id = `foil-gradient${uid}`;
 $sao(linGrad, {
   x1: "100%",
   x2: "0",
@@ -121,7 +123,7 @@ defs.append(linGrad);
 
 //Metalic Black Gradient
 const tierGrad = $ne('linearGradient');
-tierGrad.id = `tier-gradient${team.id}`;
+tierGrad.id = `tier-gradient${uid}`;
 $sa(tierGrad, 'x1','0%');
 $sa(tierGrad, 'x2','100%');
 $sa(tierGrad, 'y1', "0");
@@ -153,7 +155,7 @@ defs.append(tierGrad);
 // CLIP BACKGROUND
 // --------------------------------------------------------------------------
 const clipCard = $ne('clipPath');
-clipCard.id = `cardClip${team.code}`;
+clipCard.id = `cardClip${uid}`;
 const cdRect = $ne('rect');
 $sao(cdRect, {
   x: 0,
@@ -176,7 +178,7 @@ $sao(tBg,{
   width:250,
   x:0,
   y:0,
-  fill: `url(#${`tier-gradient${team.id})`}`
+  fill: `url(#${`tier-gradient${uid})`}`
 });
 svg.append(tBg);
 
@@ -196,7 +198,7 @@ svg.append(tLogo);
 // ADD CARD TEMPLATE ELEMENTS
 // --------------------------------------------------------------------------
 const template = $ne('g');
-$sa(template, 'clip-path', `url(#cardClip${team.id})`);
+$sa(template, 'clip-path', `url(#cardClip${uid})`);
 
 //Left bar primary
 const leftBar = $ne('rect');
