@@ -60,7 +60,7 @@ const tpText = getContrastColor(tp);
 function targetText(target, hasCount = false) {
   const text = $ne('text');
   $sao(text, {
-    x: hasCount ? 105 : 50,
+    x: hasCount ? 105 : 47,
     y: 55,
     style: {
       fill: "white",
