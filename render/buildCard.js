@@ -14,6 +14,7 @@ function $sao(element, attributes) {
   });
 }
 
+
 const $sa = (svg, att, val) => svg.setAttribute(att, val);
 const $ne = (el) => {
   const newEl = document.createElementNS('http://www.w3.org/2000/svg', el);
