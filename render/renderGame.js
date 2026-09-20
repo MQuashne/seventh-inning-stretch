@@ -266,7 +266,6 @@ export function initGame() {
   
   $t("roll-surface").style.backgroundImage = `url("public/assets/logos/${homeTeam.code}.svg"), linear-gradient(90deg,oklch(from ${homeTeam.ts} calc(l - 0.12) c h),oklch(from ${homeTeam.ts} calc(l - 0.12) c h)) `;
   
-  
   //----WIRING BUTTONS 
   
   /* NEED:

@@ -94,7 +94,7 @@ export function defenseHalf() {
   //CH:OPPSTYLE
   // If it's a place X roll Y, change dicebox styling
   
-  $t("roll-surface").style.backgroundImage = `url("../public/assets/logos/${oppTeam.code}.svg"), linear-gradient(90deg,oklch(from ${oppTeam.ts} calc(l - 0.12) c h),oklch(from ${oppTeam.ts} calc(l - 0.12) c h)) `;
+  $t("roll-surface").style.backgroundImage = `url("public/assets/logos/${oppTeam.code}.svg"), linear-gradient(90deg,oklch(from ${oppTeam.ts} calc(l - 0.12) c h),oklch(from ${oppTeam.ts} calc(l - 0.12) c h)) `;
   
   renderGame();
 }
