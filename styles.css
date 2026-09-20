@@ -1,9 +1,40 @@
 @import 'team-colors.css';
 
+/* ==========================================================================
+   SIZING SYSTEM  (read this first)
+   --------------------------------------------------------------------------
+   The whole app is drawn on a "stage": a box that is always shaped like an
+   iPhone 14 Pro screen (or slightly wider) and simply gets scaled up on
+   bigger screens. Everything inside the stage is sized in one of these:
+
+     rem / em      -> scale with the stage.  1rem = 16px on an iPhone 14 Pro,
+                      and grows proportionally on tablets/desktop.
+     %             -> % of the parent (fine, the parent is on the stage).
+     cqw / cqh     -> 1% of the STAGE width / height (#page, #gameplay-content
+                      and .modal-backdrop are size containers).
+     px            -> ONLY for hairlines (1-2px borders), shadows, text
+                      strokes and scrollbars. These intentionally don't scale.
+
+   NEVER use vw / vh / dvh / svh inside the stage. Those measure the whole
+   browser window, not the stage, which is what made the layout differ on
+   every device.
+   ========================================================================== */
+
 :root {
+    --ref-w: 393;          /* design width in CSS px (iPhone 14 Pro) */
+    --max-aspect: 0.62;    /* widest the stage may be, as width / height.
+                              Phones stay full-width; anything wider
+                              (tablet, desktop) gets black side bars. */
+    --stage-w: min(100vw, calc(100dvh * var(--max-aspect)));
+    --stage-h: 100dvh;
+    --u: calc(var(--stage-w) / var(--ref-w));   /* 1 design px, if you ever need it */
+
     --die-bg-color: linear-gradient(90deg, white 0%, white 5%, #E81828a0 6%, white 7%, white 35%, #E81828a0 36%, white 37%, white 65%, #E81828a0 66%, white 67%, white 95%, #E81828a0 96%, white 97%, white 100%);
     --die-font-color: #E81828;
     --die-outline-color: #ffffff;
+    /* TODO (not a sizing issue, left as-is): the next block uses commas instead of
+       semicolons, so it is ONE broken value and --opp-die-font-color,
+       --opp-die-outline-color and --team-back are never actually defined. */
     --opp-die-bg-color: #000000,
         --opp-die-font-color:#000000,
         --opp-die-outline-color:#000000,
@@ -53,6 +84,13 @@
     box-sizing: border-box;
 }
 
+html {
+    /* The scaling trick: rem now means "16 design px, scaled to the stage".
+       On an iPhone 14 Pro this is exactly 16px, same as before. */
+    font-size: calc(16 * var(--u));
+    -webkit-text-size-adjust: 100%;   /* stop iOS from inflating text on its own */
+}
+
 html,
 body {
     height: 100%;
@@ -64,7 +102,29 @@ body {
     /* the page itself never scrolls */
 }
 
+body {
+    background: #000;   /* shows in the side bars on tablet / desktop */
+}
 
+/* THE STAGE
+   Every full-screen layer shares the same size and is centred in the window.
+   #page is normal flow; the other two are fixed overlays. They are size
+   containers, so cqw / cqh inside them mean "% of the stage". */
+#page,
+#gameplay-content,
+.modal-backdrop {
+    width: var(--stage-w);
+    height: var(--stage-h);
+    container-type: size;
+}
+
+#gameplay-content,
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    translate: -50% 0;
+}
 
 h3 {
     font-family: 'Oswald', serif;
@@ -91,7 +151,7 @@ h3 {
 #page {
     display: grid;
     grid-template-rows: auto 1fr auto;
-    height: 100%;
+    margin: 0 auto;             /* centre the stage horizontally */
     overflow: hidden;
     box-sizing: border-box;
 }
@@ -184,7 +244,7 @@ h3 {
 
 .front-office-header {
     width: 100%;
-    height: 10vh;
+    height: 10cqh;             /* was 10vh */
 }
 
 /* GAME HEADER */
@@ -271,7 +331,7 @@ h3 {
 
 
 #diceRoller {
-    height: 150px;
+    height: 9.375rem;          /* was 150px */
     width: 50%;
     margin-top: 1.5rem;
     z-index: 9;
@@ -279,6 +339,9 @@ h3 {
     /*display: none;*/
 }
 
+/* CHECK: a 3000x300px canvas is fixed-pixel and will not scale. If your dice
+   library lets you, size it with width:100%; height:100% and let the library
+   read the element size instead. Left alone because I can't see the JS. */
 #canvas {
     width: 3000px;
     height: 300px;
@@ -317,7 +380,7 @@ h3 {
 }
 
 #reference img {
-    width: 150px;
+    width: 9.375rem;           /* was 150px */
 }
 
 .card {}
@@ -327,17 +390,17 @@ h3 {
     flex-direction: row;
     
     overflow: scroll;
-    height: 200px;
+    height: 12.5rem;           /* was 200px */
     background: #CCCCCC;
-    border: 1 px solid #AAAAAA;
-    border-radius: 20px;
-    gap: 10px;
+    /* TODO: was "border: 1 px solid #AAAAAA;" (space = invalid, never applied) */
+    border-radius: 1.25rem;    /* was 20px */
+    gap: 0.625rem;             /* was 10px */
     align-items: center;
 }
 
 .lineup-card {
     height: 100%;
-    border-radius: 8px;
+    border-radius: 0.5rem;     /* was 8px */
     overflow: hidden;
     flex-shrink: 0;
     position: relative;
@@ -346,13 +409,13 @@ h3 {
 
 .lineup-card-placeholder {
     height: 100%;
-    border-radius: 8px;
+    border-radius: 0.5rem;     /* was 8px */
     overflow: hidden;
     flex-shrink: 0;
     position: relative;
     aspect-ratio: 5 / 7;
     color: #FFFFFF80;
-    border: 3px dashed #FFFFFFD0;
+    border: 0.1875rem dashed #FFFFFFD0;   /* was 3px */
 }
 
 .lineup-card svg {
@@ -361,7 +424,7 @@ h3 {
 
 .lineup-card.new {
     opacity: 1;
-    max-width: 0px;
+    max-width: 0;
     /* transform: translateX(-20px);*/
     animation: slideIn 0.1s ease-out forwards;
     animation-delay: calc(var(--i, 0) * 100ms);
@@ -384,7 +447,7 @@ h3 {
 .form-select {
     background: rgba(0, 0, 0, 0.75);
     border: 1.5px solid rgba(245, 240, 224, 0.16);
-    border-radius: 3px;
+    border-radius: 0.1875rem;  /* was 3px */
     padding: 0.5rem 0.5rem;
     font-family: "Proxima Nova";
     font-size: 0.9rem;
@@ -414,8 +477,8 @@ h3 {
 
 
 .modal-backdrop {
-    position: fixed;
-    inset: 0;
+    /* size + position now come from the shared STAGE rule near the top
+       (was: position: fixed; inset: 0, which meant "the whole browser window") */
     /* Tinted green veil — like looking through felt */
     background: rgba(6, 18, 10, 0.90);
     z-index: 200;
@@ -432,7 +495,9 @@ h3 {
     background-size: contain;
     background-position: center;
     /*background-repeat: no-repeat;*/
-    width: calc(100%-1.5rem);
+    /* TODO: was "width: calc(100%-1.5rem);" — calc needs spaces around the minus,
+       so it was invalid and ignored (width stayed auto). Left ignored so the
+       look doesn't change; if you want the inset, use calc(100% - 1.5rem). */
     height: 10%;
     display: flex;
     padding-left: 20%;
@@ -527,7 +592,7 @@ h3 {
     display: flex;
     flex-direction: column;
     background: white;
-    justify-content: top;
+    /* TODO: was "justify-content: top;" (invalid, ignored). Probably meant flex-start. */
     
 }
 
@@ -535,12 +600,12 @@ h3 {
 #p {
     display: flex;
     flex-direction: row;
-    gap: 5px;
+    gap: 0.3125rem;            /* was 5px */
 }
 
 .sw {
-    height: 40px;
-    width: 40px;
+    height: 2.5rem;            /* was 40px */
+    width: 2.5rem;
 }
 
 #tp {
@@ -570,7 +635,7 @@ h3 {
 #a {
     display: flex;
     flex-direction: row;
-    gap: 5px;
+    gap: 0.3125rem;            /* was 5px */
 }
 
 .section-heading {
@@ -729,8 +794,8 @@ h3 {
 
 
 #insert {
-    width: 30vw;
-    height: calc(30vw * 3.5 / 2.5);
+    width: 30cqw;                          /* was 30vw */
+    height: calc(30cqw * 3.5 / 2.5);       /* was 30vw */
     display: flex;
 }
 
@@ -775,10 +840,10 @@ h3 {
 
 /*SPRING TRAINING*/
 .trough-outer {
-    border-radius: 10px;
+    border-radius: 0.625rem;   /* was 10px */
     padding: 0.2rem 0.2rem 0.2rem;
     position: relative;
-    height: 30vh;
+    height: 30cqh;             /* was 30vh */
     min-width: 0;
     display: flex;
 }
@@ -786,9 +851,9 @@ h3 {
 .trough-outer::before {
     content: '';
     position: absolute;
-    inset: 8px;
+    inset: 0.5rem;             /* was 8px */
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 4px;
+    border-radius: 0.25rem;    /* was 4px */
     pointer-events: none;
 }
 
@@ -806,7 +871,7 @@ h3 {
 
 .trough-felt {
     background: linear-gradient(180deg, var(--tp-deep), var(--tp-dark));
-    border-radius: 6px;
+    border-radius: 0.375rem;   /* was 6px */
     padding: 2% 0.65rem 2%;
     transition: background 0.35s ease;
     height: 100%;
@@ -843,7 +908,7 @@ h3 {
 @keyframes slideIn {
     to {
         opacity: 1;
-        max-width: 300px;
+        max-width: 18.75rem;   /* was 300px */
         /* Set to a safe max-width or let flexbox handle it */
         transform: translateX(0);
     }
@@ -868,14 +933,14 @@ h3 {
 
 .lineup-slot.on {
     opacity: 1;
-    max-width: 300px;
+    max-width: 18.75rem;       /* was 300px */
 }
 
 .slot-label {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 0.5rem;
     letter-spacing: 0.08em;
-    height: 11px;
+    height: 0.6875rem;         /* was 11px */
 }
 
 
@@ -890,7 +955,7 @@ h3 {
     letter-spacing: 0.13em;
     text-transform: uppercase;
     padding: 0.6rem 1.3rem;
-    border-radius: 3px;
+    border-radius: 0.1875rem;  /* was 3px */
     border: none;
     cursor: pointer;
     transition: transform 0.12s, box-shadow 0.12s, background-color 0.35s, border-color 0.35s, color 0.3s;
@@ -959,7 +1024,9 @@ h3 {
 .card-scene {
     width: 38%;
     aspect-ratio: 5 / 7;
-    perspective: 60%;
+    /* TODO: was "perspective: 60%;" — perspective only accepts a length (or none),
+       so this was invalid and the flip has NO 3D depth today. Left as-is so the
+       look doesn't change. To turn it on, try perspective: 60rem; */
     min-height: 0;
 }
 
@@ -988,13 +1055,13 @@ h3 {
 
 .card-scene.signed {
     opacity: 0.995;
-    transform: translateY(-100vw);
+    transform: translateY(-100cqw);   /* was -100vw */
     transition: transform 0.5s, opacity 0.5s;
 }
 
 .card-scene.sched {
     opacity: 0.995;
-    transform: translateY(70vw);
+    transform: translateY(70cqw);     /* was 70vw */
     transition: transform 0.5s, opacity 0.5s;
 }
 
@@ -1242,7 +1309,7 @@ h3 {
     letter-spacing: 0.1em;
     text-transform: uppercase;
     padding: 0.22rem 0.58rem;
-    border-radius: 2px;
+    border-radius: 0.125rem;   /* was 2px */
     display: inline-block;
     transition: background 0.35s, color 0.35s, border-color 0.35s;
     background: var(--ts);
@@ -1267,7 +1334,8 @@ h3 {
 
 .btn-glass:disabled {
     opacity: 0.6;
-    color: #AAAAAA cursor: not-allowed;
+    /* TODO: was "color: #AAAAAA cursor: not-allowed;" — missing semicolon made
+       the whole line invalid, so neither the grey nor the cursor applied. */
     transform: none !important;
 }
 
@@ -1290,6 +1358,8 @@ GAME BOARD
 
 /* BOARD*/
 #gameplay-content {
+    /* size + centring come from the shared STAGE rule near the top
+       (was: width: 100vw; height: 100dvh; max-width: 100vw; top/left: 0) */
     display: grid;
     grid-template-rows: 9% 28% 28% 7% 28%;
     grid-template-columns: 2.5fr 4fr;
@@ -1299,12 +1369,6 @@ GAME BOARD
         "dice dice"
         "buttons buttons"
         "batter lineup";
-    width: 100vw;
-    height: 100dvh;
-    max-width: 100vw;
-    position: fixed;
-    top: 0;
-    left: 0;
     z-index: 100;
     background-image: repeating-linear-gradient(25deg, #B0864Ca0, #995D27a0, #754414a0, #B0864Ca0, #A37236a0), url("public/assets/planks.jpeg");
     background-size: contain;
@@ -1613,7 +1677,8 @@ GAME BOARD
 }
 
 .runner.off {
-    visibility: none;
+    /* TODO: was "visibility: none;" — not a valid value (hidden/collapse are),
+       so it does nothing today. Left as-is to avoid changing behaviour. */
 }
 
 .runner.departing {
@@ -1667,7 +1732,7 @@ GAME BOARD
 .roll-display {
     text-align: center;
     position: absolute;
-    width: 80vw;
+    width: 80cqw;              /* was 80vw */
     flex-direction: column;
     justify-content: center;
     top: 50%;
@@ -1941,7 +2006,7 @@ GAME BOARD
 }
 
 .mod-trough-outer {
-    border-radius: 10px;
+    border-radius: 0.625rem;   /* was 10px */
     padding: 0.2rem 0.2rem 0.2rem;
     position: relative;
     width: calc(90cqw - 0.4rem);
@@ -1955,14 +2020,14 @@ GAME BOARD
     position: absolute;
     inset: 0.7rem;
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 4px;
+    border-radius: 0.25rem;    /* was 4px */
     pointer-events: none;
 }
 
 .mod-trough {
     /*background: linear-gradient(180deg, var(--tp-deep), var(--tp-dark));*/
     box-shadow: 0.5cqw 0.5cqw 1.5cqw #00000080 inset;
-    border-radius: 6px;
+    border-radius: 0.375rem;   /* was 6px */
     padding: 2% 0.65rem 2%;
     height: 90%;
     width: 100%;
@@ -2016,7 +2081,7 @@ GAME BOARD
 
 .btn-glass {
     background: rgba(0, 0, 0, 0.19);
-    border-radius: 16px;
+    border-radius: 1rem;       /* was 16px */
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(8.1px);
     -webkit-backdrop-filter: blur(8.1px);
