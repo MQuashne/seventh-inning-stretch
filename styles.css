@@ -331,19 +331,18 @@ h3 {
 
 
 #diceRoller {
-    height: 9.375rem;          /* was 150px */
-    width: 50%;
+    height: 28%;
+    width: 100%;
     margin-top: 1.5rem;
     z-index: 9;
     overflow: hidden;
-    /*display: none;*/
 }
 
 /* CHECK: a 3000x300px canvas is fixed-pixel and will not scale. If your dice
    library lets you, size it with width:100%; height:100% and let the library
    read the element size instead. Left alone because I can't see the JS. */
 #canvas {
-    width: 3000px;
+    width: 100%;
     height: 300px;
 }
 

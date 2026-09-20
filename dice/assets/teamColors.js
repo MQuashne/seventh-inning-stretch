@@ -3733,12 +3733,6 @@ export const evergreenJerseys = {
         "stripe": "",
         "text": "#7FB63B",
         "outline": "#6C3C21"
-      },
-      "Poodles": {
-        "jersey": "#F5F5F5",
-        "stripe": "",
-        "text": "",
-        "outline": ""
       }
     },
     "AMA": {
@@ -5470,12 +5464,6 @@ export const evergreenJerseys = {
         "jersey": "#DED4D5",
         "stripe": "#E2E1E0",
         "text": "#1F1F1F",
-        "outline": ""
-      },
-      "Renegades": {
-        "jersey": "#F5F5F5",
-        "stripe": "#0C2340",
-        "text": "",
         "outline": ""
       }
     },
@@ -7218,7 +7206,7 @@ export const evergreenJerseys = {
       "Apples": {
         "jersey": "#8FDCEC",
         "stripe": "",
-        "text": "",
+        "text": "#231F20",
         "outline": ""
       },
       "Away": {
