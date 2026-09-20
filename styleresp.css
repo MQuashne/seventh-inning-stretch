@@ -1,0 +1,2345 @@
+@import 'team-colors.css';
+
+/* ==========================================================================
+   SIZING SYSTEM  (read this first)
+   --------------------------------------------------------------------------
+   The whole app is drawn on a "stage": a box that is always shaped like an
+   iPhone 14 Pro screen (or slightly wider) and simply gets scaled up on
+   bigger screens. Everything inside the stage is sized in one of these:
+
+     rem / em      -> scale with the stage.  1rem = 16px on an iPhone 14 Pro,
+                      and grows proportionally on tablets/desktop.
+     %             -> % of the parent (fine, the parent is on the stage).
+     cqw / cqh     -> 1% of the STAGE width / height (#page, #gameplay-content
+                      and .modal-backdrop are size containers).
+     px            -> ONLY for hairlines (1-2px borders), shadows, text
+                      strokes and scrollbars. These intentionally don't scale.
+
+   NEVER use vw / vh / dvh / svh inside the stage. Those measure the whole
+   browser window, not the stage, which is what made the layout differ on
+   every device.
+   ========================================================================== */
+
+:root {
+    --ref-w: 393;          /* design width in CSS px (iPhone 14 Pro) */
+    --max-aspect: 0.62;    /* widest the stage may be, as width / height.
+                              Phones stay full-width; anything wider
+                              (tablet, desktop) gets black side bars. */
+    --stage-w: min(100vw, calc(100dvh * var(--max-aspect)));
+    --stage-h: 100dvh;
+    --u: calc(var(--stage-w) / var(--ref-w));   /* 1 design px, if you ever need it */
+
+    --die-bg-color: linear-gradient(90deg, white 0%, white 5%, #E81828a0 6%, white 7%, white 35%, #E81828a0 36%, white 37%, white 65%, #E81828a0 66%, white 67%, white 95%, #E81828a0 96%, white 97%, white 100%);
+    --die-font-color: #E81828;
+    --die-outline-color: #ffffff;
+    /* TODO (not a sizing issue, left as-is): the next block uses commas instead of
+       semicolons, so it is ONE broken value and --opp-die-font-color,
+       --opp-die-outline-color and --team-back are never actually defined. */
+    --opp-die-bg-color: #000000,
+        --opp-die-font-color:#000000,
+        --opp-die-outline-color:#000000,
+        --team-back: #FFFFFF;
+    --grass: #618240;
+    --grass-lt: oklch(from var(--grass) calc(l + 0.035) c h);
+    --cream: #f5f0e0;
+    --parchment: #ede0c0;
+    --parchment-dk: #d0bc90;
+    --ink: #180f04;
+    --ink-faded: #4a3520;
+    --wood-dark: #2e1a0a;
+    --wood-mid: #6b3f1e;
+    --wood-light: #9b6032;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --green: #2D5A3D;
+    --green-light: #3d7a52;
+    --red: #8b2020;
+    --red-light: #a82525;
+    --blue: #2a3d62;
+    --blue-light: #3a5585;
+    
+    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.35);
+    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-wood: 0 6px 24px rgba(0, 0, 0, 0.55);
+    --shadow-inset: inset 0 3px 10px rgba(0, 0, 0, 0.6);
+    --td: #000000;
+    --tl: #ffffff;
+    --tl-text: #000000;
+    --tl-dark: oklch(from var(--tl) calc(l - 0.12) c h);
+    box-sizing: border-box;
+    
+}
+
+@font-face {
+    font-family: 'BaseballClubSolid';
+    src: url("public/assets/BaseballClubSolid-E4X69.ttf");
+}
+
+@font-face {
+    font-family: 'Proxima Nova';
+    src: url("https://www.mlbstatic.com/mlb.com/fonts/proxima-nova-regular.woff2")
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    /* The scaling trick: rem now means "16 design px, scaled to the stage".
+       On an iPhone 14 Pro this is exactly 16px, same as before. */
+    font-size: calc(16 * var(--u));
+    -webkit-text-size-adjust: 100%;   /* stop iOS from inflating text on its own */
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    touch-action: manipulation;
+    box-sizing: border-box;
+    /* the page itself never scrolls */
+}
+
+body {
+    background: #000;   /* shows in the side bars on tablet / desktop */
+}
+
+/* THE STAGE
+   Every full-screen layer shares the same size and is centred in the window.
+   #page is normal flow; the other two are fixed overlays. They are size
+   containers, so cqw / cqh inside them mean "% of the stage". */
+#page,
+#gameplay-content,
+.modal-backdrop {
+    width: var(--stage-w);
+    height: var(--stage-h);
+    container-type: size;
+}
+
+#gameplay-content,
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    translate: -50% 0;
+}
+
+h3 {
+    font-family: 'Oswald', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--ink-faded);
+    width: 100%;
+    margin-bottom: 1%;
+    padding: 2% 0;
+    height: 9%;
+    display: flex;
+    align-items: center;
+    margin-top: 3%;
+}
+
+.text-white {
+    color: white;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#page {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    margin: 0 auto;             /* centre the stage horizontally */
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+#page>* {
+    box-sizing: border-box;
+}
+
+#main-screen {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow-y: auto;
+    grid-row: 2;
+    background-image:
+        /*radial-gradient(circle, var(--tp) 0%, var(--tp-dark) 100%),*/
+        url('public/assets/stadiumBG.jpeg');
+    background-blend-mode: color-dodge;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    position: relative;
+}
+
+
+.main-content {
+    padding: 0;
+    flex: 1 0 auto;
+}
+
+#cal-content {
+    /*background-color: var(--td);*/
+    width: 100%;
+    min-height: 100%;
+    /*min-height: calc(100% - 3.3rem);*/
+    
+    padding: 0 0 2rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    
+}
+
+#game-footer {
+    z-index: 5;
+    width: 100%;
+    grid-row: 3;
+}
+
+#game-nav {
+    background: var(--tp);
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    
+}
+
+.nav-item {
+    
+    text-align: center;
+    height: 90%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 1px 0px 0px #00000020;
+}
+
+.nav-item:active {
+    background: var(--tp-light);
+}
+
+.nav-item.active {
+    background: var(--tp-light);
+}
+
+.menu-label {
+    font-size: 0.7rem;
+    font-family: "Oswald";
+}
+
+.material-symbols-outlined {
+    font-size: 2rem;
+}
+
+.front-office-header {
+    width: 100%;
+    height: 10cqh;             /* was 10vh */
+}
+
+/* GAME HEADER */
+.game-header-outer {
+    
+    top: 0;
+    z-index: 100;
+    margin-bottom: 0;
+    grid-row: 1;
+}
+
+.game-header {
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    background-image: linear-gradient(75deg, var(--tp) 0%, var(--tp) 90%, transparent calc(90% + 0.5px), transparent 100%), url("public/assets/planks2.jpeg");
+    background-size: contain;
+    background-position: center;
+    /* background-repeat: no-repeat;*/
+    background-blend-mode: hard-light;
+    padding-left: 16%;
+    padding-right: 1%;
+    margin-bottom: 0;
+    position: relative;
+}
+
+.header-layer-2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(0deg, #FFFFFF40 0%, transparent 20%, transparent 80%, #FFFFFF80), linear-gradient(75deg, transparent 0%, transparent 15%, white calc(15% + 0.5px), white calc(15% + 1px), var(--tp) calc(15% + 1.5px), var(--tp) 90%, white calc(90% + 0.5px), white calc(90% + 1px), transparent calc(90% + 1.5px)), linear-gradient(115deg, #000000f0 0%, transparent 8%, transparent 12%, #FFFFFF20 22%, transparent calc(22% + 0.5px));
+    display: flex;
+    align-items: center;
+}
+
+.game-header-team {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--tp-text);
+    padding-right: 10%;
+    display: flex;
+    align-content: center;
+    position: relative;
+    object-fit: contain;
+    height: 100%;
+    width: 100%;
+    /*margin-top: 0.75rem;*/
+}
+
+#header-team-name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 0.65em;
+}
+
+#game-header-logo-ctr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: 100%;
+    width: 15%;
+}
+
+.block-logo,
+#game-header-logo {
+    object-fit: contain;
+    height: 90%;
+    width: 90%;
+    filter: drop-shadow(1px 0px 0px #FFFFFF60) drop-shadow(-1px 0px 0px #FFFFFF60) drop-shadow(0px 1px 0px #FFFFFF60) drop-shadow(0px -1px 0px #FFFFFF60);
+}
+
+
+.game-footer {
+    position: static;
+}
+
+
+#diceRoller {
+    height: 9.375rem;          /* was 150px */
+    width: 50%;
+    margin-top: 1.5rem;
+    z-index: 9;
+    overflow: hidden;
+    /*display: none;*/
+}
+
+/* CHECK: a 3000x300px canvas is fixed-pixel and will not scale. If your dice
+   library lets you, size it with width:100%; height:100% and let the library
+   read the element size instead. Left alone because I can't see the JS. */
+#canvas {
+    width: 3000px;
+    height: 300px;
+}
+
+.die-box {
+    position: relative;
+    height: 20cqw;
+    width: 20cqw;
+    border-radius: 1cqw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--die-bg-color);
+    font-size: 14cqw;
+    font-family: "BaseballClubSolid";
+    color: var(--die-font-color);
+    -webkit-text-stroke: 0.7px var(--die-outline-color);
+    border: 1px solid #aaaaaa;
+}
+
+.die-box::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(at 5% 5%, #ffffff80 0%, #ffffff00 80%);
+}
+
+.die-box.opp-die {
+    background: var(--opp-die-bg-color);
+    color: var(--opp-die-font-color);
+    -webkit-text-stroke: 0.7px var(--opp-die-outline-color);
+}
+
+#reference img {
+    width: 9.375rem;           /* was 150px */
+}
+
+.card {}
+
+#lineup {
+    display: flex;
+    flex-direction: row;
+    
+    overflow: scroll;
+    height: 12.5rem;           /* was 200px */
+    background: #CCCCCC;
+    /* TODO: was "border: 1 px solid #AAAAAA;" (space = invalid, never applied) */
+    border-radius: 1.25rem;    /* was 20px */
+    gap: 0.625rem;             /* was 10px */
+    align-items: center;
+}
+
+.lineup-card {
+    height: 100%;
+    border-radius: 0.5rem;     /* was 8px */
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+    aspect-ratio: 5 / 7;
+}
+
+.lineup-card-placeholder {
+    height: 100%;
+    border-radius: 0.5rem;     /* was 8px */
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+    aspect-ratio: 5 / 7;
+    color: #FFFFFF80;
+    border: 0.1875rem dashed #FFFFFFD0;   /* was 3px */
+}
+
+.lineup-card svg {
+    height: 100%;
+}
+
+.lineup-card.new {
+    opacity: 1;
+    max-width: 0;
+    /* transform: translateX(-20px);*/
+    animation: slideIn 0.1s ease-out forwards;
+    animation-delay: calc(var(--i, 0) * 100ms);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.36rem;
+}
+
+.form-label {
+    font-family: 'Proxima Nova', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: white;
+}
+
+.form-input,
+.form-select {
+    background: rgba(0, 0, 0, 0.75);
+    border: 1.5px solid rgba(245, 240, 224, 0.16);
+    border-radius: 0.1875rem;  /* was 3px */
+    padding: 0.5rem 0.5rem;
+    font-family: "Proxima Nova";
+    font-size: 0.9rem;
+    color: white;
+    outline: none;
+    transition: border-color 0.15s;
+    width: 100%;
+    text-align: center;
+}
+
+.form-input:focus,
+.form-select:focus {
+    border-color: var(--ts);
+}
+
+.form-input::placeholder {
+    color: rgba(245, 240, 224, 0.28);
+}
+
+.form-select {
+    cursor: pointer;
+}
+
+.form-select option {
+    background: #1c2030;
+}
+
+
+.modal-backdrop {
+    /* size + position now come from the shared STAGE rule near the top
+       (was: position: fixed; inset: 0, which meant "the whole browser window") */
+    /* Tinted green veil — like looking through felt */
+    background: rgba(6, 18, 10, 0.90);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    backdrop-filter: blur(3px) hue-rotate(150deg) saturate(0.5);
+}
+
+.modal-header {
+    background-image: linear-gradient(75deg, var(--tp) 0%, var(--tp) 85%, transparent calc(85% + 0.5px), transparent 100%), url('public/assets/planks.jpeg');
+    background-blend-mode: hard-light;
+    background-size: contain;
+    background-position: center;
+    /*background-repeat: no-repeat;*/
+    /* TODO: was "width: calc(100%-1.5rem);" — calc needs spaces around the minus,
+       so it was invalid and ignored (width stayed auto). Left ignored so the
+       look doesn't change; if you want the inset, use calc(100% - 1.5rem). */
+    height: 10%;
+    display: flex;
+    padding-left: 20%;
+    padding-right: 2%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0px 2px 3px #00000060;
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-header::before {
+    top: -10%;
+    left: -10%;
+    width: 120%;
+    height: 120%;
+    content: "";
+    font-family: Oswald;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.3em;
+    position: absolute;
+    background-image: linear-gradient(75deg, transparent 0, transparent 18%, white calc(18% + 0.5px), var(--tp) calc(18% + 1px), var(--tp) 82%, white calc(82% + 0.5px), transparent calc(82% + 1px), transparent 100%);
+    background-size: cover;
+    background-position: center;
+    /*z-index:30;*/
+    
+}
+
+.modal-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    color: var(--tp-text);
+    flex-grow: 0;
+    z-index: 10;
+}
+
+.modal-body {
+    display: flex;
+    height: 92%;
+    background: var(--td);
+}
+
+.modal-close {
+    background: transparent;
+    color: var(--td);
+    border: none;
+    font-size: 1.5rem;
+    z-index: 20;
+    font-weight: 600;
+}
+
+.lawn-stripes {
+    /* Solid base green */
+    /* Angled semi-transparent gradients to simulate light/shadow on grass */
+    background: repeating-linear-gradient(45deg,
+            var(--grass),
+            var(--grass) 11%,
+            var(--grass-lt) 12%,
+            var(--grass-lt) 23%,
+            var(--grass) 24%);
+    box-shadow: 0 20px 20px #00000020 inset;
+    
+    /* Define the scale of a single repeating pattern block */
+    
+}
+
+.small {
+    height: 30%;
+}
+
+.medium {
+    height: 55%;
+}
+
+.large {
+    height: 90%;
+}
+
+.adapt {
+    height: auto;
+}
+
+.dialog {
+    width: 90%;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    /* TODO: was "justify-content: top;" (invalid, ignored). Probably meant flex-start. */
+    
+}
+
+
+#p {
+    display: flex;
+    flex-direction: row;
+    gap: 0.3125rem;            /* was 5px */
+}
+
+.sw {
+    height: 2.5rem;            /* was 40px */
+    width: 2.5rem;
+}
+
+#tp {
+    background: var(--tp);
+}
+
+#tp-light {
+    background: var(--tp-light);
+}
+
+#tp-dark {
+    background: var(--tp-dark);
+}
+
+#ts {
+    background: var(--ts);
+}
+
+#ts-light {
+    background: var(--ts-light);
+}
+
+#ts-dark {
+    background: var(--ts-dark);
+}
+
+#a {
+    display: flex;
+    flex-direction: row;
+    gap: 0.3125rem;            /* was 5px */
+}
+
+.section-heading {
+    font-family: 'Oswald', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--ink-faded);
+    width: 100%;
+    padding: 2% 0;
+    display: flex;
+    align-items: center;
+}
+
+.section-heading-white {
+    color: white;
+}
+
+.section-subheading {
+    font-family: "Oswald";
+    margin-bottom: 3%;
+}
+
+.instructions {
+    font-family: "Oswald";
+    color: white;
+    font-size: 1.2em;
+    text-align: left;
+    width: 95%;
+    transition: all 0.5s ease-in-out;
+    interpolate-size: allow-keywords;
+}
+
+.section-hero {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 30%;
+    width: 100%;
+    align-items: center;
+    padding: 2.5rem 0 0.5rem 0;
+    gap: 0.3em;
+}
+
+.hero-img {
+    width: 30%;
+    object-fit: contain;
+}
+
+.hero-info {
+    color: white;
+    font-family: "Proxima Nova";
+    font-weight: 600;
+    font-size: 0.8em;
+}
+
+#calendar-body {
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 80%;
+    gap: 0.5rem;
+}
+
+.cal-body-separator {
+    width: 95%;
+    color: #EEEEEE;
+    border-bottom: 0.1em solid #EEEEEE;
+    font-family: "Proxima Nova";
+    font-size: 0.8em;
+    font-weight: 800;
+    background: linear-gradient(0deg, #000000a0 50%, transparent);
+    margin-top: 2em;
+    
+}
+
+.cal-sect {
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.event {
+    display: flex;
+    width: 100%;
+    height: 12cqh;
+    box-shadow: 2px 2px 2px #00000080;
+    font-family: "Oswald";
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 3cqw;
+    padding: 0 1em;
+    position: relative;
+}
+
+.event.active {
+    box-shadow: 4px 4px 4px #00000080;
+    
+}
+
+.event.past {
+    opacity: 65%;
+    height: 6cqh;
+}
+
+.event.home {
+    background: var(--tp);
+    color: var(--tp-text);
+}
+
+.event.away {
+    background: var(--ts);
+    color: var(--ts-text);
+}
+
+.event-details {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: 100%;
+    position: relative;
+}
+
+.event.past .event-date,
+.event.past .event-spot {
+    display: none;
+}
+
+.event-title {
+    font-size: 1.4rem;
+    text-wrap: wrap;
+    text-align: left;
+    flex: 4;
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    height: 70%;
+    min-height: 0;
+}
+
+.event-date {
+    height: 30%;
+    font-size: 0.7em;
+    font-weight: 600;
+    font-family: "Proxima Nova";
+    opacity: 70%;
+}
+
+.event-spot {
+    height: 70%;
+    object-fit: contain;
+}
+
+
+#insert {
+    width: 30cqw;                          /* was 30vw */
+    height: calc(30cqw * 3.5 / 2.5);       /* was 30vw */
+    display: flex;
+}
+
+#insert svg {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 7 / 5;
+}
+
+/*#flexbox-outcomes{
+    width:195px;
+    height:61px;
+    position:absolute;
+    top:285px;
+    left:4px;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-items:center;
+    gap:2px;
+}
+
+.outcome{
+    height:calc(50% - 2px);
+    width:calc(50% - 2px);
+}
+
+.outcome svg{
+    height: 100%;
+    display: inline;
+}
+   
+
+.glyph {
+    width: 0.9em;
+    height: 0.9em;
+    display: inline-block;
+    vertical-align: -0.12em;
+    flex: none;
+}
+*/
+
+/*SPRING TRAINING*/
+.trough-outer {
+    border-radius: 0.625rem;   /* was 10px */
+    padding: 0.2rem 0.2rem 0.2rem;
+    position: relative;
+    height: 30cqh;             /* was 30vh */
+    min-width: 0;
+    display: flex;
+}
+
+.trough-outer::before {
+    content: '';
+    position: absolute;
+    inset: 0.5rem;             /* was 8px */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.25rem;    /* was 4px */
+    pointer-events: none;
+}
+
+.trough-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ta);
+    text-align: center;
+    margin-bottom: 0.75rem;
+    transition: color 0.35s;
+}
+
+.trough-felt {
+    background: linear-gradient(180deg, var(--tp-deep), var(--tp-dark));
+    border-radius: 0.375rem;   /* was 6px */
+    padding: 2% 0.65rem 2%;
+    transition: background 0.35s ease;
+    height: 100%;
+    min-width: 0;
+    display: flex;
+}
+
+.lineup-scroll {
+    display: flex;
+    gap: 0.55rem;
+    overflow-x: auto;
+    padding: 0.3rem 0.05rem 0.65rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--ta-dark) rgba(0, 0, 0, 0.2);
+    height: 80%;
+    min-width: 0;
+}
+
+.lineup-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+
+.lineup-scroll::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+}
+
+.lineup-scroll::-webkit-scrollbar-thumb {
+    background: var(--ta-dark);
+    border-radius: 2px;
+    transition: background 0.35s;
+}
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        max-width: 18.75rem;   /* was 300px */
+        /* Set to a safe max-width or let flexbox handle it */
+        transform: translateX(0);
+    }
+}
+
+.lineup-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.38rem;
+    flex-shrink: 1;
+    height: 100%;
+}
+
+.lineup-slot.new {
+    opacity: 1;
+    max-width: 0;
+    animation: slideIn 0.01s ease-out forwards;
+    animation-delay: calc(var(--i, 0) * 10ms);
+    animation-iteration-count: 1;
+}
+
+.lineup-slot.on {
+    opacity: 1;
+    max-width: 18.75rem;       /* was 300px */
+}
+
+.slot-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.08em;
+    height: 0.6875rem;         /* was 11px */
+}
+
+
+/* BUTTONS */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'Proxima Nova', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.3rem;
+    border-radius: 0.1875rem;  /* was 3px */
+    border: none;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s, background-color 0.35s, border-color 0.35s, color 0.3s;
+    white-space: nowrap;
+    pointer-events: auto;
+}
+
+.btn-wood {
+    background: linear-gradient(115deg, var(--tp) 10%, var(--ts) calc(10% + 1px), var(--ts) 15%, #caa472 calc(15% + 1px), #caa472 100%);
+    color: var(--tp);
+    box-shadow: 0 3px 0 var(--wood-dark), var(--shadow-sm);
+}
+
+.btn-wood:hover {
+    transform: translateY(-1px);
+}
+
+.btn-wood:active {
+    transform: translateY(2px);
+}
+
+.btn-team {
+    background: linear-gradient(170deg, var(--tp-light), var(--tp));
+    color: var(--tp-text);
+    box-shadow: 0 3px 0 var(--tp-dark), var(--shadow-sm);
+    pointer-events: auto;
+    border:none;
+}
+
+.btn-team:hover {
+    transform: translateY(-1px);
+}
+
+.btn-team:active {
+    transform: translateY(2px);
+}
+
+.accordion-sec {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: all 300ms ease-out;
+}
+
+.accordion-sec.open {
+    display: grid;
+    grid-template-rows: 1fr;
+    
+}
+
+.accordion-content {
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* FLIP CARDS */
+
+.card-stage {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    margin: 1% 0;
+}
+
+.card-scene {
+    width: 38%;
+    aspect-ratio: 5 / 7;
+    /* TODO: was "perspective: 60%;" — perspective only accepts a length (or none),
+       so this was invalid and the flip has NO 3D depth today. Left as-is so the
+       look doesn't change. To turn it on, try perspective: 60rem; */
+    min-height: 0;
+}
+
+.flip-card {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 1s;
+    transform-style: preserve-3d;
+}
+
+.card-face {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    backface-visibility: hidden;
+}
+
+.card-face.back {
+    transform: rotateY(180deg);
+}
+
+.flip-card.flipped {
+    transform: rotateY(180deg);
+}
+
+.card-scene.signed {
+    opacity: 0.995;
+    transform: translateY(-100cqw);   /* was -100vw */
+    transition: transform 0.5s, opacity 0.5s;
+}
+
+.card-scene.sched {
+    opacity: 0.995;
+    transform: translateY(70cqw);     /* was 70vw */
+    transition: transform 0.5s, opacity 0.5s;
+}
+
+#gameday-cover {
+    width: 100%;
+    height: 100%;
+    /*background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+        url('public/assets/stadiums/PHI.JPG');*/
+    background-size: cover;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    padding-top: 3em;
+    
+}
+
+.cover-logo {
+    height: 40%;
+    aspect-ratio: 1 / 1;
+    position: relative;
+    object-fit: contain;
+}
+
+#logos {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    aspect-ratio: 16/9;
+    height: 35%;
+    min-height: 4px;
+    position: relative;
+}
+
+#logo-away {
+    position: relative;
+    top: 5%;
+    left: -30%;
+}
+
+#logo-home {
+    position: relative;
+    top: -5%;
+    left: 30%;
+}
+
+#game-cover-heading {
+    width: 5%;
+    text-align: center;
+    margin-top: -1%;
+    margin-bottom: -25%;
+}
+
+#btn-play-ball {
+    margin-top: 2em;
+}
+
+#cover-die-box {
+    scale: 0.75;
+}
+
+#choose-uniform {
+    height: 25%;
+    width: 75%;
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: space-around;
+}
+
+#game-span {
+    margin: 0 auto 0 auto;
+    text-align: center;
+    
+}
+
+#lineup-content {
+    width: 100%;
+    min-height: 100%;
+    /*min-height: calc(100% - 3.3rem);*/
+    
+    padding: 0 0 2rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    
+}
+
+.lineup-table {
+    width: 95%;
+    min-height: 0;
+    background: #00000080;
+    display: flex;
+    gap: 0.3rem;
+    flex-direction: column;
+    align-items: center;
+    
+    
+}
+
+.lineup-header {
+    color: white;
+}
+
+.lineup-row {
+    width: calc(100% - 0.3rem);
+    height: calc(100% - 0.3rem);
+    border-radius: 0.5rem;
+}
+
+.lineup-bar-wrap {
+    width: 99%;
+    height: 100%;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 2.2rem;
+}
+
+.lineup-bar-space {
+    width: 99%;
+    height: 100%;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 2.2rem;
+    background: #FFFFFF60;
+    border: 0.1rem dashed #FFFFFF80;
+    margin: -0.1rem;
+}
+
+::view-transition-group(mrunning-element) {
+    animation-duration: 3.8s;
+}
+
+.lineup-bar {
+    background: linear-gradient(0deg, var(--tp-dark), var(--tp) 70%, var(--tp-light));
+    display: flex;
+}
+
+.lineup-num {
+    background: linear-gradient(0deg, var(--ts-dark), var(--ts) 70%, var(--ts-light));
+    height: 100%;
+    width: 1.8rem;
+    border-top-left-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+    color: var(--ts-text);
+    font-family: Oswald;
+    font-size: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+}
+
+.fatigue-count {
+    color: var(--tp-text);
+    font-family: Oswald;
+    font-size: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+}
+
+.bar-sep {
+    height: 100%;
+    width: 0.15rem;
+}
+
+.lineup-name {
+    color: var(--tp-text);
+    font-family: "Proxima Nova";
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 38%;
+    padding-left: 0.5rem;
+}
+
+.last-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.first-name {
+    font-size: 0.9rem;
+    margin-right: 0.3rem;
+}
+
+
+
+.lineup-dice {
+    height: 55%;
+    aspect-ratio: 1 / 1;
+}
+
+.lineup-reroll {
+    height: 55%;
+    aspect-ratio: 1 / 1;
+}
+
+.lineup-mod {
+    height: 55%;
+    aspect-ratio: 1 / 1;
+}
+
+.fatigue-symbol {
+    height: 70%;
+    aspect-ratio: 1 / 1;
+    margin-right: -5%;
+}
+
+.lineup-resources,
+.lineup-fatigue {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    width: 18.2%;
+}
+
+.lineup-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 0.8rem;
+    align-items: center;
+    justify-content: end;
+    width: 32%;
+}
+
+
+.lineup-btn {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.22rem 0.58rem;
+    border-radius: 0.125rem;   /* was 2px */
+    display: inline-block;
+    transition: background 0.35s, color 0.35s, border-color 0.35s;
+    background: var(--ts);
+    color: var(--ts-text);
+    height: 70%;
+    box-shadow: 0 3px 0 var(--tp-dark), var(--shadow-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 21%;
+}
+
+.btn-symbol {
+    font-size: 1rem;
+}
+
+.btn:disabled {
+    opacity: 0.36;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn-glass:disabled {
+    opacity: 0.6;
+    /* TODO: was "color: #AAAAAA cursor: not-allowed;" — missing semicolon made
+       the whole line invalid, so neither the grey nor the cursor applied. */
+    transform: none !important;
+}
+
+.bronze-grad {
+    background: linear-gradient(45deg, #C4a588, #895b40 33%, #edcdb4 67%, #8b5d3b);
+}
+
+.silver-grad {
+    background: linear-gradient(225deg, #b1b2b4, #9A9B9F 20%, #F0F0F0 55%, #A7A8AC 75%, #EDEDED);
+}
+
+.gold-grad {
+    background: linear-gradient(135deg, #f6e073, #c28f1a 25%, #f9e37a 60%, #b78c1a 75%, #f0d96c)
+}
+
+
+/*========================
+GAME BOARD
+========================*/
+
+/* BOARD*/
+#gameplay-content {
+    /* size + centring come from the shared STAGE rule near the top
+       (was: width: 100vw; height: 100dvh; max-width: 100vw; top/left: 0) */
+    display: grid;
+    grid-template-rows: 9% 28% 28% 7% 28%;
+    grid-template-columns: 2.5fr 4fr;
+    grid-template-areas:
+        "scorebug scorebug"
+        "resources field"
+        "dice dice"
+        "buttons buttons"
+        "batter lineup";
+    z-index: 100;
+    background-image: repeating-linear-gradient(25deg, #B0864Ca0, #995D27a0, #754414a0, #B0864Ca0, #A37236a0), url("public/assets/planks.jpeg");
+    background-size: contain;
+}
+
+.game-surface {
+    height: calc(100% - 0.3rem);
+    width: calc(100% - 0.3rem);
+    background: var(--td);
+    background-clip: padding-box;
+    overflow: hidden;
+    position: relative;
+}
+
+.game-surface::after {
+    position: absolute;
+    box-shadow: inset 0.1rem 0.1rem 0.5rem #000;
+    inset: 0;
+    content: "";
+    pointer-events: none;
+}
+
+.board-zone {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* SCOREBUG */
+#scorebug-zone {
+    grid-area: scorebug;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#scorebug-surface {
+    
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    align-items: center;
+    justify-content: center;
+    grid-template-areas:
+        "back-btn away-logo away-score home-score home-logo .";
+    position: relative;
+}
+
+#game-back {
+    grid-area: back-btn;
+    width: 100%;
+    text-align: center;
+    color: white;
+    
+}
+
+#game-home-logo {
+    grid-area: home-logo;
+    height: 100%;
+    width: 100%;
+    align-self: center;
+    justify-self: center;
+}
+
+#game-away-logo {
+    grid-area: away-logo;
+    height: 100%;
+    width: 100%;
+}
+
+#game-home-score {
+    grid-area: home-score;
+    width: 100%;
+    height: 100%;
+}
+
+#game-away-score {
+    width: 100%;
+    height: 100%;
+    justify-self: center;
+}
+
+.game-home {}
+
+.game-away {}
+
+.game-score {
+    font-size: 2.4rem;
+    text-align: center;
+    font-family: "Oswald";
+    font-weight: 800;
+    text-shadow: 0.05rem 0.05rem 0.1rem #000;
+    background-clip: padding-box;
+}
+
+.game-logo {
+    padding: 10% 15% 20% 15%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+.game-logo img {
+    object-fit: contain;
+    aspect-ratio: 1/1;
+    width: 100%;
+}
+
+
+/* SCOREBOARD (RESOURCES) */
+#scoreboard-zone {
+    grid-area: resources;
+    width: 100%;
+    height: 100%;
+}
+
+#scoreboard-surface {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    grid-template-rows: 1fr repeat(3, 2fr);
+    grid-template-areas: "title title title"
+        "dice dice-count inning"
+        "reroll reroll-count inning"
+        "mod mod-count outs";
+    align-items: center;
+}
+
+#scoreboard-title {
+    font-size: 1rem;
+    font-family: "Oswald";
+    color: var(--tp-text);
+    font-size: 1.1rem;
+    grid-area: title;
+    text-align: center;
+}
+
+.scoreboard-resource-symbol {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70%;
+    height: 70%;
+    aspect-ratio: 1 / 1;
+    justify-self: center;
+    align-self: center;
+}
+
+.scoreboard-resource-count {
+    color: var(--tp-text);
+    font-size: 1.3rem;
+    font-family: "Oswald";
+    text-align: center;
+    
+}
+
+#scoreboard-dice-count {
+    grid-area: dice-count;
+}
+
+#scoreboard-reroll-count {
+    grid-area: reroll-count;
+}
+
+#scoreboard-mod-count {
+    grid-area: mod-count;
+}
+
+#scoreboard-dice {
+    grid-area: dice;
+}
+
+#scoreboard-reroll {
+    grid-area: reroll;
+}
+
+#scoreboard-mod {
+    grid-area: mod;
+}
+
+#scoreboard-inning {
+    grid-area: inning;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--tp-text);
+    font-family: "Oswald";
+    font-size: 1.3rem;
+}
+
+.inning-off {
+    visibility: hidden;
+}
+
+#out-count {
+    display: flex;
+    flex-direction: column;
+    grid-area: outs;
+    width: 100%;
+    height: 100%;
+}
+
+#out-label {
+    color: var(--tp-text);
+    font-size: 0.7rem;
+    font-family: "BaseballClubSolid";
+    width: 100%;
+    text-align: center;
+}
+
+#out-pips {
+    display: flex;
+    height: 50%;
+    justify-content: center;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.out-pip {
+    height: 1rem;
+    width: 1rem;
+    border-radius: 50%;
+    border: 0.1rem solid var(--tp-text);
+}
+
+.out-on {
+    background: var(--tp-text);
+}
+
+
+/* FIELD */
+#field-zone {
+    grid-area: field;
+    height: 100%;
+}
+
+#field-surface {
+    background-image: url("public/assets/grassBG.jpg");
+    background-size: 50%;
+    background-position-y: 90%;
+    background-position-x: 50%;
+    background-clip: padding-box;
+    object-fit: contain;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#field-box {
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+    grid-template-areas: "control";
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    position: relative;
+}
+
+#infield {
+    height: 100%;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    grid-area: control;
+}
+
+#runners {
+    height: 100%;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    grid-area: control;
+    position: relative;
+    transform: scale(var(--runner-scale, 1));
+    transform-origin: top left;
+}
+
+.base-path-def {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    visibility: hidden;
+    
+}
+
+.runner {
+    width: 6%;
+    height: 6%;
+    border-radius: 50%;
+    background: var(--die-bg-color);
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--die-font-color);
+    -webkit-text-stroke: 0.7px var(--die-outline-color);
+    paint-order: stroke fill;
+    font-family: "BaseballClubSolid";
+    font-size: 0.55rem;
+    text-align: center;
+    offset-path: url(#basePath);
+    offset-distance: 0%;
+    offset-rotate: 0deg;
+    transition: offset-distance 500ms ease;
+}
+
+.runner.off {
+    /* TODO: was "visibility: none;" — not a valid value (hidden/collapse are),
+       so it does nothing today. Left as-is to avoid changing behaviour. */
+}
+
+.runner.departing {
+    scale: 0%;
+    transition: scale 100ms;
+}
+
+/*
+.run-0 {
+    top: 83.2%;
+    left: 44.5%;
+}
+
+.run-2 {
+    top: 17%;
+    left: 44.5%;
+}
+
+.run-3 {
+    top: 49.6%;
+    left: 12.1%;
+}
+
+.run-1 {
+    top: 49.6%;
+    left: 76.5%;
+}
+*/
+/* DICE ROLL */
+#roll-zone {
+    grid-area: dice;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#roll-surface {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 110% auto;
+    box-shadow: inset 0.1rem 0.1rem 7rem #000;
+    background-clip: padding-box;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.roll-display {
+    text-align: center;
+    position: absolute;
+    width: 80cqw;              /* was 80vw */
+    flex-direction: column;
+    justify-content: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 50%;
+    z-index: 8;
+    display: flex;
+    pointer-events: none;
+}
+
+.display-shift {
+    margin-top: 20%;
+}
+
+#display-row-1 {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+    gap: 1em;
+}
+
+.roll-options {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.roll-play {
+    /* From https://css.glass */
+    font-size: 2rem;
+    width: 100%;
+}
+
+.roll-option {
+    font-size: 1.25rem;
+    width: 45%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1% 0;
+    margin: 1% 0;
+}
+
+#offer-pitcher {
+    width: 100%;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.98);
+    }
+    
+    50% {
+        transform: scale(1.02);
+    }
+    
+    100% {
+        transform: scale(0.98);
+    }
+}
+
+@keyframes pulseSmall {
+    0% {
+        transform: scale(0.99);
+    }
+    
+    50% {
+        transform: scale(1.01);
+    }
+    
+    100% {
+        transform: scale(0.99);
+    }
+}
+
+/* BUTTONS */
+#action-zone {
+    grid-area: buttons;
+    width: 100%;
+    height: 100%;
+}
+
+#action-surface {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-game {
+    padding: 0.3rem;
+    font-size: 0.7rem;
+    margin: 0 0.5rem;
+    flex-grow: 0.25;
+    text-align: center;
+    justify-content: center;
+}
+
+/* BATTERS */
+
+#order-zone {
+    grid-area: lineup;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+}
+
+#batter-zone {
+    grid-area: batter;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#batter-surface {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#batter-surface .lineup-card {
+    height: 90%;
+    
+}
+
+#order-surface {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 0.3rem;
+    min-width: 0;
+    width: 100%;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+}
+
+#order-surface .lineup-card {
+    height: 90%;
+    scroll-snap-align: start;
+    scroll-margin: 0.25em;
+}
+
+#gameRoller {
+    width: 100%;
+    height: 100%;
+}
+
+#dice-input-border {
+    width: 80%;
+    height: 25%;
+    position: absolute;
+    bottom: 0.15rem;
+    justify-self: center;
+    background: #ffffff;
+    clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+    grid-area: dice;
+    padding: 0.1rem 0.1rem 0 0.1rem;
+}
+
+#dice-input {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    background: #000000;
+    clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    gap: 1em;
+}
+
+#dice-input-symbol {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60%;
+    width: initial;
+    aspect-ratio: 1 / 1;
+    position: relative;
+    font-size: 4cqh;
+    margin-right: 0.5em;
+}
+
+.dice-adj {
+    color: white;
+    font-size: 1em;
+    background: transparent;
+    border: none;
+}
+
+.dice-adj:disabled {
+    opacity: 0.35;
+}
+
+#dice-input-count {
+    color: white;
+    font-size: 1.3em;
+    font-family: "Oswald";
+}
+
+#sub-cover {
+    grid-column: 1 / -1;
+    grid-row: 1 / 5;
+    z-index: 20;
+    background: #000000e0;
+    display:flex;
+    flex-direction:column;
+    justify-content: center;
+    align-items: center;
+    font-family:"Oswald";
+    font-size:1.2rem;
+    text-align: center;
+    text-transform: uppercase;
+    color: white;
+    gap: 2rem;
+    padding-top:50%;
+}
+
+.sub-modal-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.sub-modal-body {
+    width: 100%;
+    height: 85%;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sub-modal-action {
+    width: 100%;
+    height: 15%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sub-modal-action button{
+    font-size:1.2rem;
+    font-family:"Oswald";
+}
+
+.mod-dialog {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.mod-count-box {
+    margin: 1em 0 0 0;
+    display: flex;
+    flex-direction: row;
+}
+
+.mod-trough-outer {
+    border-radius: 0.625rem;   /* was 10px */
+    padding: 0.2rem 0.2rem 0.2rem;
+    position: relative;
+    width: calc(90cqw - 0.4rem);
+    min-width: 0;
+    display: flex;
+    /*margin-top:0.25rem;*/
+}
+
+.mod-trough-outer::before {
+    content: '';
+    position: absolute;
+    inset: 0.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.25rem;    /* was 4px */
+    pointer-events: none;
+}
+
+.mod-trough {
+    /*background: linear-gradient(180deg, var(--tp-deep), var(--tp-dark));*/
+    box-shadow: 0.5cqw 0.5cqw 1.5cqw #00000080 inset;
+    border-radius: 0.375rem;   /* was 6px */
+    padding: 2% 0.65rem 2%;
+    height: 90%;
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    justify-content: center;
+}
+
+
+
+
+#mod-area {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#mod-action {
+    width: 100%;
+    position: absolute;
+    display: flex;
+    justify-content: space-around;
+    bottom: 2%;
+    height: 20%;
+}
+
+#mod-overlay {
+    width: 95%;
+    height: 50%;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -15%;
+    z-index: 10;
+}
+
+.mod-overlay-select {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 8.33%;
+    flex-grow: 1;
+    max-width: 16.5%;
+}
+
+
+.btn-glass {
+    background: rgba(0, 0, 0, 0.19);
+    border-radius: 1rem;       /* was 16px */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8.1px);
+    -webkit-backdrop-filter: blur(8.1px);
+    border: 1px solid rgba(0, 0, 0, 0.41);
+    text-align: center;
+    color: white;
+    font-family: oswald;
+    font-weight: 600;
+    pointer-events: auto;
+}
+
+.btn-pulse {
+    animation: pulse 1s infinite;
+}
+
+.btn-back {
+    width: 15%;
+    /*height: 100%;*/
+    text-align: center;
+    color: white;
+    font-family: oswald;
+    font-size: 2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#mod-play {
+    width: 50%;
+    font-size: 2rem;
+    margin-top: 35%;
+    
+}
+
+.mod-shift {
+    margin-top: 5%;
+}
+
+#mod-scroll {
+    /*position:absolute;*/
+    display: flex;
+    gap: 0.55rem;
+    overflow-x: auto;
+    padding: 0.3rem 0.05rem 0.65rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--ta-dark) rgba(0, 0, 0, 0.2);
+    
+    justify-content: space-around;
+    width: 100%;
+    
+    background: var(--td);
+}
+
+.mod-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+
+.mod-scroll::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+}
+
+.mod-scroll::-webkit-scrollbar-thumb {
+    background: var(--ta-dark);
+    border-radius: 2px;
+    transition: background 0.35s;
+}
+
+.mod-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    height: 100%;
+    position: relative;
+    
+}
+
+.mod-selector .die-box {
+    height: 10cqw;
+    width: 10cqw;
+    aspect-ratio: 1 / 1;
+    font-size: 10cqw;
+}
+
+.mod-control {}
+
+.mod-adj {
+    color: white;
+    font-size: 1em;
+    background: transparent;
+    border: none;
+}
+
+.mod-adj:disabled {
+    opacity: 0.35;
+}
+
+#reroll-confirm {
+    font-size: 2rem;
+    width: 50%;
+}
+
+#pitcher-card {
+    position: absolute;
+    background: var(--td);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index:21;
+}
+
+#opp-card {
+    position: absolute;
+    background: var(--td);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 12;
+}
+
+#roll-fix {
+    position: absolute;
+    font-size: 1.5rem;
+    color: white;
+    top: 0.5rem;
+    right: 0.5rem;
+}
+
+#main-roll {
+    position: absolute;
+    width: 100%;
+    /*height: 100%;*/
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#opp-roll {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.roll-btn {
+    width: 60%;
+    text-align: center;
+    font-size: 1.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#runner-choice-overlay {
+    width: 95%;
+    height: 50%;
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: -15%;
+    z-index: 8;
+    gap: 1.5em;
+}
+
+.runner-choice {
+    width: 2em;
+    height: 2em;
+    border-radius: 50%;
+    background: var(--die-bg-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--die-font-color);
+    -webkit-text-stroke: 0.7px var(--die-outline-color);
+    paint-order: stroke fill;
+    font-family: "Oswald";
+    font-size: 1.75rem;
+    text-align: center;
+    position: relative;
+}
+
+.runner-choice.chosen {
+    opacity: 50%;
+}
+
+.notification {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-left: 1em solid var(--tl-dark);
+    background-color: var(--tl);
+    color: var(--tl-text);
+    font-family: oswald;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    padding-left: 1em;
+    transition: transform 0.25s;
+}
+
+.notification.showing {
+    transform: translateY(-100%);
+}
+
+#process-mode {
+    color: white;
+    font-size: 0.25em;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.sub-gallery {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: scroll;
+    flex-direction: column;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    position: relative;
+}
+
+.sub-gallery .lineup-card {
+    scroll-snap-align: center;
+    position: relative;
+}
+
+.lineup-card::before {
+    content: "\200B";
+    /* Inserts a zero-width space character */
+}
+
+.modal-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5em;
+}
+
+.sub-card {
+    width: 40cqw;
+}
