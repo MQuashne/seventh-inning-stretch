@@ -1409,6 +1409,7 @@ GAME BOARD
     
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows:100%;
     align-items: center;
     justify-content: center;
     grid-template-areas:
@@ -1437,6 +1438,9 @@ GAME BOARD
     height: 100%;
     width: 100%;
 }
+#away-score-logo {
+    object-fit: contain;
+}
 
 #game-home-score {
     grid-area: home-score;
@@ -1461,10 +1465,15 @@ GAME BOARD
     font-weight: 800;
     text-shadow: 0.05rem 0.05rem 0.1rem #000;
     background-clip: padding-box;
+    line-height:1;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    
 }
 
 .game-logo {
-    padding: 10% 15% 20% 15%;
+    padding: 10%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1474,7 +1483,7 @@ GAME BOARD
 .game-logo img {
     object-fit: contain;
     aspect-ratio: 1/1;
-    width: 100%;
+    height:100%;
 }
 
 
