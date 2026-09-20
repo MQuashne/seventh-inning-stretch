@@ -68,7 +68,8 @@ function targetText(target, hasCount = false) {
       textAnchor: "middle",
       alignmentBaseline: "middle",
       fontSize: 60,
-      fontWeight: 800
+      fontWeight: 800,
+      letterSpacing: "-0.4rem"
     }
   });
   text.textContent = target;
