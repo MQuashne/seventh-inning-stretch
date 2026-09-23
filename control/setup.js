@@ -36,6 +36,7 @@ function shuffle(array) {
 };
 
 export function gameSetup() {
+  document.documentElement.dataset.team = teams[Math.floor(Math.random()*teams.length)].code;
   G.myTeam = document.documentElement.dataset.team;
   G.thisTeam = teams.find((t) => t.code === document.documentElement.dataset.team)
   $t('header-team-name').textContent = `${G.thisTeam.city} ${G.thisTeam.name}`;
@@ -47,7 +48,7 @@ export function gameSetup() {
   const mainModal = new Modal();
   
   //Create 3 player decks
-  const t1Players = players.filter(player => (player.tier === 1 && player.condition === "roll"));
+  const t1Players = players.filter(player => (player.tier === 1));
   const t1Pitchers = pitchers.filter(pitcher => (pitcher.tier === 1));
   shuffle(t1Players);
   shuffle(t1Pitchers);
@@ -73,7 +74,6 @@ export function gameSetup() {
   //Get initial Roster of T1 Players
   G.lineup.order = t1Players.splice(0, 9);
   G.lineup.pitcher = t1Pitchers.splice(0, 1)[0];
-  G.lineup.bench.push(players.find(p => p.id==="008"));
   
   G.lineup.order.forEach((player) => player.team = G.thisTeam.code);
   G.lineup.pitcher.team = G.thisTeam.code;

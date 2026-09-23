@@ -1192,6 +1192,7 @@ export const DICE = (function() {
         delete threeD_dice.dice_material;
         delete threeD_dice.d4_material;
         delete threeD_dice.d100_material;
+        console.log(vars.dice_color)
     }
     
     

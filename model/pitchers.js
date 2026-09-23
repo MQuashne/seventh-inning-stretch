@@ -193,5 +193,6 @@ export const pitchers = [
    used:0,
    ability:"addD10",
    type:"temp",
-   desc: "Add the d10 to the opponent's pool, then remove one die before resolving the inning."
+   desc: "Add the d10 to the opponent's pool, then remove one die before resolving the inning. saving"
+   
 }]

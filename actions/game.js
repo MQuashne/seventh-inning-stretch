@@ -18,6 +18,10 @@ mod
 reroll
 */
 
+//=============================
+// GAME LIFECYCLE
+//=============================
+
 export function playBall() {
   const gameEvent = G.schedule.find(e => e.id === `G${G.gameNum}`);
   const thisGame = {
@@ -91,73 +95,21 @@ export function playBall() {
     state.lineup.order.forEach(pl => pl.available = false);
     state.lineup.pitcher.available = false;
   }, ["game:started"]);
-}
-
-export function firstBatter(player) {
-  store.update(state => {
-    state.game.runners.push({ player: player, location: 0 });
-    state.game.dice += player.dice;
-    state.game.rerolls += player.reroll;
-    state.game.mods += player.modifier;
-    state.game.mode = "roll";
-  }, [
-    ["batter:changed", player]
-  ]);
-}
-
-export function subBatter(subOut, subIn) {
-  store.update(state => {
-    
-    const batIdx = state.lineup.order.indexOf(subOut);
-    const benchIdx = state.lineup.bench.indexOf(subIn);
-    
-    
-    state.game.runners[state.game.runners.length - 1].player = subIn;
-    state.game.dice += (subIn.dice - subOut.dice);
-    state.game.rerolls += (subIn.reroll - subOut.reroll);
-    state.game.mods += (subIn.modifier - subOut.modifier);
-    [state.lineup.order[batIdx], state.lineup.bench[benchIdx]] = [state.lineup.bench[benchIdx], state.lineup.order[batIdx]];
-    subOut.available = false;
-    changeMode("roll");
-  }, ["batter:sub"]);
-  //update runner array
-  //remove old batter resources 
-}
-
-export function nextBatter() {
-  let batter;
-  store.update(state => {
-    state.game.currentBatterIndex < 8 ? state.game.currentBatterIndex++ : state.game.currentBatterIndex = 0;
-    batter = state.lineup.order[state.game.currentBatterIndex];
-    state.game.runners.push({ player: batter, location: 0 });
-    state.game.dice += batter.dice;
-    state.game.rerolls += batter.reroll;
-    state.game.mods += batter.modifier;
-    state.game.mode = "roll";
-  }, ["batter:changed"]);
-}
-
-export function playerOut(outPlayer) {
-  const runnerIndex = G.game.runners.findIndex(r => r.player === outPlayer);
-  console.log("index")
-  console.log(runnerIndex)
-  const runnerLocation=G.game.runners[runnerIndex].location;
-
-  store.update(state => {
-      state.game.runners.splice(runnerIndex, 1);
-      state.game.outs++;
-      state.game.process = "hit";
-    },["player:out", outPlayer ]);
   
-  if (runnerLocation === 0) {
-    store.emit("batter:out", outPlayer);
-  }
-  
-  if (G.game.outs >= 3) {
-    endOffHalf();
+  if (G.game.home) {
+    store.emit("inning:offense");
+  } else {
+    store.emit("inning:defense");
   }
 }
 
+export function endGame() {
+  
+}
+
+//=============================
+// INNING MANAGEMENT
+//=============================
 
 export function endOffHalf() {
   if (G.game.half === 1 && G.game.inning >= 9 && G.game.score[1] > G.game.score[0]) {
@@ -190,17 +142,60 @@ export function endDefHalf(runs) {
   endOffHalf();
 }
 
-
-export function startOffHalf() {
-  //  nextBatter();
+export function startDefHalf() {
+  store.emit("inning:defense");
 }
 
+//=============================
+// BATTER MANAGEMENT
+//=============================
 
-export function endGame() {
-  
+export function firstBatter(player) {
+  store.update(state => {
+    state.game.runners.push({ player: player, location: 0 });
+    state.game.dice += player.dice;
+    state.game.rerolls += player.reroll;
+    state.game.mods += player.modifier;
+    state.game.mode = "roll";
+  }, [
+    ["batter:changed", player]
+  ]);
 }
 
-//ADVANCING RUNNERS
+export function subBatter(subOut, subIn) {
+  store.update(state => {
+    const batIdx = state.lineup.order.indexOf(subOut);
+    const benchIdx = state.lineup.bench.indexOf(subIn);
+    state.game.runners[state.game.runners.length - 1].player = subIn;
+    state.game.dice += (subIn.dice - subOut.dice);
+    state.game.rerolls += (subIn.reroll - subOut.reroll);
+    state.game.mods += (subIn.modifier - subOut.modifier);
+    [state.lineup.order[batIdx], state.lineup.bench[benchIdx]] = [state.lineup.bench[benchIdx], state.lineup.order[batIdx]];
+    subOut.available = false;
+    changeMode("roll");
+  }, ["batter:sub"]);
+}
+
+export function nextBatter() {
+  let batter;
+  store.update(state => {
+    state.game.currentBatterIndex < 8 ? state.game.currentBatterIndex++ : state.game.currentBatterIndex = 0;
+    batter = state.lineup.order[state.game.currentBatterIndex];
+    state.game.runners.push({ player: batter, location: 0 });
+    state.game.dice += batter.dice;
+    state.game.rerolls += batter.reroll;
+    state.game.mods += batter.modifier;
+    state.game.mode = "roll";
+  }, ["batter:changed"]);
+}
+
+function getBatter() {
+  return G.lineup.order[G.game.currentBatterIndex]
+}
+
+//=============================
+// RUNNER ADVANCEMENT
+//=============================
 
 export function advanceRunners(lastPlay) {
   store.update((state) => {
@@ -267,73 +262,41 @@ function maybeEnterRunMode(state, lastPlay) {
   }
 }
 
-/*
-export function advanceRunners(lastPlay) {
-  const movedRunners = [];
-  let advanceBy;
-  store.update((state) => {
-    const batter = state.game.runners.find(r => r.location === 0);
-    const FB = state.game.runners.find(r => r.location === 1);
-    const SB = state.game.runners.find(r => r.location === 2);
-    const TB = state.game.runners.find(r => r.location === 3);
-    let hit = false;
-    
-    if (lastPlay === "BB") {
-      batter.location = 1;
-      if (FB) {
-        FB.location = 2;
-        if (SB) {
-          SB.location = 3;
-          if (TB) {
-            TB.location = 4;
-          }
-        }
-      }
-    }
-    else if (lastPlay === "SAC") {
-      [FB, SB, TB].forEach((r) => {
-        if (r) {
-          r.location++;
-        };
-      });
-      playerOut(batter.player);
-    } else {
-      hit = lastPlay === "extraBases" ? false : true;
-      switch (lastPlay) {
-        case "1B":
-          advanceBy = 1;
-          break;
-        case "2B":
-          advanceBy = 2;
-          break;
-        case "3B":
-          advanceBy = 3;
-          break;
-        case "HR":
-          advanceBy = 4;
-          break;
-        case "extraBases":
-          advanceBy = 1;
-          break;
-      }
-      state.game.runners.forEach((rn) => {
-        const oldLocation = rn.location
-        rn.location = Math.min(rn.location + advanceBy, 4);
-      })
-      if (lastPlay === "extraBases") {
-        state.game.runners[state.game.runners.length - 1].location -= 1;
-        state.game.process = "hit";
-      }
-    }
-    if (hit && state.game.runners.filter(r => r.location < 4).length >= 2) {
-      state.game.mode = "run";
-    }
-  }, [
-    ["runners:advanced", { lastPlay }]
-  ])
+//=============================
+// OUTS AND SCORING
+//=============================
+
+export function playerOut(outPlayer) {
+  const runnerIndex = G.game.runners.findIndex(r => r.player === outPlayer);
+  const runnerLocation = G.game.runners[runnerIndex].location;
+  
+  store.update(state => {
+    state.game.runners.splice(runnerIndex, 1);
+    state.game.outs++;
+    state.game.process = "hit";
+  }, ["player:out", outPlayer]);
+  
+  if (runnerLocation === 0) {
+    store.emit("batter:out", outPlayer);
+  }
+  
+  if (G.game.outs >= 3) {
+    endOffHalf();
+  }
 }
 
-*/
+export function allRunnersOut() {
+  const playerCount = G.game.runners.length;
+  if (G.game.outs + playerCount < 3) {
+    store.update(state => {
+      state.game.runners = [];
+      state.game.outs += playerCount;
+    }, ["batter:out"])
+  } else {
+    endOffHalf();
+  }
+}
+
 export function runScored(runner) {
   const runnerIndex = G.game.runners.findIndex(r => r === runner);
   if (runnerIndex < 0) return;
@@ -343,6 +306,9 @@ export function runScored(runner) {
   }, ["run:scored"]);
 }
 
+//=============================
+// ROLLS AND OUTCOMES
+//=============================
 
 export function endOffenseRoll(dice) {
   //Charges resources and locks in result from getBatterOutcome 
@@ -371,6 +337,15 @@ export function endOffenseRoll(dice) {
   );
 }
 
+export function endDefenseRoll(dice) {
+  const outcome = getOpponentOutcome(dice);
+  store.update(state => {
+    state.game.currentRoll = dice;
+    state.game.currentOutcome = outcome;
+    state.game.mode="outcome";
+  },["defense:rolled"]);
+}
+
 export function getBatterOutcome(batter, dice) {
   //Shows the potential outcome based on dice and batter 
   const outcomes = batter.outcomes;
@@ -386,8 +361,15 @@ export function getBatterOutcome(batter, dice) {
       break;
     }
   }
-  if (pass === false) outcome = "out";
+  if (pass === false) {
+    outcome = "out";
+  }
   return outcome
+}
+
+export function getRunnerOutcome(dice) {
+  const result = G.game.outs < 2 ? dice.filter(d => d === 6).length > 0 : dice.filter(d => d >= 5).length > 0;
+  return result ? "safe" : "out";
 }
 
 export function applyMods(batter, dice, modCount) {
@@ -408,18 +390,14 @@ export function applyMods(batter, dice, modCount) {
   }, ["mods:applied"]);
 }
 
-//store.emit("batter:rolled", { outcome, best });
-
-export function testOpp(opp, dice, type) {
-  const result = oppTests[opp.result.test](dice);
-  store.emit("opp:rolled", { result });
+export function getOpponentOutcome(dice) {
+  const result = oppTests[G.game.opponent.result.test](dice);
   return result;
 }
 
-export function getRunnerOutcome(dice) {
-  const result = G.game.outs < 2 ? dice.filter(d => d === 6).length > 0 : dice.filter(d => d >= 5).length > 0;
-  return result ? "safe" : "out";
-}
+//=============================
+// MODE/PROCESS STATE
+//=============================
 
 export function changeMode(mode) {
   store.update(state => {
@@ -432,6 +410,10 @@ export function changeProcess(process) {
   }, ["process:changed"]);
 }
 
+//=============================
+// SPECIAL CASES
+//=============================
+
 export const specialBatterThrow = {
   "008": () => {
     store.update(state => {
@@ -439,5 +421,29 @@ export const specialBatterThrow = {
       state.game.dice -= 3;
       advanceRunners("SAC");
     })
+  },
+  "011": () => {
+    store.update(state => {
+      state.game.dice += state.game.runners.length - 1;
+    });
+    if (G.game.runners.find(r => r.location === 1)) {
+      playerOut(getBatter());
+    } else {
+      advanceRunners("BB");
+    };
+  },
+  "012": () => {
+    store.update(state => {
+      state.lineup.pitcher.fatigue = Math.max(state.lineup.pitcher.fatigue - 1, 0);
+      advanceRunners("SAC");
+    })
+  },
+  "013": () => {
+    store.update(state => {
+      state.game.dice = 0;
+      state.game.rerolls = 0;
+      state.game.mods = 0;
+    });
+    advanceRunners("1B");
   }
 }

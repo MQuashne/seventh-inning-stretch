@@ -13,6 +13,7 @@ export function initCover() {
   on($t("btn-play-ball"), "click", () => {
   playBall();
   initGame();
+  
   $t("gameday-cover").classList.add("hidden");
   $t("gameplay-content").classList.remove("hidden")
 })

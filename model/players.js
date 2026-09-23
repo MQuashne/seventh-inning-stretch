@@ -220,7 +220,8 @@ export const players = [
   "modifier": 0,
   "team":"STP",
   "condition": "auto",
-  "action": { "type": "auto", "desc": `Remove 1 fatigue from the active pitcher`, "play": "SAC" }
+  "action": { "type": "auto", "desc": `Remove 1 fatigue from the active pitcher`, "play": "SAC" },
+  "rollText": "Sacrifice*"
 },
 {
   "id": "013",//TIER 1 SPECIAL
@@ -234,7 +235,8 @@ export const players = [
   "modifier": 0,
   "team":"NOR",
   "condition": "auto", 
-  "action": { "type": "auto", "desc": " Remove all dice and tokens from your pool", "play": "1B" }
+  "action": { "type": "auto", "desc": " Remove all dice and tokens from your pool", "play": "1B" },
+  "rollText":"Single*"
 },
 {
   "id": "014",

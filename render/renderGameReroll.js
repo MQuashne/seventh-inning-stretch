@@ -1,7 +1,7 @@
 import { $n, $t, $c, $a, $cl, on, randInt, show, hide } from '../util.js'
 import { G } from '../model/game.js'
 import { store } from '../model/store.js'
-import { getBatterOutcome, testOpp, changeMode } from '../actions/game.js'
+import { getBatterOutcome, changeMode } from '../actions/game.js'
 import { plays, gamebox, selectedDice, renderGame } from './renderGame.js'
 const rollDisplay = $t('roll-display');
 const outcomeDisplay = $t('roll-outcome');
@@ -38,6 +38,7 @@ export function initReroll() {
 }
 
 export function rerollScreen() {
+  changeMode("reroll");
   rollDisplay.classList.add("mod-shift");
   mainRollBtn.classList.add("display-shift");
   mainRollBtn.disabled = true;

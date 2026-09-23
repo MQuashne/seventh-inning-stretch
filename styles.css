@@ -35,9 +35,9 @@
     /* TODO (not a sizing issue, left as-is): the next block uses commas instead of
        semicolons, so it is ONE broken value and --opp-die-font-color,
        --opp-die-outline-color and --team-back are never actually defined. */
-    --opp-die-bg-color: #000000,
-        --opp-die-font-color:#000000,
-        --opp-die-outline-color:#000000,
+    --opp-die-bg-color: #000000;
+        --opp-die-font-color:#000000;
+        --opp-die-outline-color:#000000;
         --team-back: #FFFFFF;
     --grass: #618240;
     --grass-lt: oklch(from var(--grass) calc(l + 0.035) c h);
@@ -2312,7 +2312,7 @@ GAME BOARD
 
 #process-mode {
     color: white;
-    font-size: 0.25em;
+    font-size: 0.75em;
     position: absolute;
     top: 0;
     right: 0;

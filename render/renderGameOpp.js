@@ -1,7 +1,7 @@
 import { $n, $t, $c, $a, $cl, on, randInt, hide, show } from '../util.js'
 import { G } from '../model/game.js'
 import { store } from '../model/store.js'
-import { testOpp, endDefHalf } from '../actions/game.js'
+import { getOpponentOutcome, endDefHalf, endDefenseRoll } from '../actions/game.js'
 import { gamebox, renderGame, oppTeam } from './renderGame.js'
 import { buildOpp } from './buildOpp.js'
 import { viewCard, viewOpp } from './modals/viewCard.js'
@@ -21,8 +21,9 @@ const defenseOutcome = $t("defense-outcome");
 const diceCount = $t("dice-input-count");
 const oppRoll = $t("opp-roll");
 const oppRollBtn = $t("opp-roll-btn");
+const mainRollBtn = $t("main-roll-btn");
 let oppUni;
-let defThrow;
+let defDiceCount;
 
 
 export function initOpp() {
@@ -41,20 +42,11 @@ export function initOpp() {
   
   oppCard.replaceChildren();
   oppCard.append(buildOpp(G.game.opponent));
+  /*
   
-  on(oppRollBtn, "click", () => {
-    DICE.set_color('dice', oppUni.jersey);
-    DICE.set_color('label', oppUni.text);
-    DICE.set_color('stripe', oppUni.stripe ||= oppUni.jersey);
-    DICE.set_color('outline', oppUni.outline ||= oppUni.jersey);
-    G.game.opponent.result.test === "placeRoll" ? defThrow = `${diceCount.textContent}d6` : defThrow = G.game.opponent.dice;
-    gamebox.setDice(defThrow);
-    hide([diceInput, ...$a('opp-roll')]);
-    gamebox.start_throw("", (notation) => {
-      testOpp(G.game.opponent, notation.result);
-    });
-  });
   
+  on(mainRollBtn, "click", () => );
+  */
   
   on(defenseOutcome, "click", () => {
     const runs = Number(defenseOutcome.textContent[0]);
@@ -62,18 +54,13 @@ export function initOpp() {
   });
   
   store.on("opp:rolled", (result) => {
-    show([...$a("def-outcome")]);
+    //show([...$a("def-outcome")]);
     defenseOutcome.textContent = `${result.result} RUNS`;
     renderGame();
   })
 }
 
 export function defenseHalf() {
-  
-  //------INITIAL SCREEN LAYOUT
-  show([pitcherCard, oppCard, ...$a("opp-roll")]);
-  hide([diceInput,...$a("main-roll")]);
-  
   //Show the dice input if the opponent condition is "Place X, Roll Y" 
   if (G.game.opponent.result.test === "placeRoll") {
     show(diceInput)
@@ -96,5 +83,20 @@ export function defenseHalf() {
   
   $t("roll-surface").style.backgroundImage = `url("public/assets/logos/${oppTeam.code}.svg"), linear-gradient(90deg,oklch(from ${oppTeam.ts} calc(l - 0.12) c h),oklch(from ${oppTeam.ts} calc(l - 0.12) c h)) `;
   
+  DICE.set_color('dice', oppUni.jersey);
+  DICE.set_color('label', oppUni.text);
+  DICE.set_color('stripe', oppUni.stripe ||= oppUni.jersey);
+  DICE.set_color('outline', oppUni.outline ||= oppUni.jersey);
+  
   renderGame();
+}
+
+export function opponentThrow() {
+  G.game.opponent.result.test === "placeRoll" ? defDiceCount = `${diceCount.textContent}d6` : defDiceCount = G.game.opponent.dice;
+  gamebox.setDice(defDiceCount);
+  gamebox.start_throw(
+    () => hide([diceInput, ...[...$a("main-roll")]]),
+    (notation) => {
+      endDefenseRoll(notation.result);
+    });
 }
