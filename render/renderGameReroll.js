@@ -19,11 +19,12 @@ let newResult = [];
 
 export function initReroll() {
   on(gameRoller, "click", (ev) => {
-    if (G.game.mode != "reroll") return;
+    if (G.game.mode != "reroll" && G.game.mode != "remove") return;
     const rect = gameRoller.getBoundingClientRect();
     const chosen = gamebox.search_dice_by_mouse(ev, rect);
     if (!chosen) return;
     if (selectedDice.includes(chosen.notation_index)) {
+      
       selectedDice.splice(selectedDice.indexOf(chosen.notation_index), 1);
       gamebox.set_dice_selected(chosen, false)
     } else {
@@ -34,6 +35,8 @@ export function initReroll() {
       }
     }
     selectedDice.length > 0 ? mainRollBtn.disabled = false : mainRollBtn.disabled = true;
+    
+    // TODO: add removal outcome display logic here
   });
 }
 
@@ -42,4 +45,8 @@ export function rerollScreen() {
   rollDisplay.classList.add("mod-shift");
   mainRollBtn.classList.add("display-shift");
   mainRollBtn.disabled = true;
+}
+
+export function chooseDice() {
+  
 }

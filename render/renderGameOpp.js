@@ -22,6 +22,7 @@ const diceCount = $t("dice-input-count");
 const oppRoll = $t("opp-roll");
 const oppRollBtn = $t("opp-roll-btn");
 const mainRollBtn = $t("main-roll-btn");
+const notifyBox = $t("notification");
 let oppUni;
 let defDiceCount;
 
@@ -42,38 +43,32 @@ export function initOpp() {
   
   oppCard.replaceChildren();
   oppCard.append(buildOpp(G.game.opponent));
-  /*
-  
-  
-  on(mainRollBtn, "click", () => );
-  */
   
   on(defenseOutcome, "click", () => {
     const runs = Number(defenseOutcome.textContent[0]);
     endDefHalf(runs);
   });
   
-  store.on("opp:rolled", (result) => {
-    //show([...$a("def-outcome")]);
+  /*store.on("opp:rolled", (result) => {
     defenseOutcome.textContent = `${result.result} RUNS`;
     renderGame();
-  })
+  })*/
 }
 
 export function defenseHalf() {
   //Show the dice input if the opponent condition is "Place X, Roll Y" 
-  if (G.game.opponent.result.test === "placeRoll") {
-    show(diceInput)
-    diceCount.textContent = G.game.opponent.dice[0];
+  show([pitcherCard, oppCard])
+  //if (G.game.opponent.result.test === "placeRoll") {
+    //diceCount.textContent = G.game.opponent.dice[0];
     diceInput.querySelector(".die-box").classList.add("opp-die");
-  }
-  else {
-    hide(diceInput);
-  }
+  //}
+ // else {
+//    hide(diceInput);
+//  }
   
   
   //Show pitcher ability to add before the roll 
-  if ((G.lineup.pitcher.ability === "addD6" || G.lineup.pitcher.ability === "addD10") && G.lineup.pitcher.used < G.lineup.pitcher.fatigue) {
+  if ((G.lineup.pitcher.ability === "addD6" || G.lineup.pitcher.ability === "addD10") && G.lineup.pitcher.used < G.lineup.pitcher.fatigue && !G.game.pitchAdd) {
     show(offerPitcher);
   }
   
@@ -90,13 +85,25 @@ export function defenseHalf() {
   
   renderGame();
 }
-
 export function opponentThrow() {
-  G.game.opponent.result.test === "placeRoll" ? defDiceCount = `${diceCount.textContent}d6` : defDiceCount = G.game.opponent.dice;
-  gamebox.setDice(defDiceCount);
-  gamebox.start_throw(
-    () => hide([diceInput, ...[...$a("main-roll")]]),
-    (notation) => {
-      endDefenseRoll(notation.result);
-    });
+  defDiceCount = 0;
+  if (G.game.opponent.result.test === "placeRoll") {
+    defDiceCount = diceCount.textContent;
+  } else { 
+    defDiceCount = Number(G.game.opponent.dice.split("d")[0]);
+  }
+  if (G.game.pitchAdd === "d6") {
+    defDiceCount+=1;
+  }
+  
+  let diceSet = G.game.pitchAdd === "d10" ? `${defDiceCount}d6+1d10` : `${defDiceCount}d6`
+
+//G.game.opponent.result.test === "placeRoll" ? defDiceCount = `${diceCount.textContent}d6` : defDiceCount = G.game.opponent.dice;
+gamebox.setDice(diceSet);
+gamebox.start_throw(
+  () => hide([diceInput, ...[...$a("main-roll")]]),
+  (notation) => {
+    endDefenseRoll(notation.result);
+  });
+  
 }

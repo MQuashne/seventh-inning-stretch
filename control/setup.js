@@ -73,12 +73,11 @@ export function gameSetup() {
   
   //Get initial Roster of T1 Players
   G.lineup.order = t1Players.splice(0, 9);
-  G.lineup.pitcher = t1Pitchers.splice(0, 1)[0];
+  G.lineup.pitcher = pitchers.find(p => p.id==="029")//t1Pitchers.splice(0, 1)[0];
   
   G.lineup.order.forEach((player) => player.team = G.thisTeam.code);
   G.lineup.pitcher.team = G.thisTeam.code;
   G.fullRoster=[...G.lineup.order, G.lineup.pitcher,...G.lineup.bench,...G.lineup.bullpen];
-  
   
   
   

@@ -43,9 +43,11 @@ export function playBall() {
     rerolls: 3,
     rerollAllowed: 99,
     mods: 3,
+    modallowed:99,
     score: [0, 0],
     currentBatterIndex: 0,
     pitcher: G.lineup.pitcher,
+    pitchAdd:"",
     runners: [],
     scoreboard: [
       [
@@ -342,7 +344,7 @@ export function endDefenseRoll(dice) {
   store.update(state => {
     state.game.currentRoll = dice;
     state.game.currentOutcome = outcome;
-    state.game.mode="outcome";
+    state.game.mode= G.game.pitchAdd ? "remove" : "outcome";
   },["defense:rolled"]);
 }
 

@@ -1,4 +1,4 @@
-import { $n, $t, $c, $a, $cl, on, randInt, hide, show } from '../util.js'
+import { $n, $t, $c, $a, $cl, on, randInt, hide, show, notifyBox } from '../util.js'
 import { G } from '../model/game.js'
 import { store } from '../model/store.js'
 import { endDefHalf, changeProcess, changeMode } from '../actions/game.js'
@@ -31,28 +31,25 @@ const PITCH_ACTION = {
   setOne: () => pitchMod(1, 99),
   cancelOne: () => pitchCancel(1),
   cancelAll: () => pitchCancel(99),
-  addD6: () => pitchRemove("d6"),
-  addD10: () => pitchRemove("d10"),
+  addD6: () => pitchAdd("d6"),
+  addD10: () => pitchAdd("d10"),
 }
 
 export function initPitcher() {
   //subtract, reroll, mod, set, temp
   
+  on(offerPitcher, "click", () => {
+    changeProcess("pitch");
+    playPitcher();
+  });
   
-  
-  
-    
-    
-    
-    
-    on(offerPitcher, "click", () => {
-      console.log("here")
-      changeProcess("pitch");
-      playPitcher();
-      //pitchReroll();
-    });
-  }
-  
+  store.on("defense:rolled", () => {
+      if (G.game.pitchAdd) {
+        changeMode("remove");
+        pitchRemove();
+      }
+      })
+}
   export function playPitcher() {
     const ability = G.lineup.pitcher.ability
     PITCH_ACTION[ability]();
@@ -67,4 +64,18 @@ export function initPitcher() {
     changeMode("reroll");
     G.game.rerollAllowed = G.lineup.pitcher.ability === "rerollOne" ? 1 : 99;
     rerollScreen();
+  }
+  
+  function pitchAdd(die) {
+    G.game.pitchAdd = die;
+    pitcherCard.classList.add("active", "btn-pulse");
+    changeProcess("field");
+    hide(offerPitcher);
+    renderGame();
+  }
+  
+  export function pitchRemove() {
+    notifyBox.show("Select one die to remove",0,false);
+    G.game.rerollAllowed=1;
+    
   }

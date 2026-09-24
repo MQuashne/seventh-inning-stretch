@@ -1,11 +1,11 @@
-import { $n, $t, $c, $a, $cl, on, randInt, hide, show, enable, disable } from '../util.js'
+import { $n, $t, $c, $a, $cl, on, randInt, hide, show, enable, disable, notifyBox } from '../util.js'
 import { modal } from '../main.js'
 import { G } from '../model/game.js'
 import { store } from '../model/store.js'
 import { buildCard, buildDie, buildReRoll, buildMod } from './buildCard.js'
 import { buildOpp } from './buildOpp.js'
 import { viewCard, viewOpp } from './modals/viewCard.js'
-import { playerOut, allRunnersOut, endOffHalf, firstBatter, endOffenseRoll, startDefHalf, getBatterOutcome, advanceRunners, nextBatter, runScored, endDefHalf, changeMode, changeProcess, applyMods, specialBatterThrow } from '../actions/game.js'
+import { playerOut, allRunnersOut, endOffHalf, firstBatter, endOffenseRoll, endDefenseRoll, startDefHalf, getBatterOutcome, advanceRunners, nextBatter, runScored, endDefHalf, changeMode, changeProcess, applyMods, specialBatterThrow } from '../actions/game.js'
 import { DICE } from '../dice/dice.js'
 import { teams } from '../model/teams.js'
 import { allPlayers } from '../control/setup.js'
@@ -104,9 +104,10 @@ const modOverlay = $t("mod-overlay");
 
 // --baserunning
 const runnerChoiceOverlay = $t("runner-choice-overlay");
+const rerollOverlay = $t("reroll-overlay");
 
 // --notification
-const notifyBox = $t("notification");
+//const notifyBox = $t("notification");
 
 // ELEMENTS
 // --cards
@@ -149,15 +150,15 @@ const VIEW_CONFIG = {
   "run:mod": { visible: [outcomeDisplay, rollBackBtn, modOverlay] },
   "run:reroll": { visible: [mainRollBtn, rollBackBtn] },
   
-  "field:roll": { visible: [mainRollBtn, pitcherCard, oppCard] },
-  "field:sub": { visible: [subCover,pitcherCard,oppCard] },
+  "field:roll": { visible: [mainRollBtn, pitcherCard, oppCard, diceInput] },
+  "field:sub": { visible: [subCover, pitcherCard, oppCard] },
   "field:outcome": { visible: [outcomeDisplay, pitcherCard, oppCard, offerPitcher] },
+  "field:remove": { visible: [outcomeDisplay, pitcherCard, oppCard] },
   
-  "pitch:reroll": { visible: [mainRollBtn, rollBackBtn] },
-  "pitch:adjust": { visible: [outcomeDisplay, rollBackBtn, modOverlay] },
-  "pitch:set": { visible: [outcomeDisplay, rollBackBtn, modOverlay] },
-  "pitch:remove": { visible: [mainRollBtn, rollBackBtn] },
-  "pitch:add": { visible: [mainRollBtn, rollBackBtn] },
+  "pitch:reroll": { visible: [mainRollBtn, rollBackBtn, pitcherCard, oppCard] },
+  "pitch:mod": { visible: [outcomeDisplay, rollBackBtn, modOverlay, pitcherCard, oppCard] },
+  "pitch:remove": { visible: [outcomeDisplay, pitcherCard, oppCard] },
+  "pitch:add": { visible: [mainRollBtn, rollBackBtn, pitcherCard, oppCard] },
   "pitch:outcome": { visible: [outcomeDisplay, pitcherCard, oppCard] },
   
   "008:roll": { visible: [mainRollBtn, outButton, diceInput] },
@@ -172,10 +173,11 @@ const VIEW_CONFIG = {
 
 const ROLL_MAP = {
   "hit:roll": () => batterThrow(getBatter()),
-  "hit:reroll": () => batterRethrow(getBatter()),
+  "hit:reroll": () => reThrow(),
   "run:roll": () => batterThrow(getBatter()),
-  "run:reroll": () => batterRethrow(getBatter()),
+  "run:reroll": () => reThrow(),
   "field:roll": () => opponentThrow(),
+  "pitch:reroll": () => reThrow(),
 }
 
 const OUTCOME_MAP = {
@@ -232,7 +234,6 @@ export function initGame() {
   //------INITIALIZE TEAMS
   homeTeam = G.game.home === true ? G.thisTeam : teams.find(t => t.code === G.game.opponent.code);
   awayTeam = G.game.home === false ? G.thisTeam : teams.find(t => t.code === G.game.opponent.code);
-  console.log(awayTeam);
   oppTeam = teams.find(t => t.code === G.game.opponent.code)
   
   $t("roll-surface").style.backgroundImage = `url("public/assets/logos/${homeTeam.code}.svg"), linear-gradient(90deg,oklch(from ${homeTeam.ts} calc(l - 0.12) c h),oklch(from ${homeTeam.ts} calc(l - 0.12) c h)) `;
@@ -313,6 +314,8 @@ export function initGame() {
   function exitReroll() {
     mainRollBtn.classList.remove("display-shift");
     rollDisplay.classList.remove("mod-shift");
+    gamebox.dices.forEach(d => {gamebox.set_dice_selected(d,false)});
+    selectedDice.splice(0,selectedDice.length);
   }
   
   function exitRun() {
@@ -353,6 +356,7 @@ export function initGame() {
   
   on(rollFix, "click", () => {
     renderGame();
+    console.log("refreshed")
   })
   //-------TESTING BUTTONS
   on(bbButton, "click", () => {
@@ -393,6 +397,10 @@ export function initGame() {
   store.on("game:started", () => {
     renderGame();
   })
+  
+  store.on("mode:changed", () => {
+    renderGame();
+  });
   
   store.on("mode:changed", () => {
     renderGame();
@@ -470,7 +478,6 @@ export function initGame() {
   });
   
   store.on("inning:defense", () => {
-    console.log("heard")
     defenseHalf();
   })
   
@@ -626,7 +633,12 @@ function renderRoller() {
   const keySpecial = `${ getBatter().id }:${G.game.mode}`;
   const keyDefault = `${G.game.process}:${G.game.mode}`;
   // }
-  const config = VIEW_CONFIG[keySpecial] ?? VIEW_CONFIG[keyDefault];
+  let config;
+  if (G.game.atBat) {
+    config = VIEW_CONFIG[keySpecial] ?? VIEW_CONFIG[keyDefault];
+  } else {
+    config = VIEW_CONFIG[keyDefault];
+  }
   [...$a('roll-el')].forEach(el => config.visible.includes(el) ? show(el) : hide(el));
   
   outcomeDisplay.textContent = G.game.atBat ? plays[G.game.currentOutcome].toUpperCase() : `${G.game.currentOutcome} RUNS`;
@@ -644,11 +656,21 @@ export function updateGameButtons() {
       diceCount.textContent > 0 ? diceDown.disabled = false : diceDown.disabled = true;
     }
   } else {
-    diceCount.textContent < Number(G.game.opponent.dice[0]) ? diceUp.disabled = false : diceUp.disabled = true;
-    diceCount.textContent > 0 ? diceDown.disabled = false : diceDown.disabled = true;
+    //Rolling for opponent
+    let oppDiceCount = Number(G.game.opponent.dice.split("d")[0]);
+
+    if (G.game.opponent.result.test === "placeRoll") {
+      diceCount.textContent < oppDiceCount ? diceUp.disabled = false : diceUp.disabled = true;
+      diceCount.textContent > 0 ? diceDown.disabled = false : diceDown.disabled = true;
+    } else {
+      diceUp.disabled = true;
+      diceDown.disabled = true;
+      diceCount.textContent = oppDiceCount;
+    }
   }
   
   subButton.disabled = ((G.game.process !== "hit" && G.game.process !== "field") || G.game.mode !== "roll");
+  outcomeDisplay.disabled = G.game.pitchAdd ? true : false;
   updateRollButton();
 }
 
@@ -675,10 +697,7 @@ function updateRollButton() {
   
 }
 
-function notify(message) {
-  notifyBox.classList.add("showing");
-  setTimeout(() => { notifyBox.classList.remove("showing"); }, 3000)
-}
+
 //===============
 // ROLL FUNCTIONS
 //========++++++=
@@ -706,7 +725,7 @@ function batterThrow(batter) {
 }
 
 
-function batterRethrow(batter) {
+function reThrow() {
   //batter = getBatter();
   mainRollBtn.classList.remove("display-shift");
   rollDisplay.classList.remove("mod-shift");
@@ -719,7 +738,7 @@ function batterRethrow(batter) {
       } else if (G.game.process === "run") {
         // if (batter.condition === "roll") 
         endOffenseRoll(notation.result);
-      } else if (G.game.process="pitch") {
+      } else if (G.game.process = "pitch") {
         endDefenseRoll(notation.result);
       }
     }

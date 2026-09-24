@@ -65,7 +65,7 @@ export const pitchers = [
    team: "KC",
    fatigue: 4,
    used:2,
-   ability:"addD6",
+   ability:"addD10",
    type:"temp",
    desc:"Add one die to the opponent's pool, then remove one die before resolving the inning."
 },

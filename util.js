@@ -129,6 +129,34 @@ export const enable = (el) => {
 }
 
 
+export const notifyBox = $t("notification");
+notifyBox.allow=true;
+
+notifyBox.show = function (msg,duration=0,tapClose=true){
+  notifyBox.allow=tapClose;
+  notifyBox.textContent=msg;
+  notifyBox.classList.add("showing");
+  if (duration>0){
+    setTimeout(() => {
+     notifyBox.close();
+    },duration)
+  }
+}
+
+notifyBox.close = function () {
+  notifyBox.classList.remove("showing");
+}
+
+on(notifyBox,"click",tapToClose);
+
+function tapToClose(){
+  if (notifyBox.allow){
+    notifyBox.close();
+  }
+  else {
+    return;
+  }
+}
 
 /*
 import {$n, $t, $c, $a, $cl, on, randInt,findKey} from '../util.js'

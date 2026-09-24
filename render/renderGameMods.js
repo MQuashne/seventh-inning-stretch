@@ -49,10 +49,8 @@ export function initMods() {
       
       updateModButtons(modResult, mods);
       if (G.game.process === "hit") {
-        console.log("modhit")
         tempPlay = getBatterOutcome(G.lineup.order[G.game.currentBatterIndex], modResult, "mod");
       } else if (G.game.process === "run") {
-        console.log("modrun")
         tempPlay = getRunnerOutcome(modResult, "mod");
       }
       outcomeDisplay.textContent = plays[tempPlay].toUpperCase();
