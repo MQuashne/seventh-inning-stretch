@@ -1,7 +1,7 @@
 import { $n, $t, $c, $a, $cl, on, randInt, show, hide } from '../util.js'
 import { G } from '../model/game.js'
 import { store } from '../model/store.js'
-import { getBatterOutcome, changeMode } from '../actions/game.js'
+import { getOpponentOutcome, changeMode } from '../actions/game.js'
 import { plays, gamebox, selectedDice, renderGame } from './renderGame.js'
 const rollDisplay = $t('roll-display');
 const outcomeDisplay = $t('roll-outcome');
@@ -12,10 +12,9 @@ const rerollConfirm = $t("reroll-confirm");
 const rerollBack = $t("roll-back");
 const gameRoller = $t('gameRoller');
 const mainRollBtn = $t("main-roll-btn");
-let lastPlay = "";
 //let selectedDice = [];
-let rollResult = [];
-let newResult = [];
+export let remainingDice = [];
+let remainingPlay;
 
 export function initReroll() {
   on(gameRoller, "click", (ev) => {
@@ -24,7 +23,6 @@ export function initReroll() {
     const chosen = gamebox.search_dice_by_mouse(ev, rect);
     if (!chosen) return;
     if (selectedDice.includes(chosen.notation_index)) {
-      
       selectedDice.splice(selectedDice.indexOf(chosen.notation_index), 1);
       gamebox.set_dice_selected(chosen, false)
     } else {
@@ -36,7 +34,15 @@ export function initReroll() {
     }
     selectedDice.length > 0 ? mainRollBtn.disabled = false : mainRollBtn.disabled = true;
     
+    if (G.game.mode === "remove") {
+      remainingDice = selectedDice.length > 0 ? G.game.currentRoll.toSpliced(selectedDice[0], 1) : [...G.game.currentRoll];
+      console.log(remainingDice);
+      renderGame();
+    }
+    
+    
     // TODO: add removal outcome display logic here
+    
   });
 }
 

@@ -670,7 +670,7 @@ export function updateGameButtons() {
   }
   
   subButton.disabled = ((G.game.process !== "hit" && G.game.process !== "field") || G.game.mode !== "roll");
-  outcomeDisplay.disabled = G.game.pitchAdd ? true : false;
+  outcomeDisplay.disabled = (G.game.pitchAdd && selectedDice.length<1) ? true : false;
   updateRollButton();
 }
 
