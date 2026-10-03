@@ -4,6 +4,7 @@ import { store } from '../model/store.js'
 import { endDefHalf, changeProcess, changeMode } from '../actions/game.js'
 import { gamebox, renderGame, oppTeam } from './renderGame.js'
 import { rerollScreen } from './renderGameReroll.js'
+import { modScreen } from './renderGameMods.js'
 import { buildOpp } from './buildOpp.js'
 import { viewCard, viewOpp } from './modals/viewCard.js'
 import { DICE } from '../dice/dice.js'
@@ -27,8 +28,8 @@ let defThrow;
 const PITCH_ACTION = {
   rerollOne: () => pitchReroll(1),
   rerollSet: () => pitchReroll(99),
-  adjustOne: () => pitchMod(1, 1),
-  setOne: () => pitchMod(1, 99),
+  adjustOne: () => pitchMod(19),
+  setOne: () => pitchMod(99),
   cancelOne: () => pitchCancel(1),
   cancelAll: () => pitchCancel(99),
   addD6: () => pitchAdd("d6"),
@@ -55,14 +56,14 @@ export function initPitcher() {
     PITCH_ACTION[ability]();
   }
   
-  function pitchCancel() {
-    defenseOutcome[0] = G.lineup.pitcher.ability === "cancelAll" ? 0 : Number(defenseOutcome[0]) - 1;
+  function pitchCancel(runsCancelled) {
+    G.game.currentOutcome = Math.max(0,G.game.currentOutcome-runsCancelled);
     changeMode("outcome");
   }
   
-  function pitchReroll() {
+  function pitchReroll(rerollAllowed) {
     changeMode("reroll");
-    G.game.rerollAllowed = G.lineup.pitcher.ability === "rerollOne" ? 1 : 99;
+    G.game.rerollAllowed = rerollAllowed;
     rerollScreen();
   }
   
@@ -70,8 +71,12 @@ export function initPitcher() {
     G.game.pitchAdd = die;
     pitcherCard.classList.add("active", "btn-pulse");
     changeProcess("field");
-    hide(offerPitcher);
     renderGame();
+  }
+  
+  function pitchMod(changes){
+    G.game.modAllowed = changes;
+    modScreen();
   }
   
   export function pitchRemove() {

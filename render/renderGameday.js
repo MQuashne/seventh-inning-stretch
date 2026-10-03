@@ -11,8 +11,9 @@ import { playBall } from '../actions/game.js'
 
 export function initCover() {
   on($t("btn-play-ball"), "click", () => {
-  playBall();
+  //playBall();
   initGame();
+  playBall();
   
   $t("gameday-cover").classList.add("hidden");
   $t("gameplay-content").classList.remove("hidden")

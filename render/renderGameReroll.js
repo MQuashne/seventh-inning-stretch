@@ -14,7 +14,7 @@ const gameRoller = $t('gameRoller');
 const mainRollBtn = $t("main-roll-btn");
 //let selectedDice = [];
 export let remainingDice = [];
-let remainingPlay;
+export let remainingPlay;
 
 export function initReroll() {
   on(gameRoller, "click", (ev) => {
@@ -36,13 +36,10 @@ export function initReroll() {
     
     if (G.game.mode === "remove") {
       remainingDice = selectedDice.length > 0 ? G.game.currentRoll.toSpliced(selectedDice[0], 1) : [...G.game.currentRoll];
-      console.log(remainingDice);
-      renderGame();
+      outcomeDisplay.disabled = selectedDice.length <= 0;
+      remainingPlay = getOpponentOutcome(remainingDice)
+      outcomeDisplay.textContent= `${remainingPlay} RUNS`;
     }
-    
-    
-    // TODO: add removal outcome display logic here
-    
   });
 }
 

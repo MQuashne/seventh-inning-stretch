@@ -1,7 +1,7 @@
 import { $n, $t, $c, $a, $ac, $cl, on, randInt, show, hide } from '../util.js'
 import { G } from '../model/game.js'
 import { store } from '../model/store.js'
-import { getBatterOutcome, changeMode, getRunnerOutcome } from '../actions/game.js'
+import { getBatterOutcome, changeMode, getRunnerOutcome, getOpponentOutcome } from '../actions/game.js'
 import { plays, gamebox, renderGame } from './renderGame.js'
 const modAction = $t('mod-action');
 const modOverlay = $t("mod-overlay");
@@ -53,17 +53,26 @@ export function initMods() {
       } else if (G.game.process === "run") {
         tempPlay = getRunnerOutcome(modResult, "mod");
       }
+      if (G.game.atBat) {
       outcomeDisplay.textContent = plays[tempPlay].toUpperCase();
       scModCount.textContent = mods;
+      } else if (G.game.process==="pitch"){
+        outcomeDisplay.textContent = `${getOpponentOutcome(modResult)} RUNS`;
+      } else if (G.game.process==="field"){
+        outcomeDisplay.textContent = `+${modsUsed} RUNS`;
+      }
     }
   });
 }
 
-export function modScreen(dice) {
+export function modScreen(dice=G.game.currentRoll) {
+  //console.log(G.game.currentDice)
+  changeMode("mod");
   preMod = [...dice];
   modResult = [...dice];
   totalChange = 0;
-  mods = G.game.mods;
+  mods = G.game.atBat ? G.game.mods : G.game.modAllowed;
+  modsUsed = 0;
   modOverlay.replaceChildren();
   //G.game.mode = "mod";
   gamebox.line_up_dice({ y_fraction: 0.3 });
@@ -79,6 +88,7 @@ export function modScreen(dice) {
     s.root.classList.add("overlay-select-group");
     modOverlay.append(s.root);
   }
+  console.log(`mods: ${mods}`)
   updateModButtons(modResult, mods);
 }
 
@@ -101,5 +111,13 @@ export function updateModButtons(modResult, mods) {
     sel.dataset.change > 0 ? upBtn.style.color = "#FFFF00" : upBtn.style.color = "#FFFFFF";
     
     sel.dataset.change < 0 ? dnBtn.style.color = "#FFFF00" : dnBtn.style.color = "#FFFFFF";
+   
+    if (G.game.process==="pitch" && modsUsed>0){
+      if (sel.dataset.change==="0"){
+        console.log("done")
+        upBtn.disabled=true;
+        dnBtn.disabled=true;
+      }
+    }
   })
 }

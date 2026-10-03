@@ -145,6 +145,7 @@ notifyBox.show = function (msg,duration=0,tapClose=true){
 
 notifyBox.close = function () {
   notifyBox.classList.remove("showing");
+  notifyBox.textContent="";
 }
 
 on(notifyBox,"click",tapToClose);

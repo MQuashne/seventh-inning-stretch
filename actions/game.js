@@ -16,6 +16,15 @@ roll
 outcome
 mod
 reroll
+
+extra die:
+- always available, never sent back
+handling:
+1) offer with button "coach die" <- ugh... this one
+2) min dice pool is 1 [last used]
+ batter gives 1, have 2. use 2, 1 remains. batter gives 3, have 4. batter gives 2, have 6. use 5, have 1. that die is only used when the whole pool is.
+ 3) 1 die discount on everything and start with 1... [first used]
+ start with 1, batter gives 1, have 2. use 2, have 1. batter gives 3, have 4. batter gives 2, have 6. use 5, have 2. 
 */
 
 //=============================
@@ -30,8 +39,8 @@ export function playBall() {
     order: [...G.lineup.order],
     inning: 7,
     half: 2,
-    mode: "",
-    process: "",
+    mode: "roll",
+    process: "hit",
     currentRoll: [],
     currentOutcome: "out",
     currentModRoll: [],
@@ -39,15 +48,20 @@ export function playBall() {
     atBat: gameEvent.home,
     inProgress: true,
     outs: 0,
-    dice: 12,
-    rerolls: 3,
+    dice: 0,
+    rerolls: 0,
     rerollAllowed: 99,
-    mods: 3,
-    modallowed:99,
+    mods: 0,
+    modallowed: 99,
+    modsUsed: 0,
     score: [0, 0],
     currentBatterIndex: 0,
     pitcher: G.lineup.pitcher,
-    pitchAdd:"",
+    pitchAdd: "",
+    pitchesLeft: 0,
+    oppTokensUsed: 0,
+    must: false,
+    batCoachUsed: false,
     runners: [],
     scoreboard: [
       [
@@ -96,12 +110,37 @@ export function playBall() {
     state.lineup.bullpen.forEach(pl => pl.available = true);
     state.lineup.order.forEach(pl => pl.available = false);
     state.lineup.pitcher.available = false;
-  }, ["game:started"]);
-  
-  if (G.game.home) {
+    state.game.pitchesLeft = G.lineup.pitcher.fatigue > 10 ? 1 : G.lineup.pitcher.fatigue - G.lineup.pitcher.used;
+    if (G.difficulty === "Rookie") {
+      state.game.dice = 1;
+      state.game.rerolls = 1;
+      state.game.mods = 1;
+    }
+  }, ["game:startedz"]);
+  //firstBatter(getBatter());
+  /*if (G.game.home) {
     store.emit("inning:offense");
   } else {
     store.emit("inning:defense");
+  }
+  */
+}
+
+export function checkGameEnd() {
+  //Bottom of the 9th or extras
+  const lastOut = (G.game.outs === 3 && G.game.inning.half === 2 && G.game.inning >= 9 && G.game.score[0] !== G.game.score[1]);
+  
+  //Top of 9th or extras home lead
+  const homeWin = (G.game.outs === 3 && G.game.inning.half === 1 && G.game.inning >= 9 && G.game.score[1] > G.game.score[0]);
+  
+  //Walk off in bottom of 9th
+  const walkOff = (G.game.inning.half === 2 && G.game.inning >= 9 && G.game.score[1] > G.game.score[0]);
+  
+  if (lastOut || homeWin || walkOff) {
+    endGame();
+    return true;
+  } else {
+    return false;
   }
 }
 
@@ -112,39 +151,65 @@ export function endGame() {
 //=============================
 // INNING MANAGEMENT
 //=============================
-
-export function endOffHalf() {
-  if (G.game.half === 1 && G.game.inning >= 9 && G.game.score[1] > G.game.score[0]) {
-    endGame();
-  } else if (G.game.half === 2 && G.game.inning >= 9 && G.game.score[1] != G.game.score[0]) {
-    endGame();
-  } else {
-    store.update(state => {
-      state.game.half = 2 - (state.game.half - 1);
-      state.game.outs = 0;
+export function startOffHalf() {
+  changeProcess("hit");
+  changeMode("roll");
+  store.update(state => {
+    if (G.difficulty === "Rookie") {
+      state.game.dice = 1;
+      state.game.rerolls = 1;
+      state.game.mods = 1;
+    } else {
       state.game.dice = 0;
       state.game.rerolls = 0;
       state.game.mods = 0;
-      state.game.runners = [];
-      state.game.atBat = !state.game.atBat;
-      if (state.game.half === 1) {
-        state.game.inning++;
-      }
-    }, [
-      ["inning:changed"],
-      [`inning:${G.game.atBat ? "defense" : "offense"}`]
-    ])
-  }
+    }
+    state.game.rerollAllowed = 99;
+    state.game.atBat = true;
+    state.game.runners.push({ player: getBatter(), location: 0 });
+    state.game.dice += getBatter().dice;
+    state.game.rerolls += getBatter().reroll;
+    state.game.mods += getBatter().modifier;
+  }, ["inning:offense"]);
+}
+
+export function endOffHalf() {
+  const gameEnd = checkGameEnd();
+  if (gameEnd) { return; }
+  store.update(state => {
+    state.game.outs = 0;
+    state.game.runners = [];
+    state.game.half = 2 - (state.game.half - 1);
+    if (state.game.half === 1) {
+      state.game.inning++;
+    };
+  });
+  startDefHalf();
 }
 
 export function endDefHalf(runs) {
+  const gameEnd = checkGameEnd();
+  if (gameEnd) { return; }
   store.update(state => {
-    state.game.home ? state.game.score[0] += runs : state.game.score[1] += runs
+    state.game.home ? state.game.score[0] += runs : state.game.score[1] += runs;
+    state.game.half = 2 - (state.game.half - 1);
+    if (state.game.half === 1) {
+      state.game.inning++;
+    };
   }, ["score:changed"])
-  endOffHalf();
+  startOffHalf();
 }
 
 export function startDefHalf() {
+  changeProcess("field");
+  changeMode("roll");
+  store.update(state => {
+    state.game.pitchesLeft = G.lineup.pitcher.fatigue > 10 ? 1 : G.lineup.pitcher.fatigue - G.lineup.pitcher.used;
+    state.game.oppTokensUsed = 0;
+    state.game.pitchAdd = "";
+    state.game.rerollAllowed = 99;
+    state.game.atBat = false;
+  })
   store.emit("inning:defense");
 }
 
@@ -159,9 +224,7 @@ export function firstBatter(player) {
     state.game.rerolls += player.reroll;
     state.game.mods += player.modifier;
     state.game.mode = "roll";
-  }, [
-    ["batter:changed", player]
-  ]);
+  });
 }
 
 export function subBatter(subOut, subIn) {
@@ -232,13 +295,15 @@ function advanceOnWalk(runners, batter) {
       if (TB) TB.location = 4;
     }
   }
+  //setTimeout(() => nextBatter(),1000);
 }
 
 function advanceOnSac(runners, batter) {
   runners.forEach((r) => {
     if (r.location > 0) r.location++;
   });
-  playerOut(batter.player);
+  //setTimeout(() =>playerOut(batter.player),1000);
+  
 }
 
 const ADVANCE_BY = { "1B": 1, "2B": 2, "3B": 3, "HR": 4, extraBases: 1 };
@@ -261,6 +326,8 @@ function maybeEnterRunMode(state, lastPlay) {
   const runnersOnBase = state.game.runners.filter(r => r.location < 4).length;
   if (isHit && runnersOnBase >= 2) {
     state.game.mode = "run";
+  } else {
+    setTimeout(() => nextBatter(), 1000);
   }
 }
 
@@ -276,10 +343,14 @@ export function playerOut(outPlayer) {
     state.game.runners.splice(runnerIndex, 1);
     state.game.outs++;
     state.game.process = "hit";
+    state.game.mode = "roll";
   }, ["player:out", outPlayer]);
   
   if (runnerLocation === 0) {
     store.emit("batter:out", outPlayer);
+    if (G.game.outs <= 3) {
+      nextBatter();
+    }
   }
   
   if (G.game.outs >= 3) {
@@ -306,6 +377,8 @@ export function runScored(runner) {
     state.game.runners.splice(runnerIndex, 1);
     state.game.home === true ? state.game.score[1]++ : state.game.score[0]++
   }, ["run:scored"]);
+  const gameEnd = checkGameEnd();
+  if (gameEnd) { return; }
 }
 
 //=============================
@@ -334,18 +407,30 @@ export function endOffenseRoll(dice) {
   store.update(state => {
       state.game.currentRoll = dice;
       state.game.currentOutcome = outcome;
+      state.game.batCoachUsed = false;
     },
     ["offense:rolled"]
   );
 }
 
 export function endDefenseRoll(dice) {
-  const outcome = getOpponentOutcome(dice);
   store.update(state => {
+    
+    if (G.game.opponent.result.test === "mustThree") {
+      state.game.must = 3
+    } else if (G.game.opponent.result.test === "mustFour") {
+      state.game.must = 4
+    } else { state.game.must = false }
+    
+    if (state.game.process === "field" && state.game.mode === "reroll") state.game.oppTokensUsed++;
+    
+    const outcome = state.game.must ? G.game.oppTokensUsed : getOpponentOutcome(dice);
+    
     state.game.currentRoll = dice;
     state.game.currentOutcome = outcome;
-    state.game.mode= G.game.pitchAdd ? "remove" : "outcome";
-  },["defense:rolled"]);
+    state.game.mode = G.game.pitchAdd ? "remove" : "outcome";
+    state.game.process = "field";
+  }, ["defense:rolled"]);
 }
 
 export function getBatterOutcome(batter, dice) {
@@ -374,27 +459,52 @@ export function getRunnerOutcome(dice) {
   return result ? "safe" : "out";
 }
 
-export function applyMods(batter, dice, modCount) {
+export function applyMods(player, dice, modCount) {
   store.update(state => {
     state.game.currentDice = dice;
     switch (G.game.process) {
       case 'hit':
-        state.game.currentOutcome = getBatterOutcome(batter, dice)
+        state.game.currentOutcome = getBatterOutcome(player, dice)
         state.game.mods -= modCount;
         break;
       case 'run':
         state.game.currentOutcome = getRunnerOutcome(dice);
         state.game.mods -= modCount;
         break;
+      case 'pitch':
+        state.game.currentOutcome = getOpponentOutcome(dice);
+        state.game.process = "field";
+        break;
+      case 'field':
+        state.game.oppTokensUsed += modCount;
+        state.game.currentOutcome = state.game.oppTokensUsed;
       default:
         // Tab to edit
     }
   }, ["mods:applied"]);
 }
 
+export function fatiguePitcher() {
+  store.update(state => {
+    if (G.lineup.pitcher.fatigue < 10) {
+      state.lineup.pitcher.used++;
+      state.game.pitchesLeft = G.lineup.pitcher.fatigue - G.lineup.pitcher.used;
+    } else {
+      state.game.pitchesLeft = 0;
+    }
+  })
+}
+
 export function getOpponentOutcome(dice) {
   const result = oppTests[G.game.opponent.result.test](dice);
   return result;
+}
+
+export function addCoachDie() {
+  store.update(state => {
+    state.game.batCoachUsed = true;
+    state.game.dice++;
+  }, ["coachDie:added"]);
 }
 
 //=============================

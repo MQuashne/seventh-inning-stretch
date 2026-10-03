@@ -48,28 +48,16 @@ export function initOpp() {
     const runs = Number(defenseOutcome.textContent[0]);
     endDefHalf(runs);
   });
-  
-  /*store.on("opp:rolled", (result) => {
-    defenseOutcome.textContent = `${result.result} RUNS`;
-    renderGame();
-  })*/
 }
 
 export function defenseHalf() {
-  //Show the dice input if the opponent condition is "Place X, Roll Y" 
   show([pitcherCard, oppCard])
-  //if (G.game.opponent.result.test === "placeRoll") {
-    //diceCount.textContent = G.game.opponent.dice[0];
     diceInput.querySelector(".die-box").classList.add("opp-die");
-  //}
- // else {
-//    hide(diceInput);
-//  }
-  
   
   //Show pitcher ability to add before the roll 
   if ((G.lineup.pitcher.ability === "addD6" || G.lineup.pitcher.ability === "addD10") && G.lineup.pitcher.used < G.lineup.pitcher.fatigue && !G.game.pitchAdd) {
     show(offerPitcher);
+    offerPitcher.disabled=G.game.pitchesLeft<1;
   }
   
   //-------OPPONENT TEAM STYLING
@@ -82,9 +70,10 @@ export function defenseHalf() {
   DICE.set_color('label', oppUni.text);
   DICE.set_color('stripe', oppUni.stripe ||= oppUni.jersey);
   DICE.set_color('outline', oppUni.outline ||= oppUni.jersey);
-  
+ 
   renderGame();
 }
+
 export function opponentThrow() {
   defDiceCount = 0;
   if (G.game.opponent.result.test === "placeRoll") {
@@ -98,7 +87,6 @@ export function opponentThrow() {
   
   let diceSet = G.game.pitchAdd === "d10" ? `${defDiceCount}d6+1d10` : `${defDiceCount}d6`
 
-//G.game.opponent.result.test === "placeRoll" ? defDiceCount = `${diceCount.textContent}d6` : defDiceCount = G.game.opponent.dice;
 gamebox.setDice(diceSet);
 gamebox.start_throw(
   () => hide([diceInput, ...[...$a("main-roll")]]),

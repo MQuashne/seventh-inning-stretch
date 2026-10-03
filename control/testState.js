@@ -16,10 +16,12 @@
     });
     
     const oppSignings = G.tier2Deck.splice(0, 3);
-    //G.opponents.push(G.league.find(t => t.code ==="CWS"));
+    
+    //G.opponents.push(G.league.find(t => t.code ==="ARI"));
     for (let i = 0; i < 3; i++) {
-      const opp = G.league.find(t => t.id === oppSignings[i].id);
+     const opp = G.league.find(t => t.id === oppSignings[i].id);
       G.opponents.push(opp);
+      
       const nextGame = G.schedule.find(event => event.id === `G${i+1}`);
       nextGame.title = `${opp.city} ${opp.team}`;
       if (i === 0) {

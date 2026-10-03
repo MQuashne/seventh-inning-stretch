@@ -254,7 +254,9 @@ export const opponents = [
   code: "ARI",
   roll: "Roll 5",
   dice:"5d6",
-  action: "You must achieve a three-of-a-kind. Use modifiers to change values. Score one run per modifier used."
+  action: "You must achieve a three-of-a-kind. Use modifiers to change values. Score one run per modifier used.",
+  result:{test:"mustThree",unit:1}
+  
 },
 {
   id: "046",

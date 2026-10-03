@@ -1785,10 +1785,11 @@ GAME BOARD
     align-items: center;
     padding: 1% 0;
     margin: 1% 0;
+    flex: 1 1 auto;
 }
 
 #offer-pitcher {
-    width: 100%;
+    /*width: 100%;*/
 }
 
 @keyframes pulse {
@@ -1957,6 +1958,8 @@ GAME BOARD
     font-size: 1.3em;
     font-family: "Oswald";
 }
+
+
 
 #sub-cover {
     grid-column: 1 / -1;
@@ -2237,7 +2240,7 @@ GAME BOARD
     position: absolute;
     font-size: 1.5rem;
     color: white;
-    top: 0.5rem;
+    bottom: 0.5rem;
     right: 0.5rem;
 }
 
@@ -2367,4 +2370,8 @@ GAME BOARD
 
 .sub-card {
     width: 40cqw;
+}
+
+.bat-coach {
+    color:#FFFF00; !important
 }
